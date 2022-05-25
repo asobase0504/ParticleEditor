@@ -123,6 +123,7 @@ void UpdateParticle(void)
 	float ImRandMin = GetRandMin();
 	float ImRandMax = GetRandMax();
 	float ImRadius = GetRadius();
+	float ImAlpha = GetAlpha();
 	bool bEnable = bSetEffect();
 	bool bBackRot = BackRot();
 	bool bTex = TexUse();
@@ -205,8 +206,8 @@ void UpdateParticle(void)
 				break;
 			}
 
-			/*g_aParticle[i].col.r -= 0.01f;
-			g_aParticle[i].col.b++;*/
+			//アルファ値調整用
+			g_aParticle[i].col.a -= ImAlpha;
 
 			//
 			//エフェクトの種類

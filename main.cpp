@@ -84,6 +84,7 @@ static int selecttype = 0;
 static bool s_bBackRot = false;
 static bool s_bEffectEnable = false;
 static int s_nItem = 0;
+static float s_fAlpha = 0;
 static float s_fRandMin = 0;
 static float s_fRandMax = 0;
 static char FileString[MAX_PATH * 256];
@@ -566,7 +567,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 
 		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
-																//FPS•\Ž¦
+		//FPS•\Ž¦
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too
@@ -670,7 +671,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				}
 
 				ImGui::SliderInt("Life", &s_nLife, 0, 500);
-				ImGui::SliderFloat("Radius", &s_fRadius, 0.0f, 100.0f);
+				ImGui::SliderFloat("Speed", &s_fRadius, 0.0f, 100.0f);
 
 				//‹““®‚¨‚©‚µ‚­‚È‚Á‚¿‚á‚Á‚½Žž—p
 				if (ImGui::Button("DataRemove"))
@@ -705,6 +706,8 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				}
 
 				ImGui::RadioButton("Gradation None", &selecttype, 0);
+
+				ImGui::SliderFloat("Alpha", &s_fAlpha, 0.0f, 0.5f);
 
 				ImGui::TreePop();
 			}
@@ -823,6 +826,11 @@ float GetRandMax(void)
 float GetRadius(void)
 {
 	return s_fRadius;
+}
+
+float GetAlpha(void)
+{
+	return s_fAlpha;
 }
 
 char GetFileName(int nNum)

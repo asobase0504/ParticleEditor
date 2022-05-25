@@ -51,6 +51,7 @@ int GetLife(void);
 float GetRandMin(void);
 float GetRandMax(void);
 float GetRadius(void);
+float GetAlpha(void);
 char GetFileName(int nNum);
 bool bSetEffect(void);
 bool BackRot(void);
