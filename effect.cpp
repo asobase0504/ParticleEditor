@@ -16,12 +16,12 @@ void InitEffect(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		L"data\\TEXTURE\\flare.png",
+		"data\\TEXTURE\\flare.png",
 		&s_pTexture[EFFECTTYPE_NORMAL]);
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		L"data\\TEXTURE\\bright.jpg",
+		"data\\TEXTURE\\bright.jpg",
 		&s_pTexture[EFFECTTYPE_PLAYER]);
 
 	for (int i = 0; i < MAX_EFFECT; i++)

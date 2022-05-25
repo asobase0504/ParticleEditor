@@ -18,12 +18,12 @@ void InitParticle(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		L"data\\TEXTURE\\flare.png",
+		"data\\TEXTURE\\flare.png",
 		&s_pTexture[PARTICLETYPE_NORMAL]);
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		L"data\\TEXTURE\\bright.jpg",
+		"data\\TEXTURE\\bright.jpg",
 		&s_pTexture[PARTICLETYPE_PLAYER]);
 
 	// 初期化
