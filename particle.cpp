@@ -226,14 +226,14 @@ void UpdateParticle(void)
 		// ‚¢‚ë‚ñ‚È“®‚«
 		{
 			//‡
-			/*g_fAngle += 0.3f;
-			pParticle->move.x = sinf((D3DX_PI / 180) * 17 * g_fAngle) * 3.0f;
-			pParticle->move.y = sinf((D3DX_PI / 180) * 8 * g_fAngle) * 3.0f;*/
+			/*g_fAngle += 0.7f;
+			pParticle->move.x = sinf((D3DX_PI / 180) * 17 * g_fAngle) * ImAttenuation;
+			pParticle->move.y = sinf((D3DX_PI / 180) * 8 * g_fAngle) * ImAttenuation;*/
 
-			//‚Ó‚É‚á‚Ó‚É‚á```
+			//‚Ó‚É‚á‚Ó‚É‚á
 			/*g_fAngle += 0.0996f;
-			pParticle->move.x = 9 * powf(cosf(fGRad), 3.0f);
-			pParticle->move.y = 9 * powf(sinf(fGRad), 3.0f);*/
+			pParticle->move.x = ImAttenuation * powf(cosf(fGRad), 3.0f);
+			pParticle->move.y = ImAttenuation * powf(sinf(fGRad), 3.0f);*/
 
 			//—†ù‚¾‚Á‚½‚è
 			g_fAngle += 20.5f;
