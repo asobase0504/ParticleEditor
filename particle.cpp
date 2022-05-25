@@ -113,6 +113,7 @@ void UpdateParticle(void)
 	bool bBackRot = BackRot();
 	bool bTexRot = TexRot();
 	bool bTex = TexUse();
+	float ImRadius = GetRadius();
 
 	float fRad = 0.0f;
 	float fGRad = 0.0f;
@@ -148,6 +149,8 @@ void UpdateParticle(void)
 		//エフェクトの移動
 		pParticle->pos += pParticle->move;
 		pParticle->pos += ImMove;
+
+		pParticle->fRadius = ImRadius;
 
 		if (bBackRot)
 		{
@@ -442,13 +445,14 @@ void LoadTex(void)
 	}
 }
 
-//削除処理
+// 削除処理
 void DeleteParticle(int nDelete)
 {
 	// データのリセット
 	memset(&g_aParticle[nDelete], 0, sizeof(g_aParticle[nDelete]));
 }
 
+// 角度の初期化処理
 void RemoveAngle(void)
 {
 	g_fAngle = 0;
