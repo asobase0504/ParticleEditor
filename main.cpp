@@ -57,20 +57,6 @@ static LPDIRECT3DDEVICE9 s_pD3DDevice = NULL;	// Direct3dデバイスへのぽいんた
 static int s_nCountFPS;							// FPSのカウンター
 static bool bPress = false;						// リボンバーのトリガー処理のために必要な変数
 static D3DPRESENT_PARAMETERS s_d3dpp = {};
-static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-static bool show_demo_window = true;//基本の呼び出し
-static bool show_another_window = false;//もう一つ呼び出し
-static char Txet[8] = "";
-static bool useEffect = false;
-static bool bMove = false;
-static bool bBackRot = false;
-static bool bEffectEnable = false;
-static int selecttype = 0;
-static int nLife = 0;
-static float fRadius = 0;
-static D3DXVECTOR3 setpos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-static D3DXVECTOR3 setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-static D3DXVECTOR3 setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 //プロトタイプ宣言
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -83,6 +69,31 @@ bool ImGuiText(bool show_demo_window, bool show_another_window);
 int Button(int nSize);
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+//ImGui
+static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+D3DXVECTOR3 setpos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+D3DXVECTOR3 setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+D3DXVECTOR3 setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+static bool show_demo_window = true;
+static bool show_another_window = false;
+static float s_fRadius = 0;
+static char Txet[8] = "";
+static int s_selecttype = 0;
+static int s_nLife = 0;
+static int selecttype = 0;
+static bool s_bBackRot = false;
+static bool s_bTextureRot = false;
+static bool s_bEffectEnable = false;
+static int s_nItem = 0;
+static float s_fAlpha = 0.0f;
+static float s_fAttenuation = 4.0f;
+static float s_fRandMin = 0;
+static float s_fRandMax = 0;
+static char FileString[MAX_PATH * 256];
+static bool useEffect = false;
+static bool bMove = false;
+static bool bTexUse = false;
 
 //===================
 //メイン関数
@@ -393,16 +404,27 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)//TRUE：ウインドウ/FAL
 	s_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// アルファブレンド設定
 	s_pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// アルファブレンド設定
 
-	//サンプラーステートの設定
-	s_pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	// 小さいの拡大
-	s_pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	// 大きいの縮小
+	// サンプラーステ―トの設定
+	s_pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	//テクスチャをリニア補完する
+	s_pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	//テクスチャをリニア補完する
 	s_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	s_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
-	// テクスチャステージの設定
-	s_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);	// ポリゴンとテクスチャの色を混ぜる
+	// サンプラーステ―トの設定
+	s_pD3DDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	//テクスチャをリニア補完する
+	s_pD3DDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	//テクスチャをリニア補完する
+	s_pD3DDevice->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	s_pD3DDevice->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+
+	// 1枚目のテクスチャのテクスチャステージステートの設定
+	s_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	s_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	s_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+
+	// 二枚目のテクスチャのテクスチャステージ設定
+	s_pD3DDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	s_pD3DDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+	s_pD3DDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
 
 	//入力処理の初期化処理
 	if (FAILED(InitInput(hInstance, hWnd)))
@@ -481,6 +503,28 @@ void Draw(void)
 	s_pD3DDevice->Present(NULL, NULL, NULL, NULL);
 }
 
+//ディレクトリ表示用
+BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
+{
+	OPENFILENAME ofn;
+
+	fname[0] = TEXT('\0');
+
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hWnd;
+	ofn.lpstrFilter = TEXT("全てのファイル(*.*)\0*.*\0");
+	ofn.nFilterIndex = 0;
+	ofn.lpstrFile = fname;
+	ofn.nMaxFile = nsize;
+	ofn.lpstrInitialDir = initDir;
+	ofn.lpstrTitle = TEXT("ファイル指定");
+
+	bTexUse = true;
+
+	return GetOpenFileName(&ofn);
+}
+
 //---------------------------------------
 // FPSの取得
 //---------------------------------------
@@ -501,6 +545,7 @@ void ResetDevice()
 	ImGui_ImplDX9_CreateDeviceObjects();
 }
 
+
 bool ImGuiText(bool show_demo_window, bool show_another_window)
 {
 	ImGui_ImplDX9_NewFrame();
@@ -519,25 +564,34 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 		static float fSize = 0.0f;
 		static int counter = 0;
 		static int nSize = 0;
+		static int nItem = 0;
 		static char Text[8];
 		static bool bRot = false;
+		static bool bTexRot = false;
+		static bool bTexBackRot = false;
+		static bool bPause = false;
 		Particle *pParticle = GetParticle();
 
-		ImGui::Begin("Hello, world!");							// Create a window called "Hello, world!" and append into it.
+		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
 		//FPS表示
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-		ImGui::Text("This is some useful text.");				// Display some text (you can use a format strings too
+		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too
 		ImGui::InputText("textbox 1", Text, sizeof(Text));
-		//ImGui::Checkbox("Demo Window", &show_demo_window);	// Edit bools storing our window open/close state
+		//ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 
 		//別ウィンドウを生成
 		ImGui::Checkbox("Another Window", &show_another_window);
 
 		ImGui::SliderInt("Size", &nSize, 0, 10);
 		ImGui::SliderFloat("Size", &fSize, 0, 100.0f);
-		ImGui::SliderFloat("float", &f, 0.0f, 100.0f);			// Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::SliderFloat("float", &f, 0.0f, 100.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+
+		if (ImGui::Button("PAUSE"))
+		{
+			system("Pause");
+		}
 
 		nSize = Button(nSize);
 
@@ -546,26 +600,30 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 		{
 			//rot計算用
 			static float fDeg = 0.0f;
-			float fRad = fDeg;
 			float rotX = setpos.x * cosf(fDeg) + setpos.x * sinf(fDeg);
 			float rotY = setpos.y * sinf(fDeg) - setpos.y * cosf(fDeg);
 			float fAngle = atan2f(rotX, rotY);
 			setrot = D3DXVECTOR3(rotX, rotY, fAngle);
 
+			if (ImGui::Button("OPEN DIRECTORY"))
+			{
+				GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
+			}
+
 			if (ImGui::Checkbox("EffectEnable", &useEffect))
 			{
-				if (!bEffectEnable)
+				if (!s_bEffectEnable)
 				{
-					bEffectEnable = true;
+					s_bEffectEnable = true;
 				}
 
-				else if (bEffectEnable)
+				else if (s_bEffectEnable)
 				{
-					bEffectEnable = false;
+					s_bEffectEnable = false;
 					setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 					setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-					nLife = 60;
-					fRadius = 8.0f;
+					s_nLife = 60;
+					s_fRadius = 0.5f;
 				}
 
 				bSetEffect();
@@ -577,8 +635,8 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				setpos.y = (float)SCREEN_HEIGHT / 2;
 				setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 				setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-				nLife = 60;
-				fRadius = 8.0f;
+				s_nLife = 60;
+				s_fRadius = 0.5f;
 			}
 			EffectData *Effect = GetStatus();
 			ImGui::InputFloat3("SettingEffectPos", Effect->nPopPos, "%f");
@@ -597,14 +655,27 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 
 				if (ImGui::Checkbox("BackRot", &bRot))
 				{
-					if (!bBackRot)
+					if (!s_bBackRot)
 					{
-						bBackRot = true;
+						s_bBackRot = true;
 					}
 
-					else if (bBackRot)
+					else if (s_bBackRot)
 					{
-						bBackRot = false;
+						s_bBackRot = false;
+					}
+				}
+
+				if (ImGui::Checkbox("TextureRot", &bTexRot))
+				{
+					if (!s_bTextureRot)
+					{
+						s_bTextureRot = true;
+					}
+
+					else if (s_bTextureRot)
+					{
+						s_bTextureRot = false;
 					}
 				}
 
@@ -619,8 +690,9 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 					fDeg += D3DX_PI * 2;
 				}
 
-				ImGui::SliderInt("Life", &nLife, 0, 500);
-				ImGui::SliderFloat("Radius", &fRadius, 0.0f, 100.0f);
+				ImGui::SliderInt("Life", &s_nLife, 0, 500);
+				ImGui::SliderFloat("Radius", &s_fRadius, 0.0f, 100.0f);
+				ImGui::SliderFloat("Attenuation", &s_fAttenuation, 0.0f, 10.0f);
 
 				//挙動おかしくなっちゃった時用
 				if (ImGui::Button("DataRemove"))
@@ -640,14 +712,24 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 			GetColor();
 
+			//グラデーション
 			if (ImGui::TreeNode("Effecttree3", "Gradation"))
 			{
 				ImGui::RadioButton("RPlus GSubtract", &selecttype, 1);
 				ImGui::RadioButton("GPlus BSubtract", &selecttype, 2);
 				ImGui::RadioButton("BPlus RSubtract", &selecttype, 3);
+				ImGui::RadioButton("Random", &selecttype, 4);
+
+				if (selecttype == 4)
+				{
+					ImGui::InputFloat("RandomMin", &s_fRandMin);
+					ImGui::InputFloat("RandomMax", &s_fRandMax);
+				}
+
 				ImGui::RadioButton("Gradation None", &selecttype, 0);
 
-				//ツリーを閉じる
+				ImGui::SliderFloat("Alpha", &s_fAlpha, 0.0f, 0.5f);
+
 				ImGui::TreePop();
 			}
 
@@ -661,7 +743,6 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 		//float y = ImGui::BezierValue(0.5f, v); // x delta in [0..1] range
 		//{ static float v[] = { 0.680f, -0.55f, 0.265f, 1.550f }; ImGui::Bezier("easeInOutBack", v); }
 
-		ImGui::SameLine();
 		ImGui::End();
 	}
 
@@ -688,27 +769,27 @@ int Button(int nSize)
 	//ツリーを生成
 	if (ImGui::TreeNode("tree1", "Value"))
 	{
-		if (ImGui::Button("1++"))	// Buttons return true when clicked (most widgets return true when edited/activated)
+		if (ImGui::Button("1++"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
 		{
 			nSize++;
 		}
 
-		if (ImGui::Button("1--"))	// Buttons return true when clicked (most widgets return true when edited/activated)
+		if (ImGui::Button("1--"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
 		{
 			nSize--;
 		}
 
-		if (ImGui::Button("5++"))	// Buttons return true when clicked (most widgets return true when edited/activated)
+		if (ImGui::Button("5++"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
 		{
 			nSize += 5;
 		}
 
-		if (ImGui::Button("5--"))	// Buttons return true when clicked (most widgets return true when edited/activated)
+		if (ImGui::Button("5--"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
 		{
 			nSize -= 5;
 		}
 
-		if (ImGui::Button("remove"))	// Buttons return true when clicked (most widgets return true when edited/activated)
+		if (ImGui::Button("remove"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
 		{
 			nSize = 0;
 		}
@@ -719,25 +800,25 @@ int Button(int nSize)
 	return nSize;
 }
 
-// 位置をゲット
+//位置をゲット
 D3DXVECTOR3 GetPos(void)
 {
 	return D3DXVECTOR3(setpos.x, setpos.y, setpos.z);
 }
 
-// 移動をゲット
+//移動量をゲット
 D3DXVECTOR3 GetMove(void)
 {
 	return D3DXVECTOR3(setmove.x, setmove.y, setmove.z);
 }
 
-// 回転をゲット
+//向きをゲット
 D3DXVECTOR3 GetRot(void)
 {
 	return D3DXVECTOR3(setrot.x, setrot.y, setrot.z);
 }
 
-// 色をゲット
+//色をゲット
 D3DXCOLOR GetColor(void)
 {
 	return D3DXCOLOR(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
@@ -750,20 +831,55 @@ int GetType(void)
 
 int GetLife(void)
 {
-	return nLife;
+	return s_nLife;
+}
+
+float GetRandMin(void)
+{
+	return s_fRandMin;
+}
+
+float GetRandMax(void)
+{
+	return s_fRandMax;
 }
 
 float GetRadius(void)
 {
-	return fRadius;
+	return s_fRadius;
+}
+
+float GetAlpha(void)
+{
+	return s_fAlpha;
+}
+
+float GetAttenuation(void)
+{
+	return s_fAttenuation;
+}
+
+char GetFileName(int nNum)
+{
+	return FileString[nNum];
 }
 
 bool bSetEffect(void)
 {
-	return bEffectEnable;
+	return s_bEffectEnable;
 }
 
 bool BackRot(void)
 {
-	return bBackRot;
+	return s_bBackRot;
+}
+
+bool TexRot(void)
+{
+	return s_bTextureRot;
+}
+
+bool TexUse(void)
+{
+	return bTexUse;
 }

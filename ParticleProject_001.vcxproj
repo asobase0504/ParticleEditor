@@ -42,7 +42,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -76,9 +76,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
     <IncludePath>packages\cpprestsdk.v142.2.10.15\build\native\include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
     <ReferencePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(ReferencePath)</ReferencePath>
-    <LibraryPath>cinder;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;nlohmann;packages\cpprestsdk.v142.2.10.15\build\native\x64\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -160,7 +161,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BG.cpp" />
-    <ClCompile Include="bullet.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="file.cpp" />
     <ClCompile Include="game.cpp" />
@@ -175,14 +175,10 @@
     <ClCompile Include="letter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="particle.cpp" />
-    <ClCompile Include="time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BG.h" />
-    <ClInclude Include="bullet.h" />
     <ClInclude Include="effect.h" />
-    <ClInclude Include="enemy.h" />
-    <ClInclude Include="enemybullet.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -198,7 +194,6 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="resource1.h" />
-    <ClInclude Include="time.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
