@@ -51,9 +51,13 @@ int GetLife(void);
 float GetRandMin(void);
 float GetRandMax(void);
 float GetRadius(void);
+float GetAlpha(void);
+float GetAttenuation(void);
 char GetFileName(int nNum);
 bool bSetEffect(void);
 bool BackRot(void);
+bool TexRot(void);
+bool BackTexRot(void);
 bool TexUse(void);
 
 #endif

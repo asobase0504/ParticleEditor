@@ -16,7 +16,7 @@ void InitParticle(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
 
-												//テクスチャの読み込み
+	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\Flare.png",
 		&s_pTexture[PARTICLETYPE_NORMAL]);
@@ -107,8 +107,11 @@ void UpdateParticle(void)
 	int ImSelect = GetType();
 	float ImRandMin = GetRandMin();
 	float ImRandMax = GetRandMax();
+	float ImAlpha = GetAlpha();
+	float ImAttenuation = GetAttenuation();
 	bool bEnable = bSetEffect();
 	bool bBackRot = BackRot();
+	bool bTexRot = TexRot();
 	bool bTex = TexUse();
 	float ImRadius = GetRadius();
 
@@ -137,6 +140,8 @@ void UpdateParticle(void)
 
 		/* ↓使用しているなら↓ */
 
+		static float s_fLength = sqrtf((pParticle->fWidth * pParticle->fWidth) + (pParticle->fHeight * pParticle->fHeight));	//対角線の長さを算出
+		static float s_fAngle = atan2f(pParticle->fWidth, pParticle->fHeight);													//対角線の角度を算出
 		float fRandomR = 0.0f;
 		float fRandomG = 0.0f;
 		float fRandomB = 0.0f;
@@ -196,6 +201,9 @@ void UpdateParticle(void)
 			break;
 		}
 
+		//アルファ値調整用
+		g_aParticle[i].col.a -= ImAlpha;
+
 		//
 		//エフェクトの種類
 		//
@@ -228,10 +236,9 @@ void UpdateParticle(void)
 			pParticle->move.y = 9 * powf(sinf(fGRad), 3.0f);*/
 
 			//螺旋だったり
-			g_fAngle += 21.0f;
-			//pParticle->fRadius = 10.0f;
-			pParticle->move.x = (pParticle->fRadius * sinf(fGRad));
-			pParticle->move.y = (pParticle->fRadius * cosf(fGRad));
+			g_fAngle += 20.5f;
+			pParticle->move.x = (pParticle->fRadius * sinf(fGRad)) * ImAttenuation;
+			pParticle->move.y = (pParticle->fRadius * cosf(fGRad)) * ImAttenuation;
 		}
 
 		// 推移
@@ -267,17 +274,41 @@ void UpdateParticle(void)
 		pVtx += i * 4;		//頂点データのポインタを4つ分集める
 
 		//頂点座標の設定
-		pVtx[0].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, -pParticle->fHeight, 0.0f);
-		pVtx[1].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, -pParticle->fHeight, 0.0f);
-		pVtx[2].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, pParticle->fHeight, 0.0f);
-		pVtx[3].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, pParticle->fHeight, 0.0f);
+		if (bTexRot)
+		{
+			pParticle->rot.z -= 0.05f;
+
+			pVtx[0].pos.x = pParticle->pos.x + sinf(pParticle->rot.z + (D3DX_PI + s_fAngle)) * s_fLength;
+			pVtx[0].pos.y = pParticle->pos.y + cosf(pParticle->rot.z + (D3DX_PI + s_fAngle)) * s_fLength;
+			pVtx[0].pos.z = 0.0f;
+
+			pVtx[1].pos.x = pParticle->pos.x + sinf(pParticle->rot.z + (D3DX_PI - s_fAngle)) * s_fLength;
+			pVtx[1].pos.y = pParticle->pos.y + cosf(pParticle->rot.z + (D3DX_PI - s_fAngle)) * s_fLength;
+			pVtx[1].pos.z = 0.0f;
+
+			pVtx[2].pos.x = pParticle->pos.x + sinf(pParticle->rot.z - (0 + s_fAngle)) * s_fLength;
+			pVtx[2].pos.y = pParticle->pos.y + cosf(pParticle->rot.z - (0 + s_fAngle)) * s_fLength;
+			pVtx[2].pos.z = 0.0f;
+
+			pVtx[3].pos.x = pParticle->pos.x + sinf(pParticle->rot.z - (0 - s_fAngle)) * s_fLength;
+			pVtx[3].pos.y = pParticle->pos.y + cosf(pParticle->rot.z - (0 - s_fAngle)) * s_fLength;
+			pVtx[3].pos.z = 0.0f;
+		}
+
+		else
+		{
+			pVtx[0].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, -pParticle->fHeight, 0.0f);
+			pVtx[1].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, -pParticle->fHeight, 0.0f);
+			pVtx[2].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, pParticle->fHeight, 0.0f);
+			pVtx[3].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, pParticle->fHeight, 0.0f);
+		}
 
 		//頂点カラーの設定
 		pVtx[0].col = pParticle->col;
 		pVtx[1].col = pParticle->col;
 		pVtx[2].col = pParticle->col;
 		pVtx[3].col = pParticle->col;
-
+		
 		//頂点バッファをアンロックする
 		s_pVtxBuff->Unlock();
 	}
