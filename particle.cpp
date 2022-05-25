@@ -113,6 +113,7 @@ void UpdateParticle(void)
 	float ImRandMin = GetRandMin();
 	float ImRandMax = GetRandMax();
 	float ImAlpha = GetAlpha();
+	float ImAttenuation = GetAttenuation();
 	bool bEnable = bSetEffect();
 	bool bBackRot = BackRot();
 	bool bTex = TexUse();
@@ -228,9 +229,9 @@ void UpdateParticle(void)
 				pParticle->move.y = 9 * powf(sinf(fGRad), 3.0f);*/
 
 				//—†ù‚¾‚Á‚½‚è
-				g_fAngle += 21.0f;
-				pParticle->move.x = (pParticle->fRadius * sinf(fGRad));
-				pParticle->move.y = (pParticle->fRadius * cosf(fGRad));
+				g_fAngle += 20.5f;
+				pParticle->move.x = (pParticle->fRadius * sinf(fGRad)) * ImAttenuation;
+				pParticle->move.y = (pParticle->fRadius * cosf(fGRad)) * ImAttenuation;
 			}
 
 			// „ˆÚ
