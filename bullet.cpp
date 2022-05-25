@@ -21,7 +21,7 @@ void InitBullet(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\bullet.png",
+		L"data\\TEXTURE\\bullet.png",
 		&g_pTextureBullet);
 
 	//弾の情報の初期化

@@ -1,0 +1,41 @@
+{
+	"POPPOS" :[
+	 {
+	 "X" : 50.0, 
+	 "Y" : 50.0, 
+	 "Z" : 50.0
+	 }
+	 ],
+	"ROT" :[
+	 {
+	 "X" : 1.0, 
+	 "Y" : 0.5, 
+	 "Z" : 0.0
+	 }
+	  ],
+	"DIVISION" :[
+	 {
+	 "X" : 1.0, 
+	 "Y" : 1.0
+	 }
+	  ],
+	"COL" :[
+	 {
+	 "R" : 1.0, 
+	 "G" : 1.0, 
+	 "B" : 1.0,
+	 "A" : 1.0
+	 }
+	  ],
+	"EFFECTTYPE" : 0,
+	"ALPHABLEND_TYPE" : 1,
+	"RADIUS" : 50.0,
+	"SPEED" : 10.0,
+	"WEIGHT" : 0.01,
+	"LIFE" : 60,
+	"TEXTURE" : 0,
+	"TEXTURE2" : 0,
+	"TIME" : 0,
+	"NUMPARTICLE" : 1,
+	"MULTITEX" : "0"
+}

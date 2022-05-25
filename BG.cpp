@@ -22,7 +22,7 @@ void InitBg(void)
 	//テクスチャの読み込み
 	//無地
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\aquaBG.jpg",
+		L"data\\TEXTURE\\aquaBG.jpg",
 		&g_pTextureBg);
 
 	//for (nCntBG = 0; nCntBG < NUM_BG; nCntBG++)

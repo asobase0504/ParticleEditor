@@ -17,12 +17,12 @@ void InitParticle(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\flare.png",
+		L"data\\TEXTURE\\flare.png",
 		&s_pTexture[PARTICLETYPE_NORMAL]);
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\bright.jpg",
+		L"data\\TEXTURE\\bright.jpg",
 		&s_pTexture[PARTICLETYPE_PLAYER]);
 
 	for (int i = 0; i < MAX_PARTICLE; i++)

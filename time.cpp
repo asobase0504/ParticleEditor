@@ -24,7 +24,7 @@ void InitTime(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data/TEXTURE/number000.png",
+		L"data/TEXTURE/number000.png",
 		&s_pTextureTime);
 
 	//頂点バッファ
