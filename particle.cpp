@@ -108,6 +108,7 @@ void UpdateParticle(void)
 	float ImRandMin = GetRandMin();
 	float ImRandMax = GetRandMax();
 	float ImAlpha = GetAlpha();
+	float ImRadius = GetRadius();
 	float ImAttenuation = GetAttenuation();
 	bool bEnable = bSetEffect();
 	bool bBackRot = BackRot();
