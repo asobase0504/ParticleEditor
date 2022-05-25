@@ -112,7 +112,6 @@ void UpdateParticle(void)
 	int ImSelect = GetType();
 	float ImRandMin = GetRandMin();
 	float ImRandMax = GetRandMax();
-	float ImRadius = GetRadius();
 	bool bEnable = bSetEffect();
 	bool bBackRot = BackRot();
 	bool bTex = TexUse();
@@ -144,15 +143,12 @@ void UpdateParticle(void)
 			pParticle->pos += pParticle->move;
 			pParticle->pos += ImMove;
 
-			pParticle->fRadius = ImRadius;
-
 			if (bBackRot)
 			{
 				//float fRad = (pParticle->fAngle) * (D3DX_PI / 180);
 				fGRad = (ImRot.z - g_fAngle);
 			}
-
-			else if (!bBackRot)
+			else
 			{
 				fRad = (pParticle->fAngle) * (D3DX_PI / 180);
 				fGRad = (ImRot.z + g_fAngle);
@@ -162,18 +158,18 @@ void UpdateParticle(void)
 			switch (ImSelect)
 			{
 			case 1:
-				pParticle->col.g -= 0.01f;
-				pParticle->col.r++;
+				pParticle->colTransition = D3DXCOLOR(0.0f,-0.01f,0.0f,0.0f);
+				pParticle->col.r = 1.0f;
 				break;
 
 			case 2:
-				pParticle->col.b -= 0.01f;
-				pParticle->col.g++;
+				pParticle->colTransition = D3DXCOLOR(0.0f, 0.0f, -0.01f, 0.0f);
+				pParticle->col.g = 1.0f;
 				break;
 
 			case 3:
-				pParticle->col.r -= 0.01f;
-				pParticle->col.b++;
+				pParticle->colTransition = D3DXCOLOR(-0.01f, 0.0f, 0.0f, 0.0f);
+				pParticle->col.b = 1.0f;
 				break;
 
 			case 4:
@@ -236,7 +232,10 @@ void UpdateParticle(void)
 
 			// 推移
 			pParticle->nLife--;	// 体力の減少
-			pParticle->col += pParticle->colTransition;	// 色の推移
+			pParticle->move.y += pParticle->fWeight;			// 重力
+			pParticle->col += pParticle->colTransition;			// 色の推移
+			pParticle->move += pParticle->moveTransition;		// 移動量の推移
+			pParticle->fWeight += pParticle->fWeightTransition;	// 重さの推移
 
 			if (pParticle->nLife <= 0)
 			{//エフェクトの寿命
@@ -285,7 +284,7 @@ void DrawParticle(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
 
-													//アルファブレンディングを加算合成に設定
+	//アルファブレンディングを加算合成に設定
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
@@ -324,6 +323,7 @@ void SetParticle(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, fl
 {
 	VERTEX_2D*pVtx;		//頂点情報へのポインタ
 	int ImLife = GetLife();
+	float ImRadius = GetRadius();
 
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
@@ -334,6 +334,10 @@ void SetParticle(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, fl
 
 		if (!pParticle->bUse)
 		{//エフェクトが使用されている
+
+			// データのリセット
+			memset(&g_aParticle[i], 0, sizeof(g_aParticle[i]));
+
 			pParticle->pos = pos;
 			pParticle->move = move;
 			pParticle->col = col;
@@ -343,6 +347,7 @@ void SetParticle(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, fl
 
 			//(ImGui)
 			pParticle->nLife = ImLife;
+			pParticle->fRadius = ImRadius;
 			//pParticle->nLife = nLife;
 
 			//頂点座標の設定
@@ -367,6 +372,7 @@ void SetParticle(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, fl
 	s_pVtxBuff->Unlock();
 }
 
+// テクスチャの読込み
 void LoadTex(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
