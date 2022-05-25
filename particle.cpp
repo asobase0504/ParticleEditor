@@ -3,6 +3,7 @@
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 #include "main.h"
 #include "particle.h"
+#include <time.h>
 
 //グローバル変数
 static LPDIRECT3DTEXTURE9		s_pTexture[NUM_PARTICLE] = {};	//テクスチャへのポインタ
@@ -15,9 +16,9 @@ void InitParticle(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
 
-	//テクスチャの読み込み
+												//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\flare.png",
+		"data\\TEXTURE\\Flare.png",
 		&s_pTexture[PARTICLETYPE_NORMAL]);
 
 	//テクスチャの読み込み
@@ -47,7 +48,7 @@ void InitParticle(void)
 
 	VERTEX_2D *pVtx = NULL;		//頂点情報へのポインタ
 
-	//頂点バッファをロックし、頂点情報へのポインタを取得
+								//頂点バッファをロックし、頂点情報へのポインタを取得
 	s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	for (int nCnt = 0; nCnt < MAX_PARTICLE; nCnt++)
@@ -75,11 +76,6 @@ void InitParticle(void)
 		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-
-		pVtx[0].tex2 = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex2 = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex2 = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex2 = D3DXVECTOR2(1.0f, 1.0f);
 
 		pVtx += 4;		//頂点データのポインタを4つ分集める
 	}
@@ -113,8 +109,9 @@ void UninitParticle(void)
 void UpdateParticle(void)
 {
 	VERTEX_2D *pVtx = nullptr;		//頂点情報へのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
 
-	//頂点バッファをロック
+												//頂点バッファをロック
 	s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	//(ImGui)
@@ -123,12 +120,15 @@ void UpdateParticle(void)
 	D3DXVECTOR3 ImRot = GetRot();
 	D3DXCOLOR ImColor = GetColor();
 	int ImSelect = GetType();
+	float ImRandMin = GetRandMin();
+	float ImRandMax = GetRandMax();
 	float ImRadius = GetRadius();
 	bool bEnable = bSetEffect();
 	bool bBackRot = BackRot();
+	bool bTex = TexUse();
 
-	float fRad = 0;
-	float fGRad = 0;
+	float fRad = 0.0f;
+	float fGRad = 0.0f;
 	g_fAngle = 0;
 
 	if (bEnable)
@@ -136,11 +136,20 @@ void UpdateParticle(void)
 		SetParticle(D3DXVECTOR3(ImPos.x, ImPos.y, ImPos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(ImColor.r, ImColor.g, ImColor.b, ImColor.a), 0, 50.0f, 50.0f, PARTICLETYPE_NORMAL);
 	}
 
+	if (bTex)
+	{
+		LoadTex();
+	}
+
 	for (int i = 0; i < MAX_PARTICLE; i++)
 	{
 		if (g_aParticle[i].bUse)
 		{//エフェクトが使用されているなら
-		 //エフェクトの移動
+			float fRandomR = 0.0f;
+			float fRandomG = 0.0f;
+			float fRandomB = 0.0f;
+
+			//エフェクトの移動
 			g_aParticle[i].pos += g_aParticle[i].move;
 			g_aParticle[i].pos += ImMove;
 
@@ -176,6 +185,19 @@ void UpdateParticle(void)
 				g_aParticle[i].col.b++;
 				break;
 
+			case 4:
+				fRandomR = (ImRandMin + ((rand() / (float)RAND_MAX) * (ImRandMax - ImRandMin)));
+				g_aParticle[i].col.r = fRandomR;
+
+				fRandomG = (ImRandMin + ((rand() / (float)RAND_MAX) * (ImRandMax - ImRandMin)));
+				g_aParticle[i].col.g = fRandomG;
+
+				fRandomB = (ImRandMin + ((rand() / (float)RAND_MAX) * (ImRandMax - ImRandMin)));
+				g_aParticle[i].col.b = fRandomB;
+
+				g_aParticle[i].col.a = 1.0f;
+				break;
+
 			case 0:
 				break;
 
@@ -206,14 +228,14 @@ void UpdateParticle(void)
 			}
 
 			//∞
-		/*	g_fAngle += 0.3f;
+			/*g_fAngle += 0.3f;
 			g_aParticle[i].move.x = sinf((D3DX_PI / 180) * 17 * g_fAngle) * 3.0f;
 			g_aParticle[i].move.y = sinf((D3DX_PI / 180) * 8 * g_fAngle) * 3.0f;*/
 
 			//ふにゃふにゃ～～～
-		/*	g_fAngle += 0.0135f;
-			g_aParticle[i].move.x = 9 * powf(cosf(D3DX_PI * g_fAngle), 2.0f);
-			g_aParticle[i].move.y = 9 * powf(sinf(D3DX_PI * g_fAngle), 2.0f);*/
+			/*g_fAngle += 0.0996f;
+			g_aParticle[i].move.x = 9 * powf(cosf(fGRad), 3.0f);
+			g_aParticle[i].move.y = 9 * powf(sinf(fGRad), 3.0f);*/
 
 			//螺旋だったり
 			for (int j = 0; j < 1024; j++)
@@ -259,6 +281,11 @@ void UpdateParticle(void)
 		pVtx += 4;		//頂点データのポインタを4つ分集める
 	}
 
+	if (ImSelect == 4)
+	{
+		srand(time(nullptr));
+	}
+
 	//頂点バッファをアンロックする
 	s_pVtxBuff->Unlock();
 }
@@ -268,7 +295,7 @@ void DrawParticle(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
 
-	//アルファブレンディングを加算合成に設定
+													//アルファブレンディングを加算合成に設定
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
@@ -346,6 +373,30 @@ void SetParticle(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, fl
 	}
 	//頂点バッファをアンロックする
 	s_pVtxBuff->Unlock();
+}
+
+void LoadTex(void)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	char ImFile[512];
+	bool ImTex = TexUse();
+
+	memset(ImFile, 0, sizeof(ImFile));
+
+	for (int i = 0; i < 512; i++)
+	{
+		ImFile[i] = GetFileName(i);
+	}
+
+	if (ImTex)
+	{
+		//テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,
+			ImFile,
+			&s_pTexture[PARTICLETYPE_NORMAL]);
+
+		ImTex = false;
+	}
 }
 
 //削除処理

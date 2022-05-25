@@ -41,15 +41,19 @@ struct VERTEX_2D
 };
 
 //プロトタイプ宣言
-LPDIRECT3DDEVICE9	GetDevice(void);
+LPDIRECT3DDEVICE9 GetDevice(void);
 D3DXVECTOR3 GetPos(void);
 D3DXVECTOR3 GetMove(void);
 D3DXVECTOR3 GetRot(void);
 D3DXCOLOR GetColor(void);
 int GetType(void);
 int GetLife(void);
+float GetRandMin(void);
+float GetRandMax(void);
 float GetRadius(void);
+char GetFileName(int nNum);
 bool bSetEffect(void);
 bool BackRot(void);
+bool TexUse(void);
 
 #endif

@@ -8,7 +8,7 @@
 
 //マクロ定義
 #define MAX_EFFECT	(4096)	//エフェクトの最大数
-#define NUM_EFFECT	(10)		//エフェクトの種類
+#define NUM_EFFECT	(10)	//エフェクトの種類
 
 //エフェクトの列挙型
 enum EFFECTTYPE
@@ -22,15 +22,15 @@ enum EFFECTTYPE
 //エフェクトの構造体の定義
 struct Effect
 {
-	D3DXVECTOR3 pos;	//位置
-	D3DXVECTOR3 move;	//移動量
-	D3DXCOLOR col;		//色
-	EFFECTTYPE type;	//エフェクトの種類
-	float fWidth;		//幅
-	float fHeight;		//高さ
-	float fRadius;		//半径
-	int nLife;			//寿命
-	bool bUse;			//使用しているか
+	D3DXVECTOR3 pos;			// 位置
+	D3DXVECTOR3 move;			// 移動量
+	D3DXCOLOR col;				// 色
+	EFFECTTYPE type;			// エフェクトの種類
+	float fWidth;				// 幅
+	float fHeight;				// 高さ
+	float fRadius;				// 半径
+	int nLife;					// 寿命
+	bool bUse;					// 使用しているか
 };
 
 //プロトタイプ宣言
