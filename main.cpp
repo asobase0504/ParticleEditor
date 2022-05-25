@@ -82,6 +82,7 @@ static int s_selecttype = 0;
 static int s_nLife = 0;
 static int selecttype = 0;
 static bool s_bBackRot = false;
+static bool s_bTextureRot = false;
 static bool s_bEffectEnable = false;
 static int s_nItem = 0;
 static float s_fAlpha = 0.0f;
@@ -563,6 +564,8 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 		static int nItem = 0;
 		static char Text[8];
 		static bool bRot = false;
+		static bool bTexRot = false;
+		static bool bTexBackRot = false;
 		static bool bPause = false;
 		Particle *pParticle = GetParticle();
 
@@ -617,7 +620,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 					setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 					setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 					s_nLife = 60;
-					s_fRadius = 8.0f;
+					s_fRadius = 0.5f;
 				}
 
 				bSetEffect();
@@ -630,7 +633,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 				setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 				s_nLife = 60;
-				s_fRadius = 8.0f;
+				s_fRadius = 0.5f;
 			}
 
 			ImGui::InputFloat3("SettingEffectPos", setpos, "%f");
@@ -657,6 +660,19 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 					else if (s_bBackRot)
 					{
 						s_bBackRot = false;
+					}
+				}
+
+				if (ImGui::Checkbox("TextureRot", &bTexRot))
+				{
+					if (!s_bTextureRot)
+					{
+						s_bTextureRot = true;
+					}
+
+					else if (s_bTextureRot)
+					{
+						s_bTextureRot = false;
 					}
 				}
 
@@ -853,6 +869,11 @@ bool bSetEffect(void)
 bool BackRot(void)
 {
 	return s_bBackRot;
+}
+
+bool TexRot(void)
+{
+	return s_bTextureRot;
 }
 
 bool TexUse(void)
