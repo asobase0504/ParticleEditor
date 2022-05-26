@@ -53,6 +53,7 @@ float GetRandMax(void);
 float GetRadius(void);
 float GetAlpha(void);
 float GetAttenuation(void);
+float GetAngle(void);
 char GetFileName(int nNum);
 bool bSetEffect(void);
 bool BackRot(void);

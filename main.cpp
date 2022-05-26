@@ -88,6 +88,7 @@ static bool s_bEffectEnable = false;
 static int s_nItem = 0;
 static float s_fAlpha = 0.0f;
 static float s_fAttenuation = 4.0f;
+static float s_fAngle = 20.0f;
 static float s_fRandMin = 0;
 static float s_fRandMax = 0;
 static char FileString[MAX_PATH * 256];
@@ -637,11 +638,16 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 				s_nLife = 60;
 				s_fRadius = 0.5f;
+				s_fAngle = 20.5f;
 			}
+
 			EffectData *Effect = GetStatus();
 			ImGui::InputFloat3("SettingEffectPos", Effect->nPopPos, "%f");
-			ImGui::SliderFloat("PosX", &Effect->nPopPos.x, 0, (float)SCREEN_WIDTH);
-			ImGui::SliderFloat("PosY", &Effect->nPopPos.y, 0, (float)SCREEN_HEIGHT);
+			ImGui::SliderFloat("PosX", &setpos.x, 0, (float)SCREEN_WIDTH);
+			ImGui::SliderFloat("PosY", &setpos.y, 0, (float)SCREEN_HEIGHT);
+
+			Effect->nPopPos.x = setpos.x;
+			Effect->nPopPos.y = setpos.y;
 
 			ImGui::InputFloat3("SettingEffectMove", setmove, "%f");
 			ImGui::SliderFloat("MoveX", &setmove.x, -100.0f, 100.0f);
@@ -692,6 +698,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 
 				ImGui::SliderInt("Life", &s_nLife, 0, 500);
 				ImGui::SliderFloat("Radius", &s_fRadius, 0.0f, 100.0f);
+				ImGui::SliderAngle("Angle", &s_fAngle, 0.0f, 2000.0f);
 				ImGui::SliderFloat("Attenuation", &s_fAttenuation, 0.0f, 10.0f);
 
 				//‹““®‚¨‚©‚µ‚­‚È‚Á‚¿‚á‚Á‚½Žž—p
@@ -847,6 +854,11 @@ float GetRandMax(void)
 float GetRadius(void)
 {
 	return s_fRadius;
+}
+
+float GetAngle(void)
+{
+	return s_fAngle;
 }
 
 float GetAlpha(void)

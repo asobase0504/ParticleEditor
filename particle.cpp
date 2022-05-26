@@ -109,6 +109,7 @@ void UpdateParticle(void)
 	float ImRandMax = GetRandMax();
 	float ImAlpha = GetAlpha();
 	float ImAttenuation = GetAttenuation();
+	float ImAngle = GetAngle();
 	bool bEnable = bSetEffect();
 	bool bBackRot = BackRot();
 	bool bTexRot = TexRot();
@@ -236,7 +237,7 @@ void UpdateParticle(void)
 			pParticle->move.y = ImAttenuation * powf(sinf(fGRad), 3.0f);*/
 
 			//螺旋だったり
-			g_fAngle += 20.5f;
+			g_fAngle += ImAngle;
 			pParticle->move.x = (pParticle->fRadius * sinf(fGRad)) * ImAttenuation;
 			pParticle->move.y = (pParticle->fRadius * cosf(fGRad)) * ImAttenuation;
 		}
@@ -329,6 +330,20 @@ void DrawParticle(void)
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 
+	//点に貼る(true)、ポリゴンに貼る(false)
+	//pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE,false);
+
+	//カメラの位置(true)、スクリーンの位置(false)
+	//pDevice->SetRenderState(D3DRS_POINTSCALEENABLE,false);
+
+	//サイズを設定
+	//pDevice->SetRenderState(D3DRS_POINTSIZE,DwordtoFloat(20.0f));
+
+	//ポイントサイズの計算
+	//pDevice->SetRenderState(D3DRS_POINTSCALE_A, DwordtoFloat(0.0f));
+	//pDevice->SetRenderState(D3DRS_POINTSCALE_B, DwordtoFloat(0.0f));
+	//pDevice->SetRenderState(D3DRS_POINTSCALE_C, DwordtoFloat(20.0f));
+
 	for (int nCnt = 0; nCnt < MAX_PARTICLE; nCnt++)
 	{
 		if (!g_aParticle[nCnt].bUse)
@@ -349,6 +364,8 @@ void DrawParticle(void)
 
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+
+		//pDevice->DrawPrimitive(D3DPT_POINTLIST, nCnt * 4, 0);
 	}
 
 	//αブレンディングを元に戻す
@@ -461,4 +478,10 @@ void RemoveAngle(void)
 Particle *GetParticle(void)
 {
 	return &g_aParticle[0];
+}
+
+//フロートをDWORDに変換する
+DWORD DwordtoFloat(float f)
+{
+	return *((DWORD*)&f);
 }
