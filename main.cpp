@@ -12,6 +12,7 @@
 #include "main.h"
 #include "input.h"
 #include "game.h"
+#include "file.h"
 // imgui系統
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
@@ -309,7 +310,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 		case VK_ESCAPE: //エスケープが押された
 
-			nID = MessageBox(hWnd, "終了しますか？", "終わりのコマンド", MB_YESNO | MB_TOPMOST);
+			nID = MessageBox(hWnd, "終了しますか？","終わりのコマンド", MB_YESNO | MB_TOPMOST);
 			// 第一引数をNULLにするとメッセージBOXアクティブウィンドウにならない
 			// 第一引数をhWndにするとこのウィンドウが親(オーナー)になり、
 			// このメッセージBOXを処理しない限りほかの処理ができない
@@ -435,6 +436,8 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)//TRUE：ウインドウ/FAL
 	srand((unsigned int)time(0));
 
 	InitGame();	// ゲームモードの初期化
+
+	LoodJson(L"data/FILE/Effect.json");
 
 	return S_OK;
 }
@@ -635,10 +638,10 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				s_nLife = 60;
 				s_fRadius = 0.5f;
 			}
-
-			ImGui::InputFloat3("SettingEffectPos", setpos, "%f");
-			ImGui::SliderFloat("PosX", &setpos.x, 0, (float)SCREEN_WIDTH);
-			ImGui::SliderFloat("PosY", &setpos.y, 0, (float)SCREEN_HEIGHT);
+			EffectData *Effect = GetStatus();
+			ImGui::InputFloat3("SettingEffectPos", Effect->nPopPos, "%f");
+			ImGui::SliderFloat("PosX", &Effect->nPopPos.x, 0, (float)SCREEN_WIDTH);
+			ImGui::SliderFloat("PosY", &Effect->nPopPos.y, 0, (float)SCREEN_HEIGHT);
 
 			ImGui::InputFloat3("SettingEffectMove", setmove, "%f");
 			ImGui::SliderFloat("MoveX", &setmove.x, -100.0f, 100.0f);

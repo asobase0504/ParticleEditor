@@ -18,7 +18,7 @@ void InitParticle(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\Flare.png",
+		"data\\TEXTURE\\flare.png",
 		&s_pTexture[PARTICLETYPE_NORMAL]);
 
 	//テクスチャの読み込み
