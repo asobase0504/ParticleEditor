@@ -42,6 +42,7 @@ struct VERTEX_2D
 
 //プロトタイプ宣言
 LPDIRECT3DDEVICE9 GetDevice(void);
+BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir);
 D3DXVECTOR3 GetPos(void);
 D3DXVECTOR3 GetMove(void);
 D3DXVECTOR3 GetRot(void);

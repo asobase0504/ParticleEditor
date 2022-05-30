@@ -19,6 +19,7 @@
 #include "imgui_impl_win32.h"
 #include <imgui_internal.h>
 #include "resource1.h"
+#include "imgui_property.h"
 // imguiに描画する情報
 #include "particle.h"
 #include "effect.h"
@@ -174,9 +175,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 	//ImGui::StyleColorsClassic();
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplWin32_Init(hWnd);
-	ImGui_ImplDX9_Init(s_pD3DDevice);
-
+	InitImguiProperty(hWnd, s_pD3DDevice);
+	//ImGui_ImplWin32_Init(hWnd);
+	//ImGui_ImplDX9_Init(s_pD3DDevice);
 
 	//分解能の設定
 	timeBeginPeriod(1);
@@ -213,12 +214,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 				dwFrameCount = 0;
 			}
 
-			if ((dwCurrentTime - dwExedastTime) >= (1000 / 60))
+//			if ((dwCurrentTime - dwExedastTime) >= (1000 / 60))
 			{//60分の1秒経過
 				dwExedastTime = dwCurrentTime;	// 処理開始の時刻[現在時刻]を保存
 
 				// imguiの更新
-				show_another_window = ImGuiText(show_demo_window, show_another_window);
+				UpdateImguiProperty();
+				//show_another_window = ImGuiText(show_demo_window, show_another_window);
 
 				// 更新
 				Update();
@@ -295,7 +297,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	//	POINT    pt;
 
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+	{
 		return true;
+	}
 
 	int nID;//返り値を格納
 	static HWND hWndEditlnput1;		//入力ウィンドウハンドル(識別子)
@@ -497,8 +501,10 @@ void Draw(void)
 
 		DrawGame();
 
-		ImGui::Render();
-		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+		DrawImguiProperty();
+
+		//ImGui::Render();
+		//ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
 		s_pD3DDevice->EndScene();	//描画終了
 	}
@@ -632,11 +638,11 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 
 				bSetEffect();
 			}
-
+			EffectData *Effect = GetStatus();
 			if (ImGui::Button("default"))
 			{
-				setpos.x = (float)SCREEN_WIDTH / 2;
-				setpos.y = (float)SCREEN_HEIGHT / 2;
+				Effect->nPopPos.x = (float)SCREEN_WIDTH / 2;
+				Effect->nPopPos.y = (float)SCREEN_HEIGHT / 2;
 				setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 				setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 				s_fScale = 50.0f;
@@ -644,7 +650,6 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				s_fRadius = 0.5f;
 				s_fAngle = 20.5f;
 			}
-
 			EffectData *Effect = GetStatus();
 
 			//セットする位置
@@ -820,7 +825,8 @@ int Button(int nSize)
 //位置をゲット
 D3DXVECTOR3 GetPos(void)
 {
-	return D3DXVECTOR3(setpos.x, setpos.y, setpos.z);
+	EffectData *Effect = GetStatus();
+	return D3DXVECTOR3(Effect->nPopPos.x, Effect->nPopPos.y, Effect->nPopPos.z);
 }
 
 //移動量をゲット
