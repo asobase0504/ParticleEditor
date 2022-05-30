@@ -652,7 +652,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				s_fRadius = 0.5f;
 				s_fAngle = 20.5f;
 			}
-
+//			EffectData *Effect = GetStatus();
 
 			//セットする位置
 			ImGui::InputFloat3("SettingEffectPos", Effect->nPopPos, "%f");

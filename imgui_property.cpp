@@ -27,6 +27,7 @@ static char FileString[MAX_PATH * 256];	// ファイル名
 static bool	s_window = false;	// ウインドウを使用するかどうか
 static Particle imguiParticle;	// ImGuiに保存されてるパーティクル情報
 static bool s_bEffectEnable = false;
+static float s_fScale = 50.0f;
 
 //--------------------------------------------------
 // 初期化
@@ -220,7 +221,7 @@ void UpdateImguiProperty(void)
 				imguiParticle.bBackrot = !imguiParticle.bBackrot;
 			}
 
-			//正規化
+			//if (ImGui::Checkbox("TextureRot", &bTexRot))
 			if (s_fDeg > D3DX_PI)
 			{
 				s_fDeg -= D3DX_PI * 2;

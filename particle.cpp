@@ -22,7 +22,7 @@ void InitParticle(void)
 		"data\\TEXTURE\\flare.png",
 		&s_pTexture[PARTICLETYPE_NORMAL]);
 
-	// 初期化
+	//テクスチャの読み込み
 	memset(g_aParticle, 0, sizeof(g_aParticle));
 
 	//頂点バッファの生成
@@ -114,7 +114,6 @@ void UpdateParticle(void)
 	if (bSetImguiParticle())
 	{
 		SetParticleImgui(GetImguiParticle());
-//		SetParticle(ImPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), ImColor, 60, 50.0f, 50.0f, PARTICLETYPE_NORMAL);
 	}
 
 	if (bTex)
@@ -136,17 +135,17 @@ void UpdateParticle(void)
 		//エフェクトの移動
 		pParticle->pos += pParticle->move;
 
-		// いろんな動き
+		//アルファ値調整用
 		{
+			//*
+			/*g_fAngle += 30.0f * i;
+			pParticle->move.x = sinf(fGRad) * 1.3f;
+			pParticle->move.y = cosf(fGRad) * 1.3f;*/
+
 			//∞
 			/*g_fAngle += 0.7f;
 			pParticle->move.x = sinf((D3DX_PI / 180) * 17 * g_fAngle) * ImAttenuation;
 			pParticle->move.y = sinf((D3DX_PI / 180) * 8 * g_fAngle) * ImAttenuation;*/
-
-			//ふにゃふにゃ
-			/*g_fAngle += 0.0996f;
-			pParticle->move.x = ImAttenuation * powf(cosf(fGRad), 3.0f);
-			pParticle->move.y = ImAttenuation * powf(sinf(fGRad), 3.0f);*/
 
 		}
 
