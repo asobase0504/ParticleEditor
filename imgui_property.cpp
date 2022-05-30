@@ -155,13 +155,16 @@ void UpdateImguiProperty(void)
 	if (ImGui::TreeNode("Effecttree1", "EffectSetting"))
 	{
 		//rot計算用
-		static float fDeg = 0.0f;
-		float rotX = imguiParticle.pos.x * cosf(fDeg) + imguiParticle.pos.x * sinf(fDeg);
-		float rotY = imguiParticle.pos.y * sinf(fDeg) - imguiParticle.pos.y * cosf(fDeg);
+		static float s_fDeg = 0.0f;
+		float rotX = imguiParticle.pos.x * cosf(s_fDeg) + imguiParticle.pos.x * sinf(s_fDeg);
+		float rotY = imguiParticle.pos.y * sinf(s_fDeg) - imguiParticle.pos.y * cosf(s_fDeg);
 		float fAngle = atan2f(rotX, rotY);
 		imguiParticle.rot = D3DXVECTOR3(rotX, rotY, fAngle);
 
-		if (ImGui::Button("OPEN DIRECTORY"))
+		imguiParticle.col.a = 1.0f;
+		imguiParticle.fScale = 50.0f;
+
+		if (ImGui::Button("LOAD TEXTURE"))
 		{
 			GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
 		}
@@ -197,12 +200,8 @@ void UpdateImguiProperty(void)
 		}
 
 		//EffectData *Effect = GetStatus();
-		//ImGui::InputFloat3("SettingEffectPos", Effect->nPopPos, "%f");
 		ImGui::SliderFloat("PosX", &imguiParticle.pos.x, 0, (float)SCREEN_WIDTH);
 		ImGui::SliderFloat("PosY", &imguiParticle.pos.y, 0, (float)SCREEN_HEIGHT);
-
-		//Effect->nPopPos.x = imguiParticle.pos.x;
-		//Effect->nPopPos.y = imguiParticle.pos.y;
 
 		ImGui::InputFloat3("SettingEffectMove", imguiParticle.move, "%f");
 		ImGui::SliderFloat("MoveX", &imguiParticle.move.x, -100.0f, 100.0f);
@@ -212,7 +211,7 @@ void UpdateImguiProperty(void)
 		if (ImGui::TreeNode("Effecttree2", "Details"))
 		{
 			ImGui::InputFloat3("SettingEffectRot", imguiParticle.rot, "%f");
-			ImGui::SliderFloat("Rot", &fDeg, -D3DX_PI, D3DX_PI);
+			ImGui::SliderFloat("Rot", &s_fDeg, -D3DX_PI, D3DX_PI);
 
 			if (ImGui::Checkbox("BackRot", &bRot))
 			{
@@ -220,31 +219,16 @@ void UpdateImguiProperty(void)
 			}
 
 			//if (ImGui::Checkbox("TextureRot", &bTexRot))
-			//{
-			//	if (!s_bTextureRot)
-			//	{
-			//		s_bTextureRot = true;
-			//	}
-
-			//	else if (s_bTextureRot)
-			//	{
-			//		s_bTextureRot = false;
-			//	}
-			//}
-
-			//正規化
-			if (fDeg > D3DX_PI)
+			if (s_fDeg > D3DX_PI)
 			{
-				fDeg -= D3DX_PI * 2;
+				s_fDeg -= D3DX_PI * 2;
 			}
-			else if (fDeg < -D3DX_PI)
+			else if (s_fDeg < -D3DX_PI)
 			{
-				fDeg += D3DX_PI * 2;
+				s_fDeg += D3DX_PI * 2;
 			}
 
-			ImGui::SliderFloat("TextureScale", &s_fScale, 0.0f, 100.0f);		//テクスチャの大きさ調整
-			imguiParticle.fWidth = s_fScale;
-			imguiParticle.fHeight = s_fScale;
+			ImGui::SliderFloat("TextureScale", &imguiParticle.fScale, 0.0f, 100.0f);
 			ImGui::SliderInt("Life", &imguiParticle.nLife, 0, 500);
 			ImGui::SliderFloat("Radius", &imguiParticle.fRadius, 0.0f, 100.0f);
 			ImGui::SliderAngle("Angle", &imguiParticle.fAngle, 0.0f, 2000.0f);
@@ -279,16 +263,18 @@ void UpdateImguiProperty(void)
 			{
 				static float randColMax = 1.0f;
 				static float randColMin = 0.0f;
-				ImGui::InputFloat("RandomMin", &randColMax);
-				ImGui::InputFloat("RandomMax", &randColMin);
+				ImGui::InputFloat("RandomMin", &randColMin);
+				ImGui::InputFloat("RandomMax", &randColMax);
 
-				imguiParticle.colRandamMax = D3DXCOLOR(randColMax, randColMax, randColMax, 1.0f);
 				imguiParticle.colRandamMin = D3DXCOLOR(randColMin, randColMin, randColMin, 1.0f);
+				imguiParticle.colRandamMax = D3DXCOLOR(randColMax, randColMax, randColMax, 1.0f);
 			}
 
 			ImGui::RadioButton("Gradation None", &selecttype, 0);
 
 			//色変更（ImGui）
+			D3DXCOLOR RandCol = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+
 			switch (selecttype)
 			{
 			case 1:
@@ -307,7 +293,12 @@ void UpdateImguiProperty(void)
 				break;
 
 			case 4:
+				RandCol = ((float)imguiParticle.colRandamMin + (((float)rand() * (float)imguiParticle.colRandamMax - (float)imguiParticle.colRandamMin + 1.0f) / (1.0 + RAND_MAX)));
+				imguiParticle.col = RandCol;
+
+				imguiParticle.col.a = 1.0f;
 				break;
+
 			case 0:
 				break;
 			default:
