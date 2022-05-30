@@ -34,6 +34,7 @@ struct Particle
 	float fWidth;				// 幅
 	float fHeight;				// 高さ
 	float fAngle;				// 角度
+	float fAttenuation;			// 減衰値
 	float fRadius;				// 半径
 	float fWeight;				// 重さ
 	float fWeightTransition;	// 重さの推移量
