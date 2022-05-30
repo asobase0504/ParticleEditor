@@ -116,7 +116,7 @@ void UpdateParticle(void)
 
 	if (bSetImguiParticle())
 	{
-		SetParticleImgui(*GetImguiParticle());
+		SetParticleImgui(GetImguiParticle());
 //		SetParticle(ImPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), ImColor, 0, 50.0f, 50.0f, PARTICLETYPE_NORMAL);
 	}
 
@@ -224,7 +224,7 @@ void UpdateParticle(void)
 		pParticle->nLife--;	// ëÃóÕÇÃå∏è≠
 		pParticle->move.y += pParticle->fWeight;			// èdóÕ
 		pParticle->col += pParticle->colTransition;			// êFÇÃêÑà⁄
-		pParticle->move += pParticle->moveTransition;		// à⁄ìÆó ÇÃêÑà⁄
+		pParticle->move *= pParticle->fAttenuation;		// à⁄ìÆó ÇÃêÑà⁄
 		pParticle->fWeight += pParticle->fWeightTransition;	// èdÇ≥ÇÃêÑà⁄
 
 		if (pParticle->nLife <= 0)
@@ -467,8 +467,8 @@ void SetParticleImgui(Particle& inParticle)
 
 		//óÜê˘ÇæÇ¡ÇΩÇË
 		g_fAngle += ImAngle;
-		pParticle->move.x += (pParticle->fRadius * sinf(fGRad)) * ImAttenuation;
-		pParticle->move.y += (pParticle->fRadius * cosf(fGRad)) * ImAttenuation;
+		pParticle->move.x += (pParticle->fRadius * sinf(fGRad)) * pParticle->fAttenuation;
+		pParticle->move.y += (pParticle->fRadius * cosf(fGRad)) * pParticle->fAttenuation;
 
 		//======================
 		//ê≥ãKâª

@@ -244,7 +244,7 @@ void UpdateImguiProperty(void)
 			ImGui::SliderInt("Life", &imguiParticle.nLife, 0, 500);
 			ImGui::SliderFloat("Radius", &imguiParticle.fRadius, 0.0f, 100.0f);
 			ImGui::SliderAngle("Angle", &imguiParticle.fAngle, 0.0f, 2000.0f);
-		//	ImGui::SliderFloat("Attenuation", &s_fAttenuation, 0.0f, 10.0f);
+			ImGui::SliderFloat("Attenuation", &imguiParticle.fAttenuation, 0.0f, 1.0f);
 
 			//挙動おかしくなっちゃった時用
 			if (ImGui::Button("DataRemove"))
@@ -258,7 +258,7 @@ void UpdateImguiProperty(void)
 		}
 
 		//カラーパレット
-		ImGui::ColorEdit3("clear color", (float*)&imguiParticle.col); // Edit 3 floats representing a color
+		ImGui::ColorEdit4("clear color", (float*)&imguiParticle.col); // Edit 3 floats representing a color
 		GetColor();
 
 		//グラデーション
@@ -310,7 +310,7 @@ void UpdateImguiProperty(void)
 				break;
 			}
 
-			ImGui::SliderFloat("Alpha", &imguiParticle.col.a, 0.0f, 1.0f);
+			ImGui::SliderFloat("Alpha", &imguiParticle.colTransition.a, -1.0f, 0.0f);
 
 			ImGui::TreePop();
 		}
@@ -345,9 +345,9 @@ void DrawImguiProperty(void)
 //--------------------------------------------------
 // Imguiの取得
 //--------------------------------------------------
-Particle* GetImguiParticle(void)
+Particle& GetImguiParticle(void)
 {
-	return &imguiParticle;
+	return imguiParticle;
 }
 
 //--------------------------------------------------
