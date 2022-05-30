@@ -528,6 +528,7 @@ BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
 	ofn.nMaxFile = nsize;
 	ofn.lpstrInitialDir = initDir;
 	ofn.lpstrTitle = TEXT("ファイル指定");
+	ofn.Flags = OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 
 	bTexUse = true;
 
@@ -732,28 +733,6 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 			//カラーパレット
 			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 			GetColor();
-
-			//グラデーション
-			if (ImGui::TreeNode("Effecttree3", "Gradation"))
-			{
-				ImGui::RadioButton("RPlus GSubtract", &selecttype, 1);
-				ImGui::RadioButton("GPlus BSubtract", &selecttype, 2);
-				ImGui::RadioButton("BPlus RSubtract", &selecttype, 3);
-				ImGui::RadioButton("Random", &selecttype, 4);
-
-				if (selecttype == 4)
-				{
-					ImGui::InputFloat("RandomMin", &s_fRandMin);
-					ImGui::InputFloat("RandomMax", &s_fRandMax);
-				}
-
-				ImGui::RadioButton("Gradation None", &selecttype, 0);
-
-				//アルファ値の減少量調整
-				ImGui::SliderFloat("Alpha", &s_fAlpha, 0.0f, 0.5f);
-
-				ImGui::TreePop();
-			}
 
 			//ツリーを閉じる
 			ImGui::TreePop();
