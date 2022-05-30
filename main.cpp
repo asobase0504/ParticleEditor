@@ -210,7 +210,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 				dwFrameCount = 0;
 			}
 
-			if ((dwCurrentTime - dwExedastTime) >= (1000 / 60))
+//			if ((dwCurrentTime - dwExedastTime) >= (1000 / 60))
 			{//60分の1秒経過
 				dwExedastTime = dwCurrentTime;	// 処理開始の時刻[現在時刻]を保存
 
@@ -628,17 +628,17 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 
 				bSetEffect();
 			}
-
+			EffectData *Effect = GetStatus();
 			if (ImGui::Button("default"))
 			{
-				setpos.x = (float)SCREEN_WIDTH / 2;
-				setpos.y = (float)SCREEN_HEIGHT / 2;
+				Effect->nPopPos.x = (float)SCREEN_WIDTH / 2;
+				Effect->nPopPos.y = (float)SCREEN_HEIGHT / 2;
 				setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 				setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 				s_nLife = 60;
 				s_fRadius = 0.5f;
 			}
-			EffectData *Effect = GetStatus();
+		
 			ImGui::InputFloat3("SettingEffectPos", Effect->nPopPos, "%f");
 			ImGui::SliderFloat("PosX", &Effect->nPopPos.x, 0, (float)SCREEN_WIDTH);
 			ImGui::SliderFloat("PosY", &Effect->nPopPos.y, 0, (float)SCREEN_HEIGHT);
@@ -803,7 +803,8 @@ int Button(int nSize)
 //位置をゲット
 D3DXVECTOR3 GetPos(void)
 {
-	return D3DXVECTOR3(setpos.x, setpos.y, setpos.z);
+	EffectData *Effect = GetStatus();
+	return D3DXVECTOR3(Effect->nPopPos.x, Effect->nPopPos.y, Effect->nPopPos.z);
 }
 
 //移動量をゲット
