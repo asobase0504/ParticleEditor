@@ -638,6 +638,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 
 				bSetEffect();
 			}
+
 			EffectData *Effect = GetStatus();
 			if (ImGui::Button("default"))
 			{
@@ -709,7 +710,6 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 					fDeg += D3DX_PI * 2;
 				}
 
-				ImGui::SliderFloat("TextureScale", &s_fScale, 0.0f, 100.0f);		//テクスチャの大きさ調整
 				ImGui::SliderInt("Life", &s_nLife, 0, 500);
 				ImGui::SliderFloat("Radius", &s_fRadius, 0.0f, 100.0f);				//半径
 				ImGui::SliderFloat("Angle", &s_fAngle, 0.0f, 50.0f);				//角度

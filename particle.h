@@ -44,6 +44,7 @@ struct Particle
 	float fAngle;				// 角度
 	float fAttenuation;			// 減衰値
 	float fRadius;				// 半径
+	float fScale;				// テクスチャのサイズ調整用
 	float fWeight;				// 重さ
 	float fWeightTransition;	// 重さの推移量
 	int nLife;					// 寿命
