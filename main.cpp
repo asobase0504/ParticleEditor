@@ -19,6 +19,7 @@
 #include "imgui_impl_win32.h"
 #include <imgui_internal.h>
 #include "resource1.h"
+#include "imgui_property.h"
 // imguiに描画する情報
 #include "particle.h"
 #include "effect.h"
@@ -88,6 +89,7 @@ static bool s_bEffectEnable = false;
 static int s_nItem = 0;
 static float s_fAlpha = 0.0f;
 static float s_fAttenuation = 4.0f;
+static float s_fAngle = 20.0f;
 static float s_fRandMin = 0;
 static float s_fRandMax = 0;
 static char FileString[MAX_PATH * 256];
@@ -171,9 +173,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 	//ImGui::StyleColorsClassic();
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplWin32_Init(hWnd);
-	ImGui_ImplDX9_Init(s_pD3DDevice);
-
+	InitImguiProperty(hWnd, s_pD3DDevice);
+	//ImGui_ImplWin32_Init(hWnd);
+	//ImGui_ImplDX9_Init(s_pD3DDevice);
 
 	//分解能の設定
 	timeBeginPeriod(1);
@@ -215,7 +217,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 				dwExedastTime = dwCurrentTime;	// 処理開始の時刻[現在時刻]を保存
 
 				// imguiの更新
-				show_another_window = ImGuiText(show_demo_window, show_another_window);
+				UpdateImguiProperty();
+				//show_another_window = ImGuiText(show_demo_window, show_another_window);
 
 				// 更新
 				Update();
@@ -292,7 +295,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	//	POINT    pt;
 
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+	{
 		return true;
+	}
 
 	int nID;//返り値を格納
 	static HWND hWndEditlnput1;		//入力ウィンドウハンドル(識別子)
@@ -494,8 +499,10 @@ void Draw(void)
 
 		DrawGame();
 
-		ImGui::Render();
-		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+		DrawImguiProperty();
+
+		//ImGui::Render();
+		//ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
 		s_pD3DDevice->EndScene();	//描画終了
 	}
@@ -637,11 +644,15 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 				s_nLife = 60;
 				s_fRadius = 0.5f;
+				s_fAngle = 20.5f;
 			}
-		
+			EffectData *Effect = GetStatus();
 			ImGui::InputFloat3("SettingEffectPos", Effect->nPopPos, "%f");
-			ImGui::SliderFloat("PosX", &Effect->nPopPos.x, 0, (float)SCREEN_WIDTH);
-			ImGui::SliderFloat("PosY", &Effect->nPopPos.y, 0, (float)SCREEN_HEIGHT);
+			ImGui::SliderFloat("PosX", &setpos.x, 0, (float)SCREEN_WIDTH);
+			ImGui::SliderFloat("PosY", &setpos.y, 0, (float)SCREEN_HEIGHT);
+
+			Effect->nPopPos.x = setpos.x;
+			Effect->nPopPos.y = setpos.y;
 
 			ImGui::InputFloat3("SettingEffectMove", setmove, "%f");
 			ImGui::SliderFloat("MoveX", &setmove.x, -100.0f, 100.0f);
@@ -692,6 +703,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 
 				ImGui::SliderInt("Life", &s_nLife, 0, 500);
 				ImGui::SliderFloat("Radius", &s_fRadius, 0.0f, 100.0f);
+				ImGui::SliderAngle("Angle", &s_fAngle, 0.0f, 2000.0f);
 				ImGui::SliderFloat("Attenuation", &s_fAttenuation, 0.0f, 10.0f);
 
 				//挙動おかしくなっちゃった時用
@@ -848,6 +860,11 @@ float GetRandMax(void)
 float GetRadius(void)
 {
 	return s_fRadius;
+}
+
+float GetAngle(void)
+{
+	return s_fAngle;
 }
 
 float GetAlpha(void)
