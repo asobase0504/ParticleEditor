@@ -7,7 +7,7 @@
 #include "main.h"
 
 //マクロ定義
-#define MAX_PARTICLE	(4096)	//エフェクトの最大数
+#define MAX_PARTICLE	(21000)	//エフェクトの最大数
 #define NUM_PARTICLE	(10)		//エフェクトの種類
 
 //エフェクトの列挙型
