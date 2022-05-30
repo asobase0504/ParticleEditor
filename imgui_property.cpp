@@ -119,7 +119,8 @@ void UpdateImguiProperty(void)
 	static char text[MAX_TEXT] = "";
 
 	static bool useEffect = false;
-	static bool bRot = false;
+	static bool s_bRot = false;
+	static bool s_bTexRot = false;
 
 	// ウインドウの起動時の場所
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);
@@ -194,9 +195,11 @@ void UpdateImguiProperty(void)
 			imguiParticle.pos.y = (float)SCREEN_HEIGHT / 2;
 			imguiParticle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+			imguiParticle.col = D3DXCOLOR(0.5f,0.0f,1.0f,1.0f);
 			imguiParticle.nLife = 60;
-			imguiParticle.fRadius = 0.5f;
+			imguiParticle.fRadius = 4.5f;
 			imguiParticle.fAngle = 20.5f;
+			imguiParticle.fAttenuation = 0.98f;
 		}
 
 		//EffectData *Effect = GetStatus();
@@ -213,7 +216,7 @@ void UpdateImguiProperty(void)
 			ImGui::InputFloat3("SettingEffectRot", imguiParticle.rot, "%f");
 			ImGui::SliderFloat("Rot", &s_fDeg, -D3DX_PI, D3DX_PI);
 
-			if (ImGui::Checkbox("BackRot", &bRot))
+			if (ImGui::Checkbox("BackRot", &s_bRot))
 			{
 				imguiParticle.bBackrot = !imguiParticle.bBackrot;
 			}

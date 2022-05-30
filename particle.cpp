@@ -121,42 +121,10 @@ void UpdateParticle(void)
 
 		/* ↓使用しているなら↓ */
 
-		float fRandomR = 0.0f;
-		float fRandomG = 0.0f;
-		float fRandomB = 0.0f;
-
 		//エフェクトの移動
 		pParticle->pos += pParticle->move;
 
 		//色変更（ImGui）
-		switch (ImSelect)
-		{
-		case 1:
-			pParticle->colTransition = D3DXCOLOR(0.0f, -0.01f, 0.0f, 1.0f);
-			pParticle->col.r = 1.0f;
-			break;
-
-		case 2:
-			pParticle->colTransition = D3DXCOLOR(0.0f, 0.0f, -0.01f, 1.0f);
-			pParticle->col.g = 1.0f;
-			break;
-
-		case 3:
-			pParticle->colTransition = D3DXCOLOR(-0.01f, 0.0f, 0.0f, 1.0f);
-			pParticle->col.b = 1.0f;
-			break;
-
-		case 4:
-			break;
-
-		case 0:
-			break;
-
-		default:
-			break;
-		}
-
-		//アルファ値調整用
 		{
 			//*
 			/*g_fAngle += 30.0f * i;
@@ -296,7 +264,6 @@ void SetParticle(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, fl
 		//(ImGui)
 		pParticle->nLife = ImLife;
 		pParticle->fRadius = ImRadius;
-		//pParticle->nLife = nLife;
 
 		pParticle->bUse = true;
 
