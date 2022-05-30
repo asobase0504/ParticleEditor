@@ -19,6 +19,7 @@
 #include "imgui_impl_win32.h"
 #include <imgui_internal.h>
 #include "resource1.h"
+#include "imgui_property.h"
 // imguiに描画する情報
 #include "particle.h"
 #include "effect.h"
@@ -172,9 +173,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 	//ImGui::StyleColorsClassic();
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplWin32_Init(hWnd);
-	ImGui_ImplDX9_Init(s_pD3DDevice);
-
+	InitImguiProperty(hWnd, s_pD3DDevice);
+	//ImGui_ImplWin32_Init(hWnd);
+	//ImGui_ImplDX9_Init(s_pD3DDevice);
 
 	//分解能の設定
 	timeBeginPeriod(1);
@@ -216,7 +217,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 				dwExedastTime = dwCurrentTime;	// 処理開始の時刻[現在時刻]を保存
 
 				// imguiの更新
-				show_another_window = ImGuiText(show_demo_window, show_another_window);
+				UpdateImguiProperty();
+				//show_another_window = ImGuiText(show_demo_window, show_another_window);
 
 				// 更新
 				Update();
@@ -293,7 +295,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	//	POINT    pt;
 
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+	{
 		return true;
+	}
 
 	int nID;//返り値を格納
 	static HWND hWndEditlnput1;		//入力ウィンドウハンドル(識別子)
@@ -495,8 +499,10 @@ void Draw(void)
 
 		DrawGame();
 
-		ImGui::Render();
-		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+		DrawImguiProperty();
+
+		//ImGui::Render();
+		//ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
 		s_pD3DDevice->EndScene();	//描画終了
 	}

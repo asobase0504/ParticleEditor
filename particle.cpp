@@ -4,6 +4,7 @@
 #include "main.h"
 #include "particle.h"
 #include <time.h>
+#include "imgui_property.h"
 
 //グローバル変数
 static LPDIRECT3DTEXTURE9		s_pTexture[NUM_PARTICLE] = {};	//テクスチャへのポインタ
@@ -102,27 +103,21 @@ void UpdateParticle(void)
 	//(ImGui)
 	D3DXVECTOR3 ImPos = GetPos();
 	D3DXVECTOR3 ImMove = GetMove();
-	D3DXVECTOR3 ImRot = GetRot();
 	D3DXCOLOR ImColor = GetColor();
 	int ImSelect = GetType();
 	float ImRandMin = GetRandMin();
 	float ImRandMax = GetRandMax();
 	float ImAlpha = GetAlpha();
-	float ImAttenuation = GetAttenuation();
-	float ImAngle = GetAngle();
-	bool bEnable = bSetEffect();
-	bool bBackRot = BackRot();
 	bool bTexRot = TexRot();
 	bool bTex = TexUse();
 	float ImRadius = GetRadius();
 
-	float fRad = 0.0f;
-	float fGRad = 0.0f;
-	g_fAngle = 0;
+//	g_fAngle = 0;
 
-	if (bEnable)
+	if (bSetImguiParticle())
 	{
-		SetParticle(ImPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), ImColor, 0, 50.0f, 50.0f, PARTICLETYPE_NORMAL);
+		SetParticleImgui(*GetImguiParticle());
+//		SetParticle(ImPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), ImColor, 0, 50.0f, 50.0f, PARTICLETYPE_NORMAL);
 	}
 
 	if (bTex)
@@ -149,20 +144,7 @@ void UpdateParticle(void)
 
 		//エフェクトの移動
 		pParticle->pos += pParticle->move;
-		pParticle->pos += ImMove;
-
-		pParticle->fRadius = ImRadius;
-
-		if (bBackRot)
-		{
-			//float fRad = (pParticle->fAngle) * (D3DX_PI / 180);
-			fGRad = (ImRot.z - g_fAngle);
-		}
-		else
-		{
-			fRad = (pParticle->fAngle) * (D3DX_PI / 180);
-			fGRad = (ImRot.z + g_fAngle);
-		}
+//		pParticle->pos += ImMove;
 
 		//色変更（ImGui）
 		switch (ImSelect)
@@ -236,10 +218,6 @@ void UpdateParticle(void)
 			pParticle->move.x = ImAttenuation * powf(cosf(fGRad), 3.0f);
 			pParticle->move.y = ImAttenuation * powf(sinf(fGRad), 3.0f);*/
 
-			//螺旋だったり
-			g_fAngle += ImAngle;
-			pParticle->move.x = (pParticle->fRadius * sinf(fGRad)) * ImAttenuation;
-			pParticle->move.y = (pParticle->fRadius * cosf(fGRad)) * ImAttenuation;
 		}
 
 		// 推移
@@ -252,19 +230,6 @@ void UpdateParticle(void)
 		if (pParticle->nLife <= 0)
 		{//エフェクトの寿命
 			DeleteParticle(i);
-		}
-
-		//======================
-		//正規化
-		//======================
-		if (pParticle->fRadius > D3DX_PI)
-		{
-			pParticle->fRadius -= D3DX_PI * 2;
-		}
-
-		else if (pParticle->fRadius < -D3DX_PI)
-		{
-			pParticle->fRadius += D3DX_PI * 2;
 		}
 
 		VERTEX_2D *pVtx = nullptr;		//頂点情報へのポインタ
@@ -437,6 +402,99 @@ void SetParticle(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, fl
 	}
 }
 
+void SetParticleImgui(Particle& inParticle)
+{
+	for (int i = 0; i < MAX_PARTICLE; i++)
+	{
+		Particle* pParticle = &g_aParticle[i];
+
+		if (pParticle->bUse)
+		{
+			continue;
+		}
+
+		/* ↓使用されてないなら↓ */
+
+		// データのリセット
+		DeleteParticle(i);
+
+		*pParticle = inParticle;
+		pParticle->type = PARTICLETYPE_NORMAL;
+
+		pParticle->fWidth = 50.0f;
+		pParticle->fHeight = 50.0f;
+		pParticle->bUse = true;
+
+		VERTEX_2D*pVtx;		//頂点情報へのポインタ
+
+		//頂点バッファをロックし、頂点情報へのポインタを取得
+		s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+		pVtx += i * 4;		//頂点データのポインタを4つ分集める
+
+		//頂点座標の設定
+		pVtx[0].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, -pParticle->fHeight, 0.0f);
+		pVtx[1].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, -pParticle->fHeight, 0.0f);
+		pVtx[2].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, pParticle->fHeight, 0.0f);
+		pVtx[3].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, pParticle->fHeight, 0.0f);
+
+		//頂点カラーの設定
+		pVtx[0].col = pParticle->col;
+		pVtx[1].col = pParticle->col;
+		pVtx[2].col = pParticle->col;
+		pVtx[3].col = pParticle->col;
+
+		//頂点バッファをアンロックする
+		s_pVtxBuff->Unlock();
+
+		float ImAttenuation = GetAttenuation();
+		float ImAngle = GetAngle();
+		D3DXVECTOR3 ImRot = GetRot();
+		bool bBackRot = BackRot();
+		float fRad = 0.0f;
+		float fGRad = 0.0f;
+
+		if (bBackRot)
+		{
+			//float fRad = (pParticle->fAngle) * (D3DX_PI / 180);
+			fGRad = (ImRot.z - g_fAngle);
+		}
+		else
+		{
+			fRad = (pParticle->fAngle) * (D3DX_PI / 180);
+			fGRad = (ImRot.z + g_fAngle);
+		}
+
+		//螺旋だったり
+		g_fAngle += ImAngle;
+		pParticle->move.x += (pParticle->fRadius * sinf(fGRad)) * ImAttenuation;
+		pParticle->move.y += (pParticle->fRadius * cosf(fGRad)) * ImAttenuation;
+
+		//======================
+		//正規化
+		//======================
+		if (pParticle->fRadius > D3DX_PI)
+		{
+			pParticle->fRadius -= D3DX_PI * 2;
+		}
+		else if (pParticle->fRadius < -D3DX_PI)
+		{
+			pParticle->fRadius += D3DX_PI * 2;
+		}
+
+		if (g_fAngle > D3DX_PI)
+		{
+			g_fAngle -= D3DX_PI * 2;
+		}
+		else if (g_fAngle < -D3DX_PI)
+		{
+			g_fAngle += D3DX_PI * 2;
+		}
+
+		break;
+	}
+}
+
 // テクスチャの読込み
 void LoadTex(void)
 {
@@ -446,16 +504,11 @@ void LoadTex(void)
 
 	memset(ImFile, 0, sizeof(ImFile));
 
-	for (int i = 0; i < 512; i++)
-	{
-		ImFile[i] = GetFileName(i);
-	}
-
 	if (ImTex)
 	{
 		//テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,
-			ImFile,
+			GetFileName(),
 			&s_pTexture[PARTICLETYPE_NORMAL]);
 
 		ImTex = false;
@@ -467,6 +520,14 @@ void DeleteParticle(int nDelete)
 {
 	// データのリセット
 	memset(&g_aParticle[nDelete], 0, sizeof(g_aParticle[nDelete]));
+}
+
+void DeleteParticleAll()
+{
+	for (int i = 0; i < MAX_PARTICLE; i++)
+	{
+		DeleteParticle(i);
+	}
 }
 
 // 角度の初期化処理

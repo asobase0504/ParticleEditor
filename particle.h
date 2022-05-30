@@ -27,6 +27,8 @@ struct Particle
 	D3DXVECTOR3 moveTransition;	// 移動量の推移量
 	D3DXVECTOR3 rot;			//向き
 	D3DXCOLOR col;				// 色
+	D3DXCOLOR colRandamMax;		// ランダムな色の範囲(最大)
+	D3DXCOLOR colRandamMin;		// ランダムな色の範囲(最小)
 	D3DXCOLOR colTransition;	// 色の推移量
 	PARTICLETYPE type;			// エフェクトの種類
 	float fWidth;				// 幅
@@ -36,6 +38,7 @@ struct Particle
 	float fWeight;				// 重さ
 	float fWeightTransition;	// 重さの推移量
 	int nLife;					// 寿命
+	bool bBackrot;
 	bool bUse;					// 使用しているか
 };
 
@@ -53,8 +56,10 @@ void UninitParticle(void);
 void UpdateParticle(void);
 void DrawParticle(void);
 void SetParticle(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, float fWidth, float fHeight, PARTICLETYPE type);
+void SetParticleImgui(Particle& inParticle);
 void LoadTex(void);
 void DeleteParticle(int nDelete);
+void DeleteParticleAll();
 void RemoveAngle(void);
 Particle *GetParticle(void);
 DWORD DwordtoFloat(float f);
