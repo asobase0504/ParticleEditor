@@ -646,7 +646,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				s_fRadius = 0.5f;
 				s_fAngle = 20.5f;
 			}
-			EffectData *Effect = GetStatus();
+
 			ImGui::InputFloat3("SettingEffectPos", Effect->nPopPos, "%f");
 			ImGui::SliderFloat("PosX", &setpos.x, 0, (float)SCREEN_WIDTH);
 			ImGui::SliderFloat("PosY", &setpos.y, 0, (float)SCREEN_HEIGHT);
