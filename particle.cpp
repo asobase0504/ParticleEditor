@@ -110,6 +110,7 @@ void UpdateParticle(void)
 	float ImAlpha = GetAlpha();
 	float ImAttenuation = GetAttenuation();
 	float ImAngle = GetAngle();
+	float ImScale = GetScale();
 	bool bEnable = bSetEffect();
 	bool bBackRot = BackRot();
 	bool bTexRot = TexRot();
@@ -122,7 +123,7 @@ void UpdateParticle(void)
 
 	if (bEnable)
 	{
-		SetParticle(ImPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), ImColor, 0, 50.0f, 50.0f, PARTICLETYPE_NORMAL);
+		SetParticle(ImPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), ImColor, 0, ImScale, ImScale, PARTICLETYPE_NORMAL);
 	}
 
 	if (bTex)
@@ -331,18 +332,19 @@ void DrawParticle(void)
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 
 	//点に貼る(true)、ポリゴンに貼る(false)
-	//pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE,false);
+	//pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE,true);
 
 	//カメラの位置(true)、スクリーンの位置(false)
 	//pDevice->SetRenderState(D3DRS_POINTSCALEENABLE,false);
 
 	//サイズを設定
-	//pDevice->SetRenderState(D3DRS_POINTSIZE,DwordtoFloat(20.0f));
+	//pDevice->SetRenderState(D3DRS_POINTSIZE,FloattoDword(1.0f));
+	//pDevice->SetRenderState(D3DRS_POINTSIZE_MIN, FloattoDword(0.0f));
 
 	//ポイントサイズの計算
-	//pDevice->SetRenderState(D3DRS_POINTSCALE_A, DwordtoFloat(0.0f));
-	//pDevice->SetRenderState(D3DRS_POINTSCALE_B, DwordtoFloat(0.0f));
-	//pDevice->SetRenderState(D3DRS_POINTSCALE_C, DwordtoFloat(20.0f));
+	//pDevice->SetRenderState(D3DRS_POINTSCALE_A, FloattoDword(0.0f));
+	//pDevice->SetRenderState(D3DRS_POINTSCALE_B, FloattoDword(0.0f));
+	//pDevice->SetRenderState(D3DRS_POINTSCALE_C, FloattoDword(1.0f));
 
 	for (int nCnt = 0; nCnt < MAX_PARTICLE; nCnt++)
 	{
@@ -364,9 +366,11 @@ void DrawParticle(void)
 
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
-
-		//pDevice->DrawPrimitive(D3DPT_POINTLIST, nCnt * 4, 0);
+		//pDevice->DrawPrimitive(D3DPT_POINTLIST,0, nCnt);
 	}
+
+	//ポイントスプライトを解除する
+	//pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE, false);
 
 	//αブレンディングを元に戻す
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
@@ -480,8 +484,8 @@ Particle *GetParticle(void)
 	return &g_aParticle[0];
 }
 
-//フロートをDWORDに変換する
-DWORD DwordtoFloat(float f)
+//FloatをDWORDに変換する
+DWORD FloattoDword(float fVal)
 {
-	return *((DWORD*)&f);
+	return *((DWORD*)&fVal);
 }

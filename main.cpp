@@ -75,6 +75,7 @@ static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 D3DXVECTOR3 setpos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 D3DXVECTOR3 setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 D3DXVECTOR3 setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+inline unsigned long FloattoDword(float fVal) { return *((unsigned long*)&fVal); }
 static bool show_demo_window = true;
 static bool show_another_window = false;
 static float s_fRadius = 0;
@@ -89,6 +90,7 @@ static int s_nItem = 0;
 static float s_fAlpha = 0.0f;
 static float s_fAttenuation = 4.0f;
 static float s_fAngle = 20.0f;
+static float s_fScale = 50.0f;
 static float s_fRandMin = 0;
 static float s_fRandMax = 0;
 static char FileString[MAX_PATH * 256];
@@ -606,7 +608,8 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 			float fAngle = atan2f(rotX, rotY);
 			setrot = D3DXVECTOR3(rotX, rotY, fAngle);
 
-			if (ImGui::Button("OPEN DIRECTORY"))
+			/*何度かやるとバグる可能性あり*/
+			if (ImGui::Button("LOAD FILE"))
 			{
 				GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
 			}
@@ -636,12 +639,15 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				setpos.y = (float)SCREEN_HEIGHT / 2;
 				setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 				setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+				s_fScale = 50.0f;
 				s_nLife = 60;
 				s_fRadius = 0.5f;
 				s_fAngle = 20.5f;
 			}
 
 			EffectData *Effect = GetStatus();
+
+			//セットする位置
 			ImGui::InputFloat3("SettingEffectPos", Effect->nPopPos, "%f");
 			ImGui::SliderFloat("PosX", &setpos.x, 0, (float)SCREEN_WIDTH);
 			ImGui::SliderFloat("PosY", &setpos.y, 0, (float)SCREEN_HEIGHT);
@@ -659,6 +665,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 				ImGui::InputFloat3("SettingEffectRot", setrot, "%f");
 				ImGui::SliderFloat("Rot", &fDeg, -D3DX_PI, D3DX_PI);
 
+				//回転方向を変更
 				if (ImGui::Checkbox("BackRot", &bRot))
 				{
 					if (!s_bBackRot)
@@ -672,6 +679,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 					}
 				}
 
+				//テクスチャを回転させるかどうか
 				if (ImGui::Checkbox("TextureRot", &bTexRot))
 				{
 					if (!s_bTextureRot)
@@ -696,10 +704,11 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 					fDeg += D3DX_PI * 2;
 				}
 
+				ImGui::SliderFloat("TextureScale", &s_fScale, 0.0f, 100.0f);		//テクスチャの大きさ調整
 				ImGui::SliderInt("Life", &s_nLife, 0, 500);
-				ImGui::SliderFloat("Radius", &s_fRadius, 0.0f, 100.0f);
-				ImGui::SliderAngle("Angle", &s_fAngle, 0.0f, 2000.0f);
-				ImGui::SliderFloat("Attenuation", &s_fAttenuation, 0.0f, 10.0f);
+				ImGui::SliderFloat("Radius", &s_fRadius, 0.0f, 100.0f);				//半径
+				ImGui::SliderFloat("Angle", &s_fAngle, 0.0f, 50.0f);				//角度
+				ImGui::SliderFloat("Attenuation", &s_fAttenuation, 0.0f, 10.0f);	//減衰
 
 				//挙動おかしくなっちゃった時用
 				if (ImGui::Button("DataRemove"))
@@ -735,6 +744,7 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 
 				ImGui::RadioButton("Gradation None", &selecttype, 0);
 
+				//アルファ値の減少量調整
 				ImGui::SliderFloat("Alpha", &s_fAlpha, 0.0f, 0.5f);
 
 				ImGui::TreePop();
@@ -864,6 +874,11 @@ float GetAngle(void)
 float GetAlpha(void)
 {
 	return s_fAlpha;
+}
+
+float GetScale(void)
+{
+	return s_fScale;
 }
 
 float GetAttenuation(void)
