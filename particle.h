@@ -9,6 +9,7 @@
 //マクロ定義
 #define MAX_PARTICLE	(21000)	//エフェクトの最大数
 #define NUM_PARTICLE	(10)		//エフェクトの種類
+#define FVF_VERTEX_PARTICLE	(D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_PSIZE)
 
 //エフェクトの列挙型
 enum PARTICLETYPE
@@ -17,6 +18,13 @@ enum PARTICLETYPE
 	PARTICLETYPE_NORMAL,
 	PARTICLETYPE_PLAYER,
 	PARTICLETYPE_MAX
+};
+
+struct ParticleTex
+{
+	D3DXVECTOR3 pos;
+	D3DXCOLOR col;
+	float size;
 };
 
 //エフェクトの構造体の定義
@@ -43,14 +51,6 @@ struct Particle
 	bool bUse;					// 使用しているか
 };
 
-struct Texture
-{
-	D3DXVECTOR3 pos;
-	D3DXCOLOR col;
-	float size;
-};
-#define FVF_VERTEX_TEST	(D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_PSIZE)
-
 //プロトタイプ宣言
 void InitParticle(void);
 void UninitParticle(void);
@@ -63,5 +63,5 @@ void DeleteParticle(int nDelete);
 void DeleteParticleAll();
 void RemoveAngle(void);
 Particle *GetParticle(void);
-DWORD DwordtoFloat(float f);
+DWORD FloattoDword(float f);
 #endif

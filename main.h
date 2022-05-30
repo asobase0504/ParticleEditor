@@ -55,11 +55,11 @@ float GetRadius(void);
 float GetAlpha(void);
 float GetAttenuation(void);
 float GetAngle(void);
+float GetScale(void);
 char GetFileName(int nNum);
 bool bSetEffect(void);
 bool BackRot(void);
 bool TexRot(void);
-bool BackTexRot(void);
 bool TexUse(void);
 
 #endif
