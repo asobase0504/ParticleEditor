@@ -96,22 +96,9 @@ void UninitParticle(void)
 void UpdateParticle(void)
 {
 	//(ImGui)
-	D3DXVECTOR3 ImPos = GetPos();
-	D3DXVECTOR3 ImMove = GetMove();
 	D3DXCOLOR ImColor = GetColor();
 	int ImSelect = GetType();
-	float ImRandMin = GetRandMin();
-	float ImRandMax = GetRandMax();
-	float ImAlpha = GetAlpha();
-	float ImAttenuation = GetAttenuation();
-	float ImAngle = GetAngle();
-	bool bEnable = bSetEffect();
-	bool bBackRot = BackRot();
-	bool bTexRot = TexRot();
 	bool bTex = TexUse();
-	float ImRadius = GetRadius();
-
-//	g_fAngle = 0;
 
 	if (bSetImguiParticle())
 	{
@@ -140,7 +127,6 @@ void UpdateParticle(void)
 
 		//エフェクトの移動
 		pParticle->pos += pParticle->move;
-//		pParticle->pos += ImMove;
 
 		//色変更（ImGui）
 		switch (ImSelect)

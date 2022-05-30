@@ -162,7 +162,7 @@ void UpdateImguiProperty(void)
 		imguiParticle.rot = D3DXVECTOR3(rotX, rotY, fAngle);
 
 		imguiParticle.col.a = 1.0f;
-		imguiParticle.fScale = 50.0f;
+		//imguiParticle.fScale = 50.0f;
 
 		if (ImGui::Button("LOAD TEXTURE"))
 		{
