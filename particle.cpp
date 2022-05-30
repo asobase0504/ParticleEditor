@@ -120,6 +120,7 @@ void UpdateParticle(void)
 
 	if (bSetImguiParticle())
 	{
+		SetParticleImgui(GetImguiParticle());
 		SetParticle(ImPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), ImColor, 0, 50.0f, 50.0f, PARTICLETYPE_NORMAL);
 	}
 
@@ -427,8 +428,6 @@ void SetParticleImgui(Particle& inParticle)
 		*pParticle = inParticle;
 		pParticle->type = PARTICLETYPE_NORMAL;
 
-		pParticle->fWidth = 50.0f;
-		pParticle->fHeight = 50.0f;
 		pParticle->bUse = true;
 
 		VERTEX_2D*pVtx;		//頂点情報へのポインタ

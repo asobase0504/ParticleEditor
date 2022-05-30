@@ -27,6 +27,7 @@ static char FileString[MAX_PATH * 256];	// ファイル名
 static bool	s_window = false;	// ウインドウを使用するかどうか
 static Particle imguiParticle;	// ImGuiに保存されてるパーティクル情報
 static bool s_bEffectEnable = false;
+static float s_fScale = 50.0f;
 
 //--------------------------------------------------
 // 初期化
@@ -241,6 +242,9 @@ void UpdateImguiProperty(void)
 				fDeg += D3DX_PI * 2;
 			}
 
+			ImGui::SliderFloat("TextureScale", &s_fScale, 0.0f, 100.0f);		//テクスチャの大きさ調整
+			imguiParticle.fWidth = s_fScale;
+			imguiParticle.fHeight = s_fScale;
 			ImGui::SliderInt("Life", &imguiParticle.nLife, 0, 500);
 			ImGui::SliderFloat("Radius", &imguiParticle.fRadius, 0.0f, 100.0f);
 			ImGui::SliderAngle("Angle", &imguiParticle.fAngle, 0.0f, 2000.0f);
