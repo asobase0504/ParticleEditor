@@ -267,7 +267,6 @@ void UpdateImguiProperty(void)
 			static float s_fCustR[10];
 			static float s_fCustG[10];
 			static float s_fCustB[10];
-			static float s_fCustA[10];
 			static int s_nSpeed = 1;
 			static int selecttype = 0;
 
@@ -296,7 +295,7 @@ void UpdateImguiProperty(void)
 				static float Color[10];
 
 				static int nTypeNum = 0;
-				const char *Items[] = { "Red", "Green", "Blue", "Alpha"};
+				const char *Items[] = { "Red", "Green", "Blue"};
 				ImGui::Combo("ColorType", &nTypeNum, Items, IM_ARRAYSIZE(Items));
 
 				ImGui::PlotLines("Custom Gradation", Color, IM_ARRAYSIZE(Color), 0, nullptr, 0.0f, 0.5f, ImVec2(0, 100));
@@ -342,19 +341,6 @@ void UpdateImguiProperty(void)
 					}
 				}
 
-				if (nTypeNum == 3)
-				{
-					ImGui::SliderFloat("Alpha", &Color[s_nSetTime], 0.0f, 0.5f);
-
-					if (ImGui::Button("Graph Assign"))
-					{
-						for (int i = 0; i < 10; i++)
-						{
-							s_fCustA[i] = Color[i];
-						}
-					}
-				}
-
 				ImGui::SameLine();
 				if (ImGui::Button("All Zero"))
 				{
@@ -364,7 +350,6 @@ void UpdateImguiProperty(void)
 						memset(&s_fCustR[i], 0, sizeof(s_fCustR[i]));
 						memset(&s_fCustG[i], 0, sizeof(s_fCustG[i]));
 						memset(&s_fCustB[i], 0, sizeof(s_fCustB[i]));
-						memset(&s_fCustA[i], 0, sizeof(s_fCustA[i]));
 					}
 				}
 			}
@@ -410,7 +395,7 @@ void UpdateImguiProperty(void)
 
 					if (s_nTimer >= 5)
 					{
-						imguiParticle.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], s_fCustA[s_nColNum]);
+						imguiParticle.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
 						s_nColNum++;
 						s_nTimer = 0;
 					}
