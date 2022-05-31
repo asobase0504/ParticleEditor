@@ -125,7 +125,7 @@ void UpdateParticle(void)
 		//エフェクトの移動
 		pParticle->pos += pParticle->move;
 
-		//色変更（ImGui）
+		//挙動
 		{
 			//*
 			/*g_fAngle += 30.0f * i;

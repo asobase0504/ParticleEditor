@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <d3d9.h>
 #include <tchar.h>
-#include <time.h>
 #include "main.h"
 #include "input.h"
 #include "game.h"

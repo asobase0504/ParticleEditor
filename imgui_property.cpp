@@ -121,6 +121,7 @@ void UpdateImguiProperty(void)
 	static bool useEffect = false;
 	static bool s_bRot = false;
 	static bool s_bTexRot = false;
+	static bool s_bUsesrand = false;
 
 	// ウインドウの起動時の場所
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);
@@ -204,6 +205,7 @@ void UpdateImguiProperty(void)
 			imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.col = D3DXCOLOR(0.5f,0.0f,1.0f,1.0f);
 			imguiParticle.nLife = 60;
+			imguiParticle.fScale = 50.0f;
 			imguiParticle.fRadius = 4.5f;
 			imguiParticle.fAngle = 20.5f;
 			imguiParticle.fAttenuation = 0.98f;
@@ -262,6 +264,10 @@ void UpdateImguiProperty(void)
 		//グラデーション
 		if (ImGui::TreeNode("Effecttree3", "Gradation"))
 		{
+			static float s_fCustR[10];
+			static float s_fCustG[10];
+			static float s_fCustB[10];
+			static int s_nSpeed = 1;
 			static int selecttype = 0;
 
 			ImGui::RadioButton("RPlus GSubtract", &selecttype, 1);
@@ -278,12 +284,59 @@ void UpdateImguiProperty(void)
 
 				imguiParticle.colRandamMin = D3DXCOLOR(randColMin, randColMin, randColMin, 1.0f);
 				imguiParticle.colRandamMax = D3DXCOLOR(randColMax, randColMax, randColMax, 1.0f);
+				
+			}
+
+			ImGui::RadioButton("Custom", &selecttype, 5);
+
+			if (selecttype == 5)
+			{
+				static int s_nSetTime = 0.0f;
+				static int nTypeNum = 0;
+				const char *Items[] = { "Red", "Green", "Blue"};
+				ImGui::Combo("ColorType", &nTypeNum, Items, IM_ARRAYSIZE(Items));
+
+				if (nTypeNum == 0)
+				{
+					ImGui::PlotLines("Custom Gradation", s_fCustR, IM_ARRAYSIZE(s_fCustR), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+					ImGui::SliderFloat("Red", &s_fCustR[s_nSetTime], -0.5f, 0.5f);
+				}
+
+				if (nTypeNum == 1)
+				{
+					ImGui::PlotLines("Custom Gradation", s_fCustG, IM_ARRAYSIZE(s_fCustG), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+					ImGui::SliderFloat("Green", &s_fCustG[s_nSetTime], -0.5f, 0.5f);
+				}
+
+				if (nTypeNum == 2)
+				{
+					ImGui::PlotLines("Custom Gradation", s_fCustB, IM_ARRAYSIZE(s_fCustB), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+					ImGui::SliderFloat("Blue", &s_fCustB[s_nSetTime], -0.5f, 0.5f);
+				}
+
+				ImGui::SliderInt("SetTime", &s_nSetTime, 0, 10);
+				ImGui::SliderInt("Speed", &s_nSpeed, 1, 30);		//数値が高くなると変化速度がゆっくりになる
+
+				ImGui::SameLine();
+				/*グラフの全ての色の数値を０にする*/
+				if (ImGui::Button("All Zero"))
+				{
+					for (int i = 0; i < 10; i++)
+					{
+						memset(&s_fCustR[i], 0, sizeof(s_fCustR[i]));
+						memset(&s_fCustG[i], 0, sizeof(s_fCustG[i]));
+						memset(&s_fCustB[i], 0, sizeof(s_fCustB[i]));
+					}
+				}
 			}
 
 			ImGui::RadioButton("Gradation None", &selecttype, 0);
 
 			//色変更（ImGui）
 			D3DXCOLOR RandCol = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+			static int s_nCounter;
+			static int s_nTimer;
+			static int s_nColNum;
 
 			switch (selecttype)
 			{
@@ -303,10 +356,37 @@ void UpdateImguiProperty(void)
 				break;
 
 			case 4:
-				RandCol = ((float)imguiParticle.colRandamMin + (((float)rand() * (float)imguiParticle.colRandamMax - (float)imguiParticle.colRandamMin + 1.0f) / (1.0 + RAND_MAX)));
+				RandCol = ((float)imguiParticle.colRandamMin + (((float)rand() * (float)imguiParticle.colRandamMax - (float)imguiParticle.colRandamMin + 1.0f) / (1.0f + RAND_MAX)));
 				imguiParticle.col = RandCol;
 
 				imguiParticle.col.a = 1.0f;
+				break;
+
+			case 5:
+				s_nCounter++;
+
+				if ((s_nCounter % s_nSpeed) == 0)
+				{//一定時間経過
+					s_nTimer++;
+
+					if (s_nTimer >= 5)
+					{
+						imguiParticle.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
+						s_nColNum++;
+						s_nTimer = 0;
+					}
+				}
+
+				if (s_nCounter >= 60)
+				{
+					s_nCounter = 0;
+				}
+
+				if (s_nColNum >= 10)
+				{
+					s_nColNum = 0;
+				}
+
 				break;
 
 			case 0:
