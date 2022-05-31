@@ -7,8 +7,9 @@
 
 #include "file.h"
 #include "letter.h"
+#include "particle.h"
 
-EffectData Effect;
+Particle DataEffect;
 namespace nl = nlohmann;
 
 nl::json j;//リストの生成
@@ -17,9 +18,9 @@ nl::json j;//リストの生成
 //============================
 //ゲット関数
 //============================
-EffectData *GetStatus(void)
+Particle GetStatus(void)
 {
-	return &Effect;
+	return DataEffect;
 }
 
 //============================
@@ -27,25 +28,28 @@ EffectData *GetStatus(void)
 //============================
 void OutputStatus()
 {
-	j["POPPOS"] = {{ "X", Effect.nPopPos.x} ,{ "Y", Effect.nPopPos.y} ,{ "Z", Effect.nPopPos.z } };
-	j["ROT"] = { {"X", Effect.ROT.x} ,{ "Y", Effect.ROT.y },{ "Z", Effect.ROT.z } };
-	j["DIVISION"] = { {"X", Effect.DIVISION.x} ,{"Y", Effect.DIVISION.y}};
-	j["COL"] = { { "R", Effect.COL.r }, {"G" ,Effect.COL.g} ,{ "B", Effect.COL.b } ,{ "A", Effect.COL.a } };
-	j["EFFECTTYPE"] = Effect.Effecttype ;
-	j["ALPHABLEND_TYPE"] = Effect.Alphablend_TYPE ;
-	j["RADIUS"] = Effect.fRadius;
-	j["SPEED"] = Effect.Speed;
-	j["WEIGHT"] = Effect.Weight;
-	j["LIFE"] = Effect.nLife;
-	j["TEXTURE"] = Effect.TEXTURE;
-	j["TEXTURE2"] = Effect.TEXTURE2;
-	j["TIME"] = Effect.TIME;
-	j["NUMPARTICLE"] = Effect.NUMPARTICLE;
-	j["NUMPARTICLE"] = Effect.MULTITEX;
+	j["POS"] = {{ "X", DataEffect.pos.x} ,{ "Y", DataEffect.pos.y} ,{ "Z", DataEffect.pos.z } };
+	j["MOVE"] = { { "X", DataEffect.move.x } ,{ "Y", DataEffect.move.y } ,{ "Z", DataEffect.move.z } };
+	j["MOVETRANSITION"] = { { "X", DataEffect.moveTransition.x } ,{ "Y", DataEffect.moveTransition.y } ,{ "Z", DataEffect.moveTransition.z } };
+	j["ROT"] = { {"X", DataEffect.rot.x} ,{ "Y", DataEffect.rot.y },{ "Z", DataEffect.rot.z } };
+	j["COL"] = { { "R", DataEffect.col.r }, {"G" ,DataEffect.col.g} ,{ "B", DataEffect.col.b } ,{ "A", DataEffect.col.a } };
+	j["COLRANDAMMAX"] = { { "R", DataEffect.colRandamMax.r },{ "G" ,DataEffect.colRandamMax.g } ,{ "B", DataEffect.colRandamMax.b } ,{ "A", DataEffect.colRandamMax.a } };
+	j["COLRANDAMMIN"] = { { "R", DataEffect.colRandamMin.r },{ "G" ,DataEffect.colRandamMin.g } ,{ "B", DataEffect.colRandamMin.b } ,{ "A", DataEffect.colRandamMin.a } };
+	j["COLTRANSITION"] = { { "R", DataEffect.colTransition.r },{ "G" ,DataEffect.colTransition.g } ,{ "B", DataEffect.colTransition.b } ,{ "A", DataEffect.colTransition.a } };
+	j["TYPE"] = DataEffect.type;
+	j["WIDTH"] = DataEffect.fWidth;
+	j["HEIGHT"] = DataEffect.fHeight;
+	j["ANGLE"] = DataEffect.fAngle;
+	j["ATTENUATION"] = DataEffect.fAttenuation;
+	j["RADIUS"] = DataEffect.fRadius;
+	j["WEIGHT"] = DataEffect.fWeight;
+	j["WEIGHTTRANSITION"] = DataEffect.fWeightTransition;
+	j["LIFE"] = DataEffect.nLife;
+	j["BACKROT"] = DataEffect.bBackrot;
 
 	auto jobj = j.dump();
 	std::ofstream writing_file;
-	const std::string pathToJSON = "data/FILE/EffectOutput.json";
+	const std::string pathToJSON = "data/FILE/DataEffectOutput.json";
 	writing_file.open(pathToJSON, std::ios::out);
 	writing_file << jobj << std::endl;
 	writing_file.close();
@@ -62,23 +66,26 @@ void LoodJson(const wchar_t* cUrl)
 		ifs >> j;
 
 		//こっちで構造体にデータを入れてます//文字は変換つけないとばぐるぞ＾＾これ-＞UTF8toSjis()
-
-		Effect.nPopPos = D3DXVECTOR3(j["POPPOS"]["X"], j["POPPOS"]["Y"], j["POPPOS"]["Z"]);
-		Effect.ROT = D3DXVECTOR3(j["ROT"] ["X"], j["ROT"] ["Y"], j["ROT"] ["Z"]);
-		Effect.DIVISION = D3DXVECTOR2(j["DIVISION"] ["X"], j["DIVISION"] ["Y"]);
-		Effect.COL = D3DXCOLOR(j["COL"] ["R"], j["COL"] ["G"], j["COL"] ["B"], j["COL"] ["A"]);
-		Effect.Effecttype = j["EFFECTTYPE"];
-		Effect.Alphablend_TYPE = j["ALPHABLEND_TYPE"];
-		Effect.fRadius = j["RADIUS"];
-		Effect.Speed = j["SPEED"];
-		Effect.Weight = j["WEIGHT"];
-		Effect.nLife = j["LIFE"];
-		Effect.TEXTURE = j["TEXTURE"];
-		Effect.TEXTURE2 = j["TEXTURE2"];
-		Effect.TIME = j["TIME"];
-		Effect.NUMPARTICLE = j["NUMPARTICLE"];
-		Effect.MULTITEX = j["NUMPARTICLE"];
+		DataEffect.pos = D3DXVECTOR3(j["POS"]["X"], j["POS"]["Y"], j["POS"]["Z"]);
+		DataEffect.move = D3DXVECTOR3(j["MOVE"]["X"], j["MOVE"]["Y"], j["MOVE"]["Z"]);
+		DataEffect.rot = D3DXVECTOR3(j["ROT"] ["X"], j["ROT"] ["Y"], j["ROT"] ["Z"]);
+		DataEffect.moveTransition = D3DXVECTOR3(j["MOVETRANSITION"]["X"], j["MOVETRANSITION"]["Y"], j["MOVETRANSITION"]["Z"]);;
+		DataEffect.col = D3DXCOLOR(j["COL"] ["R"], j["COL"] ["G"], j["COL"] ["B"], j["COL"] ["A"]);
+		DataEffect.colRandamMax = D3DXCOLOR(j["COLRANDAMMAX"]["R"], j["COLRANDAMMAX"]["G"], j["COLRANDAMMAX"]["B"], j["COLRANDAMMAX"]["A"]);
+		DataEffect.colRandamMin = D3DXCOLOR(j["COLRANDAMMIN"]["R"], j["COLRANDAMMIN"]["G"], j["COLRANDAMMIN"]["B"], j["COLRANDAMMIN"]["A"]);
+		DataEffect.colTransition = D3DXCOLOR(j["COLTRANSITION"]["R"], j["COLTRANSITION"]["G"], j["COLTRANSITION"]["B"], j["COLTRANSITION"]["A"]);
+		DataEffect.type = j["TYPE"];
+		DataEffect.fWidth = j["WIDTH"];
+		DataEffect.fHeight = j["HEIGHT"];
+		DataEffect.fRadius = j["RADIUS"];
+		DataEffect.fAngle = j["ANGLE"];
+		DataEffect.fWeight = j["WEIGHT"];
+		DataEffect.nLife = j["LIFE"];
+		DataEffect.fAttenuation = j["ATTENUATION"];
+		DataEffect.fWeightTransition = j["WEIGHTTRANSITION"];
+		DataEffect.nLife = j["LIFE"];
+		DataEffect.bBackrot = j["BACKROT"];
 
 	}
-	OutputStatus();
+
 }

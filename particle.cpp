@@ -101,9 +101,6 @@ void UninitParticle(void)
 void UpdateParticle(void)
 {
 	//(ImGui)
-	D3DXVECTOR3 ImPos = GetPos();
-	D3DXVECTOR3 ImMove = GetMove();
-	D3DXCOLOR ImColor = GetColor();
 	int ImSelect = GetType();
 	float ImRandMin = GetRandMin();
 	float ImRandMax = GetRandMax();
@@ -120,7 +117,8 @@ void UpdateParticle(void)
 
 	if (bSetImguiParticle())
 	{
-		SetParticle(ImPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), ImColor, 0, 50.0f, 50.0f, PARTICLETYPE_NORMAL);
+		SetParticleImgui(GetImguiParticle());
+		//SetParticle(ImPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), ImColor, 0, 50.0f, 50.0f, PARTICLETYPE_NORMAL);
 	}
 
 	if (bTex)
