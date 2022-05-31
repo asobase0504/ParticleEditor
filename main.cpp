@@ -552,248 +552,245 @@ void ResetDevice()
 	ImGui_ImplDX9_CreateDeviceObjects();
 }
 
-
-
-
 	// Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-	if (show_demo_window)
-	{
-		static float f = 0.0f;
-		static float fSize = 0.0f;
-		static int counter = 0;
-		static int nSize = 0;
-		static int nItem = 0;
-		static char Text[8];
-		static bool bRot = false;
-		static bool bTexRot = false;
-		static bool bTexBackRot = false;
-		static bool bPause = false;
-		Particle *pParticle = GetParticle();
-
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		//FPS表示
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too
-		ImGui::InputText("textbox 1", Text, sizeof(Text));
-		//ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-
-		//別ウィンドウを生成
-		ImGui::Checkbox("Another Window", &show_another_window);
-
-		ImGui::SliderInt("Size", &nSize, 0, 10);
-		ImGui::SliderFloat("Size", &fSize, 0, 100.0f);
-		ImGui::SliderFloat("float", &f, 0.0f, 100.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-
-		if (ImGui::Button("PAUSE"))
-		{
-			system("Pause");
-		}
-
-		nSize = Button(nSize);
-
-		//エフェクト関係
-		if (ImGui::TreeNode("Effecttree1", "EffectSetting"))
-		{
-			//rot計算用
-			static float fDeg = 0.0f;
-			float rotX = setpos.x * cosf(fDeg) + setpos.x * sinf(fDeg);
-			float rotY = setpos.y * sinf(fDeg) - setpos.y * cosf(fDeg);
-			float fAngle = atan2f(rotX, rotY);
-			setrot = D3DXVECTOR3(rotX, rotY, fAngle);
-
-			/*何度かやるとバグる可能性あり*/
-			if (ImGui::Button("LOAD FILE"))
-			{
-				GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
-			}
-
-			if (ImGui::Checkbox("EffectEnable", &useEffect))
-			{
-				if (!s_bEffectEnable)
-				{
-					s_bEffectEnable = true;
-				}
-
-				else if (s_bEffectEnable)
-				{
-					s_bEffectEnable = false;
-					setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-					setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-					s_nLife = 60;
-					s_fRadius = 0.5f;
-				}
-
-				bSetEffect();
-			}
-
-			EffectData *Effect = GetStatus();
-			if (ImGui::Button("default"))
-			{
-				Effect->nPopPos.x = (float)SCREEN_WIDTH / 2;
-				Effect->nPopPos.y = (float)SCREEN_HEIGHT / 2;
-				setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-				setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-				s_fScale = 50.0f;
-				s_nLife = 60;
-				s_fRadius = 0.5f;
-				s_fAngle = 20.5f;
-			}
+//	if (show_demo_window)
+//	{
+//		static float f = 0.0f;
+//		static float fSize = 0.0f;
+//		static int counter = 0;
+//		static int nSize = 0;
+//		static int nItem = 0;
+//		static char Text[8];
+//		static bool bRot = false;
+//		static bool bTexRot = false;
+//		static bool bTexBackRot = false;
+//		static bool bPause = false;
+//		Particle *pParticle = GetParticle();
+//
+//		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+//
+//		//FPS表示
+//		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+//
+//		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too
+//		ImGui::InputText("textbox 1", Text, sizeof(Text));
+//		//ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+//
+//		//別ウィンドウを生成
+//		ImGui::Checkbox("Another Window", &show_another_window);
+//
+//		ImGui::SliderInt("Size", &nSize, 0, 10);
+//		ImGui::SliderFloat("Size", &fSize, 0, 100.0f);
+//		ImGui::SliderFloat("float", &f, 0.0f, 100.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+//
+//		if (ImGui::Button("PAUSE"))
+//		{
+//			system("Pause");
+//		}
+//
+//		nSize = Button(nSize);
+//
+//		//エフェクト関係
+//		if (ImGui::TreeNode("Effecttree1", "EffectSetting"))
+//		{
+//			//rot計算用
+//			static float fDeg = 0.0f;
+//			float rotX = setpos.x * cosf(fDeg) + setpos.x * sinf(fDeg);
+//			float rotY = setpos.y * sinf(fDeg) - setpos.y * cosf(fDeg);
+//			float fAngle = atan2f(rotX, rotY);
+//			setrot = D3DXVECTOR3(rotX, rotY, fAngle);
+//
+//			/*何度かやるとバグる可能性あり*/
+//			if (ImGui::Button("LOAD FILE"))
+//			{
+//				GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
+//			}
+//
+//			if (ImGui::Checkbox("EffectEnable", &useEffect))
+//			{
+//				if (!s_bEffectEnable)
+//				{
+//					s_bEffectEnable = true;
+//				}
+//
+//				else if (s_bEffectEnable)
+//				{
+//					s_bEffectEnable = false;
+//					setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+//					setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+//					s_nLife = 60;
+//					s_fRadius = 0.5f;
+//				}
+//
+//				bSetEffect();
+//			}
+//
 //			EffectData *Effect = GetStatus();
-
-			//セットする位置
-			ImGui::InputFloat3("SettingEffectPos", Effect->nPopPos, "%f");
-			ImGui::SliderFloat("PosX", &setpos.x, 0, (float)SCREEN_WIDTH);
-			ImGui::SliderFloat("PosY", &setpos.y, 0, (float)SCREEN_HEIGHT);
-
-			Effect->nPopPos.x = setpos.x;
-			Effect->nPopPos.y = setpos.y;
-
-			ImGui::InputFloat3("SettingEffectMove", setmove, "%f");
-			ImGui::SliderFloat("MoveX", &setmove.x, -100.0f, 100.0f);
-			ImGui::SliderFloat("MoveY", &setmove.y, -100.0f, 100.0f);
-
-			//詳細
-			if (ImGui::TreeNode("Effecttree2", "Details"))
-			{
-				ImGui::InputFloat3("SettingEffectRot", setrot, "%f");
-				ImGui::SliderFloat("Rot", &fDeg, -D3DX_PI, D3DX_PI);
-
-				//回転方向を変更
-				if (ImGui::Checkbox("BackRot", &bRot))
-				{
-					if (!s_bBackRot)
-					{
-						s_bBackRot = true;
-					}
-
-					else if (s_bBackRot)
-					{
-						s_bBackRot = false;
-					}
-				}
-
-				//テクスチャを回転させるかどうか
-				if (ImGui::Checkbox("TextureRot", &bTexRot))
-				{
-					if (!s_bTextureRot)
-					{
-						s_bTextureRot = true;
-					}
-
-					else if (s_bTextureRot)
-					{
-						s_bTextureRot = false;
-					}
-				}
-
-				//正規化
-				if (fDeg > D3DX_PI)
-				{
-					fDeg -= D3DX_PI * 2;
-				}
-
-				else if (fDeg < -D3DX_PI)
-				{
-					fDeg += D3DX_PI * 2;
-				}
-
-				ImGui::SliderInt("Life", &s_nLife, 0, 500);
-				ImGui::SliderFloat("Radius", &s_fRadius, 0.0f, 100.0f);				//半径
-				ImGui::SliderFloat("Angle", &s_fAngle, 0.0f, 50.0f);				//角度
-				ImGui::SliderFloat("Attenuation", &s_fAttenuation, 0.0f, 10.0f);	//減衰
-
-				//挙動おかしくなっちゃった時用
-				if (ImGui::Button("DataRemove"))
-				{
-					for (int i = 0; i < MAX_EFFECT; i++)
-					{
-						DeleteParticle(i);
-					}
-					RemoveAngle();
-				}
-
-				//ツリーを閉じる
-				ImGui::TreePop();
-			}
-
-			//カラーパレット
-			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-			GetColor();
-
-			//ツリーを閉じる
-			ImGui::TreePop();
-		}
-
-		static float v[] = { 0.390f, 0.575f, 0.565f, 1.000f };
-
-		//ImGui::Bezier("あああ", v);       // draw
-		//float y = ImGui::BezierValue(0.5f, v); // x delta in [0..1] range
-		//{ static float v[] = { 0.680f, -0.55f, 0.265f, 1.550f }; ImGui::Bezier("easeInOutBack", v); }
-
-		ImGui::End();
-	}
+//			if (ImGui::Button("default"))
+//			{
+//				Effect->nPopPos.x = (float)SCREEN_WIDTH / 2;
+//				Effect->nPopPos.y = (float)SCREEN_HEIGHT / 2;
+//				setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+//				setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+//				s_fScale = 50.0f;
+//				s_nLife = 60;
+//				s_fRadius = 0.5f;
+//				s_fAngle = 20.5f;
+//			}
+////			EffectData *Effect = GetStatus();
+//
+//			//セットする位置
+//			ImGui::InputFloat3("SettingEffectPos", Effect->nPopPos, "%f");
+//			ImGui::SliderFloat("PosX", &setpos.x, 0, (float)SCREEN_WIDTH);
+//			ImGui::SliderFloat("PosY", &setpos.y, 0, (float)SCREEN_HEIGHT);
+//
+//			Effect->nPopPos.x = setpos.x;
+//			Effect->nPopPos.y = setpos.y;
+//
+//			ImGui::InputFloat3("SettingEffectMove", setmove, "%f");
+//			ImGui::SliderFloat("MoveX", &setmove.x, -100.0f, 100.0f);
+//			ImGui::SliderFloat("MoveY", &setmove.y, -100.0f, 100.0f);
+//
+//			//詳細
+//			if (ImGui::TreeNode("Effecttree2", "Details"))
+//			{
+//				ImGui::InputFloat3("SettingEffectRot", setrot, "%f");
+//				ImGui::SliderFloat("Rot", &fDeg, -D3DX_PI, D3DX_PI);
+//
+//				//回転方向を変更
+//				if (ImGui::Checkbox("BackRot", &bRot))
+//				{
+//					if (!s_bBackRot)
+//					{
+//						s_bBackRot = true;
+//					}
+//
+//					else if (s_bBackRot)
+//					{
+//						s_bBackRot = false;
+//					}
+//				}
+//
+//				//テクスチャを回転させるかどうか
+//				if (ImGui::Checkbox("TextureRot", &bTexRot))
+//				{
+//					if (!s_bTextureRot)
+//					{
+//						s_bTextureRot = true;
+//					}
+//
+//					else if (s_bTextureRot)
+//					{
+//						s_bTextureRot = false;
+//					}
+//				}
+//
+//				//正規化
+//				if (fDeg > D3DX_PI)
+//				{
+//					fDeg -= D3DX_PI * 2;
+//				}
+//
+//				else if (fDeg < -D3DX_PI)
+//				{
+//					fDeg += D3DX_PI * 2;
+//				}
+//
+//				ImGui::SliderInt("Life", &s_nLife, 0, 500);
+//				ImGui::SliderFloat("Radius", &s_fRadius, 0.0f, 100.0f);				//半径
+//				ImGui::SliderFloat("Angle", &s_fAngle, 0.0f, 50.0f);				//角度
+//				ImGui::SliderFloat("Attenuation", &s_fAttenuation, 0.0f, 10.0f);	//減衰
+//
+//				//挙動おかしくなっちゃった時用
+//				if (ImGui::Button("DataRemove"))
+//				{
+//					for (int i = 0; i < MAX_EFFECT; i++)
+//					{
+//						DeleteParticle(i);
+//					}
+//					RemoveAngle();
+//				}
+//
+//				//ツリーを閉じる
+//				ImGui::TreePop();
+//			}
+//
+//			//カラーパレット
+//			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+//			GetColor();
+//
+//			//ツリーを閉じる
+//			ImGui::TreePop();
+//		}
+//
+//		static float v[] = { 0.390f, 0.575f, 0.565f, 1.000f };
+//
+//		//ImGui::Bezier("あああ", v);       // draw
+//		//float y = ImGui::BezierValue(0.5f, v); // x delta in [0..1] range
+//		//{ static float v[] = { 0.680f, -0.55f, 0.265f, 1.550f }; ImGui::Bezier("easeInOutBack", v); }
+//
+//		ImGui::End();
+//	}
 
 	// 3. Show another simple window.
-	if (show_another_window)
-	{
-		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
+//	if (show_another_window)
+//	{
+//		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+//		ImGui::Text("Hello from another window!");
+//
+//		if (ImGui::Button("Close Me"))
+//		{
+//			show_another_window = false;
+//		}
+//
+//		ImGui::End();
+//	}
+//
+//	////ここが背景ドロー
+//	return show_another_window;
+//}
 
-		if (ImGui::Button("Close Me"))
-		{
-			show_another_window = false;
-		}
-
-		ImGui::End();
-	}
-
-	////ここが背景ドロー
-	return show_another_window;
-}
-
-int Button(int nSize)
-{
-	//ツリーを生成
-	{
-		if (ImGui::Button("1++"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-		{
-			nSize++;
-		}
-
-		if (ImGui::Button("1--"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-		{
-			nSize--;
-		}
-
-		if (ImGui::Button("5++"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-		{
-			nSize += 5;
-		}
-
-		if (ImGui::Button("5--"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-		{
-			nSize -= 5;
-		}
-
-		if (ImGui::Button("remove"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-		{
-			nSize = 0;
-		}
-
-		//ツリーを閉じる
-		ImGui::TreePop();
-	}
-	return nSize;
-}
+//int Button(int nSize)
+//{
+//	//ツリーを生成
+//	{
+//		if (ImGui::Button("1++"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+//		{
+//			nSize++;
+//		}
+//
+//		if (ImGui::Button("1--"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+//		{
+//			nSize--;
+//		}
+//
+//		if (ImGui::Button("5++"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+//		{
+//			nSize += 5;
+//		}
+//
+//		if (ImGui::Button("5--"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+//		{
+//			nSize -= 5;
+//		}
+//
+//		if (ImGui::Button("remove"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+//		{
+//			nSize = 0;
+//		}
+//
+//		//ツリーを閉じる
+//		ImGui::TreePop();
+//	}
+//	return nSize;
+//}
 
 //位置をゲット
-D3DXVECTOR3 GetPos(void)
-{
-	EffectData *Effect = GetStatus();
-	return D3DXVECTOR3(Effect->nPopPos.x, Effect->nPopPos.y, Effect->nPopPos.z);
-}
+//D3DXVECTOR3 GetPos(void)
+//{
+//	EffectData *Effect = GetStatus();
+//	return D3DXVECTOR3(Effect->nPopPos.x, Effect->nPopPos.y, Effect->nPopPos.z);
+//}
 
 //移動量をゲット
 D3DXVECTOR3 GetMove(void)

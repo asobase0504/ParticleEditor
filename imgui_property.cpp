@@ -264,6 +264,11 @@ void UpdateImguiProperty(void)
 		//グラデーション
 		if (ImGui::TreeNode("Effecttree3", "Gradation"))
 		{
+			static float s_fCustR[10];
+			static float s_fCustG[10];
+			static float s_fCustB[10];
+			static float s_fCustA[10];
+			static int s_nSpeed = 1;
 			static int selecttype = 0;
 
 			ImGui::RadioButton("RPlus GSubtract", &selecttype, 1);
@@ -283,10 +288,94 @@ void UpdateImguiProperty(void)
 				
 			}
 
+			ImGui::RadioButton("Custom", &selecttype, 5);
+
+			if (selecttype == 5)
+			{
+				static int s_nSetTime = 0.0f;
+				static float Color[10];
+
+				static int nTypeNum = 0;
+				const char *Items[] = { "Red", "Green", "Blue", "Alpha"};
+				ImGui::Combo("ColorType", &nTypeNum, Items, IM_ARRAYSIZE(Items));
+
+				ImGui::PlotLines("Custom Gradation", Color, IM_ARRAYSIZE(Color), 0, nullptr, 0.0f, 0.5f, ImVec2(0, 100));
+				ImGui::SliderInt("SetTime", &s_nSetTime, 0, 10);
+				ImGui::SliderInt("Speed", &s_nSpeed, 1, 30);
+
+				if (nTypeNum == 0)
+				{
+					ImGui::SliderFloat("Red", &Color[s_nSetTime], 0.0f, 0.5f);
+
+					if (ImGui::Button("Graph Assign"))
+					{
+						for (int i = 0; i < 10; i++)
+						{
+							s_fCustR[i] = Color[i];
+						}
+					}
+				}
+
+				if (nTypeNum == 1)
+				{
+					ImGui::SliderFloat("Green", &Color[s_nSetTime], 0.0f, 0.5f);
+
+					if (ImGui::Button("Graph Assign"))
+					{
+						for (int i = 0; i < 10; i++)
+						{
+							s_fCustG[i] = Color[i];
+						}
+					}
+				}
+
+				if (nTypeNum == 2)
+				{
+					ImGui::SliderFloat("Blue", &Color[s_nSetTime], 0.0f, 0.5f);
+
+					if (ImGui::Button("Graph Assign"))
+					{
+						for (int i = 0; i < 10; i++)
+						{
+							s_fCustB[i] = Color[i];
+						}
+					}
+				}
+
+				if (nTypeNum == 3)
+				{
+					ImGui::SliderFloat("Alpha", &Color[s_nSetTime], 0.0f, 0.5f);
+
+					if (ImGui::Button("Graph Assign"))
+					{
+						for (int i = 0; i < 10; i++)
+						{
+							s_fCustA[i] = Color[i];
+						}
+					}
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("All Zero"))
+				{
+					for (int i = 0; i < 10; i++)
+					{
+						memset(&Color[i], 0, sizeof(Color[i]));
+						memset(&s_fCustR[i], 0, sizeof(s_fCustR[i]));
+						memset(&s_fCustG[i], 0, sizeof(s_fCustG[i]));
+						memset(&s_fCustB[i], 0, sizeof(s_fCustB[i]));
+						memset(&s_fCustA[i], 0, sizeof(s_fCustA[i]));
+					}
+				}
+			}
+
 			ImGui::RadioButton("Gradation None", &selecttype, 0);
 
 			//色変更（ImGui）
 			D3DXCOLOR RandCol = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+			static int s_nCounter;
+			static int s_nTimer;
+			static int s_nColNum;
 
 			switch (selecttype)
 			{
@@ -306,10 +395,37 @@ void UpdateImguiProperty(void)
 				break;
 
 			case 4:
-				RandCol = ((float)imguiParticle.colRandamMin + (((float)rand() * (float)imguiParticle.colRandamMax - (float)imguiParticle.colRandamMin + 1.0f) / (1.0 + RAND_MAX)));
+				RandCol = ((float)imguiParticle.colRandamMin + (((float)rand() * (float)imguiParticle.colRandamMax - (float)imguiParticle.colRandamMin + 1.0f) / (1.0f + RAND_MAX)));
 				imguiParticle.col = RandCol;
 
 				imguiParticle.col.a = 1.0f;
+				break;
+
+			case 5:
+				s_nCounter++;
+
+				if ((s_nCounter % 3) == 0)
+				{//一定時間経過
+					s_nTimer++;
+
+					if (s_nTimer >= 5)
+					{
+						imguiParticle.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], s_fCustA[s_nColNum]);
+						s_nColNum++;
+						s_nTimer = 0;
+					}
+				}
+
+				if (s_nCounter >= 60)
+				{
+					s_nCounter = 0;
+				}
+
+				if (s_nColNum >= 10)
+				{
+					s_nColNum = 0;
+				}
+
 				break;
 
 			case 0:
