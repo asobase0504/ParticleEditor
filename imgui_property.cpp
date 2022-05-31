@@ -121,6 +121,7 @@ void UpdateImguiProperty(void)
 	static bool useEffect = false;
 	static bool s_bRot = false;
 	static bool s_bTexRot = false;
+	static bool s_bUsesrand = false;
 
 	// ウインドウの起動時の場所
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);
@@ -197,6 +198,7 @@ void UpdateImguiProperty(void)
 			imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.col = D3DXCOLOR(0.5f,0.0f,1.0f,1.0f);
 			imguiParticle.nLife = 60;
+			imguiParticle.fScale = 50.0f;
 			imguiParticle.fRadius = 4.5f;
 			imguiParticle.fAngle = 20.5f;
 			imguiParticle.fAttenuation = 0.98f;
@@ -271,6 +273,7 @@ void UpdateImguiProperty(void)
 
 				imguiParticle.colRandamMin = D3DXCOLOR(randColMin, randColMin, randColMin, 1.0f);
 				imguiParticle.colRandamMax = D3DXCOLOR(randColMax, randColMax, randColMax, 1.0f);
+				
 			}
 
 			ImGui::RadioButton("Gradation None", &selecttype, 0);

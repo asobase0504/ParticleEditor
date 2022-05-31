@@ -16,6 +16,7 @@
 #include <imgui_internal.h>
 #include <d3d9.h>
 #include <tchar.h>
+#include <time.h>
 
 //ƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒŠƒ“ƒN
 #pragma comment(lib,"d3d9.lib")
