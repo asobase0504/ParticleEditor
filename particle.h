@@ -33,7 +33,7 @@ struct Particle
 	D3DXVECTOR3 pos;			// 位置
 	D3DXVECTOR3 move;			// 移動量
 	D3DXVECTOR3 moveTransition;	// 移動量の推移量
-	D3DXVECTOR3 rot;			//向き
+	D3DXVECTOR3 rot;			// 向き
 	D3DXCOLOR col;				// 色
 	D3DXCOLOR colRandamMax;		// ランダムな色の範囲(最大)
 	D3DXCOLOR colRandamMin;		// ランダムな色の範囲(最小)
@@ -44,10 +44,13 @@ struct Particle
 	float fAngle;				// 角度
 	float fAttenuation;			// 減衰値
 	float fRadius;				// 半径
+	float fScale;				// テクスチャのサイズ調整用
 	float fWeight;				// 重さ
 	float fWeightTransition;	// 重さの推移量
 	int nLife;					// 寿命
-	bool bBackrot;
+	bool bUseWeight;			// 重さを使用するかどうか
+	bool bBackrot;				// 逆回転させるかどうか
+	bool bTexturerot;			// テクスチャ回転させるかどうか
 	bool bUse;					// 使用しているか
 };
 
