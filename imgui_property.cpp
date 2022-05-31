@@ -292,61 +292,37 @@ void UpdateImguiProperty(void)
 			if (selecttype == 5)
 			{
 				static int s_nSetTime = 0.0f;
-				static float Color[10];
-
 				static int nTypeNum = 0;
 				const char *Items[] = { "Red", "Green", "Blue"};
 				ImGui::Combo("ColorType", &nTypeNum, Items, IM_ARRAYSIZE(Items));
 
-				ImGui::PlotLines("Custom Gradation", Color, IM_ARRAYSIZE(Color), 0, nullptr, 0.0f, 0.5f, ImVec2(0, 100));
-				ImGui::SliderInt("SetTime", &s_nSetTime, 0, 10);
-				ImGui::SliderInt("Speed", &s_nSpeed, 1, 30);
-
 				if (nTypeNum == 0)
 				{
-					ImGui::SliderFloat("Red", &Color[s_nSetTime], 0.0f, 0.5f);
-
-					if (ImGui::Button("Graph Assign"))
-					{
-						for (int i = 0; i < 10; i++)
-						{
-							s_fCustR[i] = Color[i];
-						}
-					}
+					ImGui::PlotLines("Custom Gradation", s_fCustR, IM_ARRAYSIZE(s_fCustR), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+					ImGui::SliderFloat("Red", &s_fCustR[s_nSetTime], -0.5f, 0.5f);
 				}
 
 				if (nTypeNum == 1)
 				{
-					ImGui::SliderFloat("Green", &Color[s_nSetTime], 0.0f, 0.5f);
-
-					if (ImGui::Button("Graph Assign"))
-					{
-						for (int i = 0; i < 10; i++)
-						{
-							s_fCustG[i] = Color[i];
-						}
-					}
+					ImGui::PlotLines("Custom Gradation", s_fCustG, IM_ARRAYSIZE(s_fCustG), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+					ImGui::SliderFloat("Green", &s_fCustG[s_nSetTime], -0.5f, 0.5f);
 				}
 
 				if (nTypeNum == 2)
 				{
-					ImGui::SliderFloat("Blue", &Color[s_nSetTime], 0.0f, 0.5f);
-
-					if (ImGui::Button("Graph Assign"))
-					{
-						for (int i = 0; i < 10; i++)
-						{
-							s_fCustB[i] = Color[i];
-						}
-					}
+					ImGui::PlotLines("Custom Gradation", s_fCustB, IM_ARRAYSIZE(s_fCustB), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+					ImGui::SliderFloat("Blue", &s_fCustB[s_nSetTime], -0.5f, 0.5f);
 				}
 
+				ImGui::SliderInt("SetTime", &s_nSetTime, 0, 10);
+				ImGui::SliderInt("Speed", &s_nSpeed, 1, 30);		//数値が高くなると変化速度がゆっくりになる
+
 				ImGui::SameLine();
+				/*グラフの全ての色の数値を０にする*/
 				if (ImGui::Button("All Zero"))
 				{
 					for (int i = 0; i < 10; i++)
 					{
-						memset(&Color[i], 0, sizeof(Color[i]));
 						memset(&s_fCustR[i], 0, sizeof(s_fCustR[i]));
 						memset(&s_fCustG[i], 0, sizeof(s_fCustG[i]));
 						memset(&s_fCustB[i], 0, sizeof(s_fCustB[i]));
@@ -389,7 +365,7 @@ void UpdateImguiProperty(void)
 			case 5:
 				s_nCounter++;
 
-				if ((s_nCounter % 3) == 0)
+				if ((s_nCounter % s_nSpeed) == 0)
 				{//一定時間経過
 					s_nTimer++;
 
