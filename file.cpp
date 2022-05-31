@@ -8,6 +8,7 @@
 #include "file.h"
 #include "letter.h"
 #include "particle.h"
+#include "imgui_property.h"
 
 Particle DataEffect;
 namespace nl = nlohmann;
@@ -28,6 +29,8 @@ Particle GetStatus(void)
 //============================
 void OutputStatus()
 {
+	DataEffect = GetImguiParticle();
+
 	j["POS"] = {{ "X", DataEffect.pos.x} ,{ "Y", DataEffect.pos.y} ,{ "Z", DataEffect.pos.z } };
 	j["MOVE"] = { { "X", DataEffect.move.x } ,{ "Y", DataEffect.move.y } ,{ "Z", DataEffect.move.z } };
 	j["MOVETRANSITION"] = { { "X", DataEffect.moveTransition.x } ,{ "Y", DataEffect.moveTransition.y } ,{ "Z", DataEffect.moveTransition.z } };
@@ -46,6 +49,7 @@ void OutputStatus()
 	j["WEIGHTTRANSITION"] = DataEffect.fWeightTransition;
 	j["LIFE"] = DataEffect.nLife;
 	j["BACKROT"] = DataEffect.bBackrot;
+	j["SCALE"] = DataEffect.fScale;
 
 	auto jobj = j.dump();
 	std::ofstream writing_file;
@@ -85,6 +89,7 @@ void LoodJson(const wchar_t* cUrl)
 		DataEffect.fWeightTransition = j["WEIGHTTRANSITION"];
 		DataEffect.nLife = j["LIFE"];
 		DataEffect.bBackrot = j["BACKROT"];
+		DataEffect.fScale = j["SCALE"];
 
 	}
 
