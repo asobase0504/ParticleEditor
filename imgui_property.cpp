@@ -10,7 +10,7 @@
 //==================================================
 #include "imgui_property.h"
 #include "main.h"
-
+#include "file.h"
 #include <imgui_internal.h>
 #include <assert.h>
 
@@ -148,7 +148,14 @@ void UpdateImguiProperty(void)
 
 		ImGui::EndMenuBar();
 	}
-
+	if (ImGui::Button("DATA"))
+	{
+		imguiParticle = GetStatus();
+	}
+	if (ImGui::Button("OUT"))
+	{
+		OutputStatus();
+	}
 	// テキスト表示
 	ImGui::Text("FPS  : %.2f", ImGui::GetIO().Framerate);
 	ImGui::Separator();

@@ -65,8 +65,6 @@ void Uninit(void);
 void Update(void);
 void Draw(void);
 
-bool ImGuiText(bool show_demo_window, bool show_another_window);
-int Button(int nSize);
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -555,16 +553,7 @@ void ResetDevice()
 }
 
 
-bool ImGuiText(bool show_demo_window, bool show_another_window)
-{
-	ImGui_ImplDX9_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
 
-	//ImGuiのスタイル変更
-	ImGuiStyle& style = ImGui::GetStyle();
-	style.Colors[ImGuiCol_WindowBg] = ImColor(0.0f, 0.0f, 0.1f, 0.4f);
-	style.Colors[ImGuiCol_TitleBgActive] = ImColor(0.0f, 0.5f, 0.5f, 1.0f);
 
 	// Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 	if (show_demo_window)
@@ -767,7 +756,6 @@ bool ImGuiText(bool show_demo_window, bool show_another_window)
 int Button(int nSize)
 {
 	//ツリーを生成
-	if (ImGui::TreeNode("tree1", "Value"))
 	{
 		if (ImGui::Button("1++"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
 		{
