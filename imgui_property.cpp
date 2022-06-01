@@ -291,33 +291,35 @@ void UpdateImguiProperty(void)
 
 			if (selecttype == 5)
 			{
-				static int s_nSetTime = 0.0f;
+				static int s_nSetTime = 0;
 				static int nTypeNum = 0;
 				const char *Items[] = { "Red", "Green", "Blue"};
 				ImGui::Combo("ColorType", &nTypeNum, Items, IM_ARRAYSIZE(Items));
 
+				//赤
 				if (nTypeNum == 0)
 				{
 					ImGui::PlotLines("Custom Gradation", s_fCustR, IM_ARRAYSIZE(s_fCustR), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
 					ImGui::SliderFloat("Red", &s_fCustR[s_nSetTime], -0.5f, 0.5f);
 				}
 
+				//青
 				if (nTypeNum == 1)
 				{
 					ImGui::PlotLines("Custom Gradation", s_fCustG, IM_ARRAYSIZE(s_fCustG), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
 					ImGui::SliderFloat("Green", &s_fCustG[s_nSetTime], -0.5f, 0.5f);
 				}
 
+				//緑
 				if (nTypeNum == 2)
 				{
 					ImGui::PlotLines("Custom Gradation", s_fCustB, IM_ARRAYSIZE(s_fCustB), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
 					ImGui::SliderFloat("Blue", &s_fCustB[s_nSetTime], -0.5f, 0.5f);
 				}
 
-				ImGui::SliderInt("SetTime", &s_nSetTime, 0, 10);
+				ImGui::SliderInt("SetTime", &s_nSetTime, 0, 9);
 				ImGui::SliderInt("Speed", &s_nSpeed, 1, 30);		//数値が高くなると変化速度がゆっくりになる
 
-				ImGui::SameLine();
 				/*グラフの全ての色の数値を０にする*/
 				if (ImGui::Button("All Zero"))
 				{
