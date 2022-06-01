@@ -6,13 +6,17 @@
 #include <time.h>
 #include "imgui_property.h"
 
-//グローバル変数
+//==================================================
+// グローバル変数
+//==================================================
 static LPDIRECT3DTEXTURE9		s_pTexture[NUM_PARTICLE] = {};	//テクスチャへのポインタ
 static LPDIRECT3DVERTEXBUFFER9	s_pVtxBuff = NULL;	//頂点バッファへのポインタ
 Particle g_aParticle[MAX_PARTICLE];
 float g_fAngle = 0.0f;
 
-//初期化処理
+//--------------------------------------------------
+// 初期化処理
+//--------------------------------------------------
 void InitParticle(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
@@ -71,7 +75,9 @@ void InitParticle(void)
 	s_pVtxBuff->Unlock();
 }
 
-//終了処理
+//--------------------------------------------------
+// 終了処理
+//--------------------------------------------------
 void UninitParticle(void)
 {
 	for (int i = 0; i < NUM_PARTICLE; i++)
@@ -92,19 +98,13 @@ void UninitParticle(void)
 	}
 }
 
-//更新処理
+//--------------------------------------------------
+// 更新処理
+//--------------------------------------------------
 void UpdateParticle(void)
 {
 	//(ImGui)
-	D3DXCOLOR ImColor = GetColor();
-	int ImSelect = GetType();
 	bool bTex = TexUse();
-
-	if (bSetImguiParticle())
-	{
-		
-		SetParticleImgui(GetImguiParticle());
-	}
 
 	if (bTex)
 	{
@@ -124,20 +124,6 @@ void UpdateParticle(void)
 
 		//エフェクトの移動
 		pParticle->pos += pParticle->move;
-
-		//挙動
-		{
-			//*
-			/*g_fAngle += 30.0f * i;
-			pParticle->move.x = sinf(fGRad) * 1.3f;
-			pParticle->move.y = cosf(fGRad) * 1.3f;*/
-
-			//∞
-			/*g_fAngle += 0.7f;
-			pParticle->move.x = sinf((D3DX_PI / 180) * 17 * g_fAngle) * ImAttenuation;
-			pParticle->move.y = sinf((D3DX_PI / 180) * 8 * g_fAngle) * ImAttenuation;*/
-
-		}
 
 		// 推移
 		pParticle->nLife--;	// 体力の減少
@@ -175,7 +161,9 @@ void UpdateParticle(void)
 	}
 }
 
-//描画処理
+//--------------------------------------------------
+// 描画処理
+//--------------------------------------------------
 void DrawParticle(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
@@ -235,65 +223,9 @@ void DrawParticle(void)
 	pDevice->SetTexture(0, NULL);
 }
 
-//設定処理
-void SetParticle(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, float fWidth, float fHeight, PARTICLETYPE type)
-{
-	int ImLife = GetLife();
-	float ImRadius = GetRadius();
-
-	for (int i = 0; i < MAX_PARTICLE; i++)
-	{
-		Particle* pParticle = &g_aParticle[i];
-
-		if (pParticle->bUse)
-		{
-			continue;
-		}
-
-		/* ↓使用されてないなら↓ */
-
-		// データのリセット
-		DeleteParticle(i);
-
-		pParticle->pos = pos;
-		pParticle->move = move;
-		pParticle->col = col;
-		pParticle->type = type;
-		pParticle->fWidth = fWidth;
-		pParticle->fHeight = fHeight;
-
-		//(ImGui)
-		pParticle->nLife = ImLife;
-		pParticle->fRadius = ImRadius;
-
-		pParticle->bUse = true;
-
-		VERTEX_2D*pVtx;		//頂点情報へのポインタ
-
-		//頂点バッファをロックし、頂点情報へのポインタを取得
-		s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
-		pVtx += i * 4;		//頂点データのポインタを4つ分集める
-
-		//頂点座標の設定
-		pVtx[0].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, -pParticle->fHeight, 0.0f);
-		pVtx[1].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, -pParticle->fHeight, 0.0f);
-		pVtx[2].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, pParticle->fHeight, 0.0f);
-		pVtx[3].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, pParticle->fHeight, 0.0f);
-
-		//頂点カラーの設定
-		pVtx[0].col = col;
-		pVtx[1].col = col;
-		pVtx[2].col = col;
-		pVtx[3].col = col;
-
-		//頂点バッファをアンロックする
-		s_pVtxBuff->Unlock();
-
-		break;
-	}
-}
-
+//--------------------------------------------------
+// 設定処理
+//--------------------------------------------------
 void SetParticleImgui(Particle& inParticle)
 {
 	for (int i = 0; i < MAX_PARTICLE; i++)
@@ -317,53 +249,64 @@ void SetParticleImgui(Particle& inParticle)
 		pParticle->fHeight = g_aParticle->fScale;
 		pParticle->bUse = true;
 
-		VERTEX_2D*pVtx;		//頂点情報へのポインタ
+		VERTEX_2D*pVtx;	// 頂点情報へのポインタ
 
-		//頂点バッファをロックし、頂点情報へのポインタを取得
+		// 頂点バッファをロックし、頂点情報へのポインタを取得
 		s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-		pVtx += i * 4;		//頂点データのポインタを4つ分集める
+		pVtx += i * 4;	// 頂点データのポインタを4つ分集める
 
-		//頂点座標の設定
+		// 頂点座標の設定
 		pVtx[0].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, -pParticle->fHeight, 0.0f);
 		pVtx[1].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, -pParticle->fHeight, 0.0f);
 		pVtx[2].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, pParticle->fHeight, 0.0f);
 		pVtx[3].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, pParticle->fHeight, 0.0f);
 
-		//頂点カラーの設定
+		// 頂点カラーの設定
 		pVtx[0].col = pParticle->col;
 		pVtx[1].col = pParticle->col;
 		pVtx[2].col = pParticle->col;
 		pVtx[3].col = pParticle->col;
 
-		//頂点バッファをアンロックする
+		// 頂点バッファをアンロックする
 		s_pVtxBuff->Unlock();
 
-		float ImAttenuation = GetAttenuation();
 		float ImAngle = GetAngle();
-		D3DXVECTOR3 ImRot = GetRot();
-		bool bBackRot = BackRot();
 		float fRad = 0.0f;
 		float fGRad = 0.0f;
 
 		if (pParticle->bBackrot)
 		{
 			//float fRad = (pParticle->fAngle) * (D3DX_PI / 180);
-			fGRad = (ImRot.z - g_fAngle);
+			fGRad = (pParticle->rot.z - g_fAngle);
 		}
 		else
 		{
 			fRad = (pParticle->fAngle) * (D3DX_PI / 180);
-			fGRad = (ImRot.z + g_fAngle);
+			fGRad = (pParticle->rot.z + g_fAngle);
 		}
 
-		//螺旋だったり
-		g_fAngle += ImAngle;
-		pParticle->move.x += (pParticle->fRadius * sinf(fGRad)) * pParticle->fAttenuation;
-		pParticle->move.y += (pParticle->fRadius * cosf(fGRad)) * pParticle->fAttenuation;
+		//挙動
+		{
+			/*
+			g_fAngle += 30.0f * i;
+			pParticle->move.x = sinf(fGRad) * 1.3f;
+			pParticle->move.y = cosf(fGRad) * 1.3f;
+
+			//∞
+			g_fAngle += 0.7f;
+			pParticle->move.x = sinf((D3DX_PI / 180) * 17 * g_fAngle) * pParticle->fAttenuation;
+			pParticle->move.y = sinf((D3DX_PI / 180) * 8 * g_fAngle) * pParticle->fAttenuation;
+			*/
+
+			// 螺旋だったり
+			g_fAngle += ImAngle;
+			pParticle->move.x += (pParticle->fRadius * sinf(fGRad)) * pParticle->fAttenuation;
+			pParticle->move.y += (pParticle->fRadius * cosf(fGRad)) * pParticle->fAttenuation;
+		}
 
 		//======================
-		//正規化
+		// 正規化
 		//======================
 		if (pParticle->fRadius > D3DX_PI)
 		{

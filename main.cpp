@@ -1,9 +1,13 @@
 //=================================================
-//	おもちゃ
 //
-// マップエディタ
-// Auther： Hamada Ryuuga
+// パーティクルエディタ
+// Auther : Hamada Ryuuga
+// Auther ; Tanaka Kouta
+// Auther : Yuda Kaito
 //
+//=================================================
+//=================================================
+// include
 //=================================================
 #include <stdio.h>
 #include <d3d9.h>
@@ -217,7 +221,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 
 				// imguiの更新
 				UpdateImguiProperty();
-				//show_another_window = ImGuiText(show_demo_window, show_another_window);
 
 				// 更新
 				Update();
@@ -238,6 +241,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 
 	//分機能を戻す
 	timeEndPeriod(1);
+
 	// Windowクラスの登録を解除
 	UnregisterClass(CLASS_NAME, wcex.hInstance);
 
@@ -530,7 +534,9 @@ void Draw(void)
 	s_pD3DDevice->Present(NULL, NULL, NULL, NULL);
 }
 
+//---------------------------------------
 //ディレクトリ表示用
+//---------------------------------------
 BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
 {
 	OPENFILENAME ofn;
@@ -561,88 +567,14 @@ int GetFPS()
 	return s_nCountFPS;
 }
 
-
-//移動量をゲット
-D3DXVECTOR3 GetMove(void)
-{
-	return D3DXVECTOR3(setmove.x, setmove.y, setmove.z);
-}
-
-//向きをゲット
-D3DXVECTOR3 GetRot(void)
-{
-	return D3DXVECTOR3(setrot.x, setrot.y, setrot.z);
-}
-
-//色をゲット
-D3DXCOLOR GetColor(void)
-{
-	return D3DXCOLOR(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-}
-
-int GetType(void)
-{
-	return selecttype;
-}
-
-int GetLife(void)
-{
-	return s_nLife;
-}
-
-float GetRandMin(void)
-{
-	return s_fRandMin;
-}
-
-float GetRandMax(void)
-{
-	return s_fRandMax;
-}
-
-float GetRadius(void)
-{
-	return s_fRadius;
-}
-
 float GetAngle(void)
 {
 	return s_fAngle;
 }
 
-float GetAlpha(void)
-{
-	return s_fAlpha;
-}
-
-float GetScale(void)
-{
-	return s_fScale;
-}
-
-float GetAttenuation(void)
-{
-	return s_fAttenuation;
-}
-
 char GetFileName(int nNum)
 {
 	return FileString[nNum];
-}
-
-bool bSetEffect(void)
-{
-	return s_bEffectEnable;
-}
-
-bool BackRot(void)
-{
-	return s_bBackRot;
-}
-
-bool TexRot(void)
-{
-	return s_bTextureRot;
 }
 
 bool TexUse(void)

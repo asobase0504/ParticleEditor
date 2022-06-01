@@ -16,6 +16,7 @@
 // 処理系統
 #include "BG.h"
 #include "particle.h"
+#include "imgui_property.h"
 
 //==================================================
 // 静的変数
@@ -46,6 +47,12 @@ void UpdateGame(void)
 {
 	UpdateBg();			// 背景
 	UpdateParticle();	// パーティクル
+
+	if (bSetImguiParticle())
+	{
+
+		SetParticleImgui(GetImguiParticle());
+	}
 }
 
 //--------------------------------------------------

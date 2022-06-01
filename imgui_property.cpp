@@ -13,7 +13,10 @@
 #include "file.h"
 #include <imgui_internal.h>
 #include <assert.h>
+#include <implot.h>
+
 #define IMGUI_DEFINE_MATH_OPERATORS
+
 
 
 
@@ -48,6 +51,7 @@ void InitImguiProperty(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImPlot::CreateContext();
 
 	// 文字の設定
 	ImGuiIO& io = ImGui::GetIO();
@@ -87,6 +91,8 @@ void UninitImguiProperty(HWND hWnd, WNDCLASSEX wcex)
 
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
+
+	ImPlot::DestroyContext();
 	ImGui::DestroyContext();
 
 	// ウインドウの破壊
@@ -253,8 +259,25 @@ namespace ImGui
 		return changed;
 	}
 }
-
-
+void ShowDemo_DragLines()
+{
+	ImGui::BulletText("水平線と垂直線をクリックしてドラッグします。 ");
+	static double x1 = 0.2;
+	static double x2 = 0.8;
+	static double y1 = 0.25;
+	static double y2 = 0.75;
+	static double f = 0.1;
+	ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+	ImGui::SetNextWindowPos(ImVec2());
+	ImGui::Begin("AAA",nullptr,ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
+	ImVec2 graphWindowSize = ImGui::GetContentRegionAvail(); // ImGui :: GetWindowSize();
+	constexpr size_t GraphAmount = 15;
+	ImVec2 oneGraphSize = ImVec2(-1,graphWindowSize.y / GraphAmount);
+	if (oneGraphSize.y < 150.f)
+	{
+		oneGraphSize.y = 150.f;
+	}
+}
 //--------------------------------------------------
 // 更新
 //--------------------------------------------------
@@ -316,6 +339,8 @@ void UpdateImguiProperty(void)
 	{
 		OutputStatus();
 	}
+	////]ImGuiTable
+
 
 	//グラフ
 	static float v[] = { 0.0f, 0.0f, 1.0f, 1.0f };
@@ -372,16 +397,10 @@ void UpdateImguiProperty(void)
 	ImGui::Text("FPS  : %.2f", ImGui::GetIO().Framerate);
 	ImGui::Separator();
 
+
 	//エフェクト関係
 	if (ImGui::TreeNode("Effecttree1", "EffectSetting"))
 	{
-		//rot計算用
-		static float s_fDeg = 0.0f;
-		float rotX = imguiParticle.pos.x * cosf(s_fDeg) + imguiParticle.pos.x * sinf(s_fDeg);
-		float rotY = imguiParticle.pos.y * sinf(s_fDeg) - imguiParticle.pos.y * cosf(s_fDeg);
-		float fAngle = atan2f(rotX, rotY);
-		imguiParticle.rot = D3DXVECTOR3(rotX, rotY, fAngle);
-
 		imguiParticle.col.a = 1.0f;
 		//imguiParticle.fScale = 50.0f;
 
@@ -396,7 +415,6 @@ void UpdateImguiProperty(void)
 			{
 				s_bEffectEnable = true;
 			}
-
 			else if (s_bEffectEnable)
 			{
 				s_bEffectEnable = false;
@@ -405,14 +423,12 @@ void UpdateImguiProperty(void)
 				imguiParticle.nLife = 60;
 				imguiParticle.fRadius = 0.5f;
 			}
-
-			bSetEffect();
 		}
 
 		if (ImGui::Button("default"))
 		{
-			imguiParticle.pos.x = (float)SCREEN_WIDTH / 2;
-			imguiParticle.pos.y = (float)SCREEN_HEIGHT / 2;
+			imguiParticle.pos.x = (float)SCREEN_WIDTH * 0.5f;
+			imguiParticle.pos.y = (float)SCREEN_HEIGHT * 0.5f;
 			imguiParticle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.col = D3DXCOLOR(0.5f,0.0f,1.0f,1.0f);
@@ -434,6 +450,9 @@ void UpdateImguiProperty(void)
 		//詳細
 		if (ImGui::TreeNode("Effecttree2", "Details"))
 		{
+			//rot計算用
+			static float s_fDeg = 0.0f;
+
 			ImGui::InputFloat3("SettingEffectRot", imguiParticle.rot, "%f");
 			ImGui::SliderFloat("Rot", &s_fDeg, -D3DX_PI, D3DX_PI);
 
@@ -442,14 +461,19 @@ void UpdateImguiProperty(void)
 				imguiParticle.bBackrot = !imguiParticle.bBackrot;
 			}
 
+			float rotX = imguiParticle.pos.x * cosf(s_fDeg) + imguiParticle.pos.x * sinf(s_fDeg);
+			float rotY = imguiParticle.pos.y * sinf(s_fDeg) - imguiParticle.pos.y * cosf(s_fDeg);
+			float fAngle = atan2f(rotX, rotY);
+			imguiParticle.rot = D3DXVECTOR3(rotX, rotY, fAngle);
+
 			//if (ImGui::Checkbox("TextureRot", &bTexRot))
-			if (s_fDeg > D3DX_PI)
+			if (imguiParticle.rot.z > D3DX_PI)
 			{
-				s_fDeg -= D3DX_PI * 2;
+				imguiParticle.rot.z -= D3DX_PI * 2;
 			}
-			else if (s_fDeg < -D3DX_PI)
+			else if (imguiParticle.rot.z < -D3DX_PI)
 			{
-				s_fDeg += D3DX_PI * 2;
+				imguiParticle.rot.z += D3DX_PI * 2;
 			}
 
 			ImGui::SliderFloat("TextureScale", &imguiParticle.fScale, 0.0f, 100.0f);
@@ -470,8 +494,7 @@ void UpdateImguiProperty(void)
 		}
 
 		//カラーパレット
-		ImGui::ColorEdit4("clear color", (float*)&imguiParticle.col); // Edit 3 floats representing a color
-		GetColor();
+		ImGui::ColorEdit4("clear color", (float*)&imguiParticle.col);
 
 		//グラデーション
 		if (ImGui::TreeNode("Effecttree3", "Gradation"))
@@ -546,7 +569,7 @@ void UpdateImguiProperty(void)
 
 			ImGui::RadioButton("Gradation None", &selecttype, 0);
 
-			//色変更（ImGui）
+			//色変更(ImGui)
 			D3DXCOLOR RandCol = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 			static int s_nCounter;
 			static int s_nTimer;
@@ -617,6 +640,8 @@ void UpdateImguiProperty(void)
 		//ツリーを閉じる
 		ImGui::TreePop();
 	}
+
+	ImPlot::ShowDemoWindow();
 
 	ImGui::End();
 
