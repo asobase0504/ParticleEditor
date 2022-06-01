@@ -59,7 +59,6 @@ void InitParticle(void);
 void UninitParticle(void);
 void UpdateParticle(void);
 void DrawParticle(void);
-void SetParticle(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, float fWidth, float fHeight, PARTICLETYPE type);
 void SetParticleImgui(Particle& inParticle);
 void LoadTex(void);
 void DeleteParticle(int nDelete);

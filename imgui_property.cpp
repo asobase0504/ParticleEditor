@@ -259,7 +259,6 @@ void UpdateImguiProperty(void)
 
 		//カラーパレット
 		ImGui::ColorEdit4("clear color", (float*)&imguiParticle.col); // Edit 3 floats representing a color
-		GetColor();
 
 		//グラデーション
 		if (ImGui::TreeNode("Effecttree3", "Gradation"))
