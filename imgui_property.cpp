@@ -98,18 +98,20 @@ void UninitImguiProperty(HWND hWnd, WNDCLASSEX wcex)
 #endif // _DEBUG
 }
 
-
 //--------------------------------------------------
 // 曲線制作サインカーブ
 //--------------------------------------------------
 namespace ImGui
 {
 	template<int steps>
-	void bezier_table(ImVec2 P[4], ImVec2 results[steps + 1]) {
+	void bezier_table(ImVec2 P[4], ImVec2 results[steps + 1]) 
+	{
 		static float C[(steps + 1) * 4], *K = 0;
-		if (!K) {
+		if (!K) 
+		{
 			K = C;
-			for (unsigned step = 0; step <= steps; ++step) {
+			for (unsigned step = 0; step <= steps; ++step) 
+			{
 				float t = (float)step / (float)steps;
 				C[step * 4 + 0] = (1 - t)*(1 - t)*(1 - t);   // * P0
 				C[step * 4 + 1] = 3 * (1 - t)*(1 - t) * t; // * P1
@@ -117,7 +119,8 @@ namespace ImGui
 				C[step * 4 + 3] = t*t*t;               // * P3
 			}
 		}
-		for (unsigned step = 0; step <= steps; ++step) {
+		for (unsigned step = 0; step <= steps; ++step) 
+		{
 			ImVec2 point = {
 				K[step * 4 + 0] * P[0].x + K[step * 4 + 1] * P[1].x + K[step * 4 + 2] * P[2].x + K[step * 4 + 3] * P[3].x,
 				K[step * 4 + 0] * P[0].y + K[step * 4 + 1] * P[1].y + K[step * 4 + 2] * P[2].y + K[step * 4 + 3] * P[3].y
@@ -126,8 +129,9 @@ namespace ImGui
 		}
 	}
 
-	float BezierValue(float dt01, float P[4]) {
-		enum { STEPS = 256 };
+	float BezierValue(float dt01, float P[4]) 
+	{
+		enum { STEPS = 512 };
 		ImVec2 Q[4] = { { 0, 0 },{ P[0], P[1] },{ P[2], P[3] },{ 1, 1 } };
 		ImVec2 results[STEPS + 1];
 		bezier_table<STEPS>(Q, results);
@@ -157,6 +161,8 @@ namespace ImGui
 		// prepare canvas
 		const float avail = GetContentRegionAvail().x;
 		const float dim = ImMin(avail, 128.f);
+
+		/*width, height*/
 		ImVec2 Canvas(dim, dim);
 
 		ImRect bb(Window->DC.CursorPos, Window->DC.CursorPos + Canvas);
@@ -246,41 +252,6 @@ namespace ImGui
 
 		return changed;
 	}
-
-	void ShowBezierDemo()
-	{
-		{ static float v[] = { 0.000f, 0.000f, 1.000f, 1.000f }; Bezier("easeLinear", v); }
-		{ static float v[] = { 0.470f, 0.000f, 0.745f, 0.715f }; Bezier("easeInSine", v); }
-		{ static float v[] = { 0.390f, 0.575f, 0.565f, 1.000f }; Bezier("easeOutSine", v); }
-		{ static float v[] = { 0.445f, 0.050f, 0.550f, 0.950f }; Bezier("easeInOutSine", v); }
-		{ static float v[] = { 0.550f, 0.085f, 0.680f, 0.530f }; Bezier("easeInQuad", v); }
-		{ static float v[] = { 0.250f, 0.460f, 0.450f, 0.940f }; Bezier("easeOutQuad", v); }
-		{ static float v[] = { 0.455f, 0.030f, 0.515f, 0.955f }; Bezier("easeInOutQuad", v); }
-		{ static float v[] = { 0.550f, 0.055f, 0.675f, 0.190f }; Bezier("easeInCubic", v); }
-		{ static float v[] = { 0.215f, 0.610f, 0.355f, 1.000f }; Bezier("easeOutCubic", v); }
-		{ static float v[] = { 0.645f, 0.045f, 0.355f, 1.000f }; Bezier("easeInOutCubic", v); }
-		{ static float v[] = { 0.895f, 0.030f, 0.685f, 0.220f }; Bezier("easeInQuart", v); }
-		{ static float v[] = { 0.165f, 0.840f, 0.440f, 1.000f }; Bezier("easeOutQuart", v); }
-		{ static float v[] = { 0.770f, 0.000f, 0.175f, 1.000f }; Bezier("easeInOutQuart", v); }
-		{ static float v[] = { 0.755f, 0.050f, 0.855f, 0.060f }; Bezier("easeInQuint", v); }
-		{ static float v[] = { 0.230f, 1.000f, 0.320f, 1.000f }; Bezier("easeOutQuint", v); }
-		{ static float v[] = { 0.860f, 0.000f, 0.070f, 1.000f }; Bezier("easeInOutQuint", v); }
-		{ static float v[] = { 0.950f, 0.050f, 0.795f, 0.035f }; Bezier("easeInExpo", v); }
-		{ static float v[] = { 0.190f, 1.000f, 0.220f, 1.000f }; Bezier("easeOutExpo", v); }
-		{ static float v[] = { 1.000f, 0.000f, 0.000f, 1.000f }; Bezier("easeInOutExpo", v); }
-		{ static float v[] = { 0.600f, 0.040f, 0.980f, 0.335f }; Bezier("easeInCirc", v); }
-		{ static float v[] = { 0.075f, 0.820f, 0.165f, 1.000f }; Bezier("easeOutCirc", v); }
-		{ static float v[] = { 0.785f, 0.135f, 0.150f, 0.860f }; Bezier("easeInOutCirc", v); }
-		{ static float v[] = { 0.600f, -0.28f, 0.735f, 0.045f }; Bezier("easeInBack", v); }
-		{ static float v[] = { 0.175f, 0.885f, 0.320f, 1.275f }; Bezier("easeOutBack", v); }
-		{ static float v[] = { 0.680f, -0.55f, 0.265f, 1.550f }; Bezier("easeInOutBack", v); }
-		// easeInElastic: not a bezier
-		// easeOutElastic: not a bezier
-		// easeInOutElastic: not a bezier
-		// easeInBounce: not a bezier
-		// easeOutBounce: not a bezier
-		// easeInOutBounce: not a bezier
-	}
 }
 
 
@@ -346,11 +317,56 @@ void UpdateImguiProperty(void)
 		OutputStatus();
 	}
 
-	static float v[] = { 0.390f, 0.575f, 0.565f, 1.000f };
-	ImGui::Bezier("あああ", v);       // draw
+	//グラフ
+	static float v[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	ImGui::Bezier("test22", v);       // draw
 	float y = ImGui::BezierValue(0.5f, v); // x delta in [0..1] range
 
-	{ static float v[] = { 0.680f, -0.55f, 0.265f, 1.550f }; ImGui::Bezier("easeInOutBack", v); }
+	//グラフの四角からでないようにするやつ
+	{
+		if (v[0] <= 0.0f)
+		{
+			v[0] = 0.0f;
+		}
+
+		if (v[0] >= 1.0f)
+		{
+			v[0] = 1.0f;
+		}
+
+		if (v[1] <= 0.0f)
+		{
+			v[1] = 0.0f;
+		}
+
+		if (v[1] >= 1.0f)
+		{
+			v[1] = 1.0f;
+		}
+
+		if (v[2] >= 1.0f)
+		{
+			v[2] = 1.0f;
+		}
+
+		if (v[2] <= 0.0f)
+		{
+			v[2] = 0.0f;
+		}
+
+		if (v[3] >= 1.0f)
+		{
+			v[3] = 1.0f;
+		}
+
+		if (v[3] <= 0.0f)
+		{
+			v[3] = 0.0f;
+		}
+	}
+
+	//{ static float v[] = { 0.680f, -0.55f, 0.265f, 1.550f }; 
+	//ImGui::Bezier("test", v); }
 
 	// テキスト表示
 	ImGui::Text("FPS  : %.2f", ImGui::GetIO().Framerate);
