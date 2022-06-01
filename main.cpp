@@ -301,9 +301,30 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	int nID;//返り値を格納
 	static HWND hWndEditlnput1;		//入力ウィンドウハンドル(識別子)
 
+	char buffer1[MAX_PATH];
+	int i, _size;
+
 	switch (uMsg)
 	{
 
+	case WM_CREATE:
+		//ファイルドロップを受け取れるように設定する
+		DragAcceptFiles(hWnd, true);
+		break;
+
+	case WM_DROPFILES:
+		//ドロップされたファイル数を取得する
+		_size = DragQueryFile((HDROP)wParam, -1, buffer1, MAX_PATH);
+		for (i = 0; i<_size; i++)
+		{
+			//ドロップされたファイル名を取得する
+			DragQueryFile((HDROP)wParam, i, buffer1, MAX_PATH);
+
+		}
+		MessageBox(hWnd, buffer1, "情報", MB_OK);
+		//ファイル情報の内部データを解放する
+		DragFinish((HDROP)wParam);
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

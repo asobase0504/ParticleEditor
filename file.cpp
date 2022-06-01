@@ -51,6 +51,7 @@ void OutputStatus()
 	j["BACKROT"] = DataEffect.bBackrot;
 	j["SCALE"] = DataEffect.fScale;
 
+
 	auto jobj = j.dump();
 	std::ofstream writing_file;
 	const std::string pathToJSON = "data/FILE/DataEffectOutput.json";
