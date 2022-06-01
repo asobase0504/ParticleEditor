@@ -551,29 +551,9 @@ float GetAngle(void)
 	return s_fAngle;
 }
 
-float GetAlpha(void)
-{
-	return s_fAlpha;
-}
-
 char GetFileName(int nNum)
 {
 	return FileString[nNum];
-}
-
-bool bSetEffect(void)
-{
-	return s_bEffectEnable;
-}
-
-bool BackRot(void)
-{
-	return s_bBackRot;
-}
-
-bool TexRot(void)
-{
-	return s_bTextureRot;
 }
 
 bool TexUse(void)
