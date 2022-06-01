@@ -13,7 +13,10 @@
 #include "file.h"
 #include <imgui_internal.h>
 #include <assert.h>
+#include <implot.h>
+
 #define IMGUI_DEFINE_MATH_OPERATORS
+
 
 
 
@@ -48,6 +51,7 @@ void InitImguiProperty(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImPlot::CreateContext();
 
 	// 文字の設定
 	ImGuiIO& io = ImGui::GetIO();
@@ -87,6 +91,8 @@ void UninitImguiProperty(HWND hWnd, WNDCLASSEX wcex)
 
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
+
+	ImPlot::DestroyContext();
 	ImGui::DestroyContext();
 
 	// ウインドウの破壊
@@ -282,8 +288,25 @@ namespace ImGui
 		// easeInOutBounce: not a bezier
 	}
 }
-
-
+void ShowDemo_DragLines()
+{
+	ImGui::BulletText("水平線と垂直線をクリックしてドラッグします。 ");
+	static double x1 = 0.2;
+	static double x2 = 0.8;
+	static double y1 = 0.25;
+	static double y2 = 0.75;
+	static double f = 0.1;
+	ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+	ImGui::SetNextWindowPos(ImVec2());
+	ImGui::Begin("AAA",nullptr,ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
+	ImVec2 graphWindowSize = ImGui::GetContentRegionAvail(); // ImGui :: GetWindowSize();
+	constexpr size_t GraphAmount = 15;
+	ImVec2 oneGraphSize = ImVec2(-1,graphWindowSize.y / GraphAmount);
+	if (oneGraphSize.y < 150.f)
+	{
+		oneGraphSize.y = 150.f;
+	}
+}
 //--------------------------------------------------
 // 更新
 //--------------------------------------------------
@@ -345,6 +368,8 @@ void UpdateImguiProperty(void)
 	{
 		OutputStatus();
 	}
+	////]ImGuiTable
+
 
 	static float v[] = { 0.390f, 0.575f, 0.565f, 1.000f };
 	ImGui::Bezier("あああ", v);       // draw
@@ -355,6 +380,7 @@ void UpdateImguiProperty(void)
 	// テキスト表示
 	ImGui::Text("FPS  : %.2f", ImGui::GetIO().Framerate);
 	ImGui::Separator();
+
 
 	//エフェクト関係
 	if (ImGui::TreeNode("Effecttree1", "EffectSetting"))
@@ -528,7 +554,7 @@ void UpdateImguiProperty(void)
 
 			ImGui::RadioButton("Gradation None", &selecttype, 0);
 
-			//色変更（ImGui）
+			//色変更(ImGui)
 			D3DXCOLOR RandCol = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 			static int s_nCounter;
 			static int s_nTimer;
@@ -599,6 +625,8 @@ void UpdateImguiProperty(void)
 		//ツリーを閉じる
 		ImGui::TreePop();
 	}
+
+	ImPlot::ShowDemoWindow();
 
 	ImGui::End();
 
