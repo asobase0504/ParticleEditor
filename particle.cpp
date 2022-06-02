@@ -168,11 +168,6 @@ void DrawParticle(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
 
-	//アルファブレンディングを加算合成に設定
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-
 	//点に貼る(true)、ポリゴンに貼る(false)
 	//pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE,true);
 
@@ -197,6 +192,29 @@ void DrawParticle(void)
 
 		/* ↓使用しているなら↓ */
 
+		switch (g_aParticle[nCnt].alphaBlend)
+		{
+		case TYPE_NONE:		// 乗算
+			break;
+
+		case TYPE_ADD:		// 加算
+			//アルファブレンディングを加算合成に設定
+			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+			break;
+
+		case TYPE_SUB:			// 減算
+			// αブレンディングを減算合成に設定
+			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
+			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+			break;
+
+		default:
+			break;
+		}
+		
 		//頂点バッファをデータストリームに設定
 		pDevice->SetStreamSource(0, s_pVtxBuff, 0, sizeof(VERTEX_2D));
 
@@ -209,15 +227,15 @@ void DrawParticle(void)
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
 		//pDevice->DrawPrimitive(D3DPT_POINTLIST,0, nCnt);
+
+		//αブレンディングを元に戻す
+		pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+		pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
 
 	//ポイントスプライトを解除する
 	//pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE, false);
-
-	//αブレンディングを元に戻す
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	//テクスチャを引き継がない
 	pDevice->SetTexture(0, NULL);
@@ -244,6 +262,9 @@ void SetParticleImgui(Particle& inParticle)
 
 		*pParticle = inParticle;
 		pParticle->type = PARTICLETYPE_NORMAL;
+
+		// αブレンディングの種別
+		pParticle->alphaBlend = g_aParticle->alphaBlend;
 
 		pParticle->fWidth = g_aParticle->fScale;
 		pParticle->fHeight = g_aParticle->fScale;

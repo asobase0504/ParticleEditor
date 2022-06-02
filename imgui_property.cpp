@@ -643,6 +643,20 @@ void UpdateImguiProperty(void)
 			ImGui::TreePop();
 		}
 
+		// αブレンディングの種類
+		if (ImGui::TreeNode("Effecttree4", "AlphaBlending"))
+		{
+			// 変数宣言
+			int	nBlendingType = (int)imguiParticle.alphaBlend;		// 種別変更用の変数
+
+			ImGui::SliderInt("AlphaBlendingType", &nBlendingType, 0, 2);
+
+			imguiParticle.alphaBlend = (ALPHABLENDTYPE)nBlendingType;
+
+			//ツリーを閉じる
+			ImGui::TreePop();
+		}
+
 		//ツリーを閉じる
 		ImGui::TreePop();
 	}
