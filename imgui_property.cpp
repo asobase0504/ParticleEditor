@@ -553,7 +553,7 @@ void UpdateImguiProperty(void)
 					ImGui::SliderFloat("Blue", &s_fCustB[s_nSetTime], -0.5f, 0.5f);
 				}
 
-				ImGui::SliderInt("SetTime", &s_nSetTime, 0, 9);
+				ImGui::SliderInt("SetKey", &s_nSetTime, 0, 9);
 				ImGui::SliderInt("Speed", &s_nSpeed, 1, 30);		//数値が高くなると変化速度がゆっくりになる
 
 				/*グラフの全ての色の数値を０にする*/
@@ -601,6 +601,12 @@ void UpdateImguiProperty(void)
 
 			case 5:
 				s_nCounter++;
+
+				//ゼロ除算回避
+				if (s_nSpeed <= 0)
+				{
+					s_nSpeed = 1;
+				}
 
 				if ((s_nCounter % s_nSpeed) == 0)
 				{//一定時間経過

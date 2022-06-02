@@ -846,44 +846,44 @@ void ShowDemo_Images() {
     }
 }
 
-void ShowDemo_RealtimePlots() {
-    ImGui::BulletText("Move your mouse to change the data!");
-    ImGui::BulletText("This example assumes 60 FPS. Higher FPS requires larger buffer size.");
-    static ScrollingBuffer sdata1, sdata2;
-    static RollingBuffer   rdata1, rdata2;
-    ImVec2 mouse = ImGui::GetMousePos();
-    static float t = 0;
-    t += ImGui::GetIO().DeltaTime;
-    sdata1.AddPoint(t, mouse.x * 0.0005f);
-    rdata1.AddPoint(t, mouse.x * 0.0005f);
-    sdata2.AddPoint(t, mouse.y * 0.0005f);
-    rdata2.AddPoint(t, mouse.y * 0.0005f);
-
-    static float history = 10.0f;
-    ImGui::SliderFloat("History",&history,1,30,"%.1f s");
-    rdata1.Span = history;
-    rdata2.Span = history;
-
-    static ImPlotAxisFlags flags = ImPlotAxisFlags_NoTickLabels;
-
-    if (ImPlot::BeginPlot("##Scrolling", ImVec2(-1,150))) {
-        ImPlot::SetupAxes(NULL, NULL, flags, flags);
-        ImPlot::SetupAxisLimits(ImAxis_X1,t - history, t, ImGuiCond_Always);
-        ImPlot::SetupAxisLimits(ImAxis_Y1,0,1);
-        ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL,0.5f);
-        ImPlot::PlotShaded("Mouse X", &sdata1.Data[0].x, &sdata1.Data[0].y, sdata1.Data.size(), -INFINITY, sdata1.Offset, 2 * sizeof(float));
-        ImPlot::PlotLine("Mouse Y", &sdata2.Data[0].x, &sdata2.Data[0].y, sdata2.Data.size(), sdata2.Offset, 2*sizeof(float));
-        ImPlot::EndPlot();
-    }
-    if (ImPlot::BeginPlot("##Rolling", ImVec2(-1,150))) {
-        ImPlot::SetupAxes(NULL, NULL, flags, flags);
-        ImPlot::SetupAxisLimits(ImAxis_X1,0,history, ImGuiCond_Always);
-        ImPlot::SetupAxisLimits(ImAxis_Y1,0,1);
-        ImPlot::PlotLine("Mouse X", &rdata1.Data[0].x, &rdata1.Data[0].y, rdata1.Data.size(), 0, 2 * sizeof(float));
-        ImPlot::PlotLine("Mouse Y", &rdata2.Data[0].x, &rdata2.Data[0].y, rdata2.Data.size(), 0, 2 * sizeof(float));
-        ImPlot::EndPlot();
-    }
-}
+//void ShowDemo_RealtimePlots() {
+//    ImGui::BulletText("Move your mouse to change the data!");
+//    ImGui::BulletText("This example assumes 60 FPS. Higher FPS requires larger buffer size.");
+//    static ScrollingBuffer sdata1, sdata2;
+//    static RollingBuffer   rdata1, rdata2;
+//    ImVec2 mouse = ImGui::GetMousePos();
+//    static float t = 0;
+//    t += ImGui::GetIO().DeltaTime;
+//    sdata1.AddPoint(t, mouse.x * 0.0005f);
+//    rdata1.AddPoint(t, mouse.x * 0.0005f);
+//    sdata2.AddPoint(t, mouse.y * 0.0005f);
+//    rdata2.AddPoint(t, mouse.y * 0.0005f);
+//
+//    static float history = 10.0f;
+//    ImGui::SliderFloat("History",&history,1,30,"%.1f s");
+//    rdata1.Span = history;
+//    rdata2.Span = history;
+//
+//    static ImPlotAxisFlags flags = ImPlotAxisFlags_NoTickLabels;
+//
+//    if (ImPlot::BeginPlot("##Scrolling", ImVec2(-1,150))) {
+//        ImPlot::SetupAxes(NULL, NULL, flags, flags);
+//        ImPlot::SetupAxisLimits(ImAxis_X1,t - history, t, ImGuiCond_Always);
+//        ImPlot::SetupAxisLimits(ImAxis_Y1,0,1);
+//        ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL,0.5f);
+//        ImPlot::PlotShaded("Mouse X", &sdata1.Data[0].x, &sdata1.Data[0].y, sdata1.Data.size(), -INFINITY, sdata1.Offset, 2 * sizeof(float));
+//        ImPlot::PlotLine("Mouse Y", &sdata2.Data[0].x, &sdata2.Data[0].y, sdata2.Data.size(), sdata2.Offset, 2*sizeof(float));
+//        ImPlot::EndPlot();
+//    }
+//    if (ImPlot::BeginPlot("##Rolling", ImVec2(-1,150))) {
+//        ImPlot::SetupAxes(NULL, NULL, flags, flags);
+//        ImPlot::SetupAxisLimits(ImAxis_X1,0,history, ImGuiCond_Always);
+//        ImPlot::SetupAxisLimits(ImAxis_Y1,0,1);
+//        ImPlot::PlotLine("Mouse X", &rdata1.Data[0].x, &rdata1.Data[0].y, rdata1.Data.size(), 0, 2 * sizeof(float));
+//        ImPlot::PlotLine("Mouse Y", &rdata2.Data[0].x, &rdata2.Data[0].y, rdata2.Data.size(), 0, 2 * sizeof(float));
+//        ImPlot::EndPlot();
+//    }
+//}
 
 void ShowDemo_MarkersAndText() {
     static float mk_size = ImPlot::GetStyle().MarkerSize;
@@ -1390,7 +1390,9 @@ void ShowDemo_Querying()
     static ImVector<ImPlotRect> rects;
     static ImPlotRect limits, select;
     static bool init = true;
-    if (init) {
+
+    if (init) 
+	{
         for (int i = 0; i < 1; ++i)
         {
             double x = RandomRange(0.0, 0.0);
@@ -1400,22 +1402,62 @@ void ShowDemo_Querying()
         init = false;
     }
 
-    ImGui::BulletText("Box select and left click mouse to create a new query rect.");
-    ImGui::BulletText("Ctrl + click in the plot area to draw points.");
-
     if (ImGui::Button("Clear Queries"))
         rects.shrink(0);
+
+	static ScrollingBuffer sdata1, sdata2;
+	static RollingBuffer   rdata1, rdata2;
+	ImVec2 mouse = ImGui::GetMousePos();
+	static bool bPlay = false;
+	static float s_fStartTimeA = rdata1.Span;
+	static float s_fStartTimeB = rdata2.Span;
+	static float s_fStopTime = 0.0f;
+	static float s_History = 10.0f;
+	static float t = 0;
+	t += ImGui::GetIO().DeltaTime;
+
+	//グラフを再生させる
+	if (ImGui::Checkbox("Play", &bPlay))
+	{
+		rdata1.Span = s_History;
+		rdata2.Span = s_History;
+	}
+
+	//グラフを再生して変化した数値を初期値に戻す
+	ImGui::SameLine();
+	if (ImGui::Button("Init Val"))
+	{
+		t = 0;
+		s_fStopTime = 0.0f;
+		rdata1.Span = s_fStartTimeA;
+		rdata2.Span = s_fStartTimeB;
+	}
+
+	//if (ImPlot::BeginPlot("##Scrolling", ImVec2(-1, 150))) {
+		//ImPlot::PlotShaded("Mouse X", &sdata1.Data[0].x, &sdata1.Data[0].y, sdata1.Data.size(), -INFINITY, sdata1.Offset, 2 * sizeof(float));
+		//ImPlot::PlotLine("Mouse Y", &sdata2.Data[0].x, &sdata2.Data[0].y, sdata2.Data.size(), sdata2.Offset, 2 * sizeof(float));
+		//ImPlot::EndPlot();
+	//}
 
     if (ImPlot::BeginPlot("##Centroid")) 
 	{
         ImPlot::SetupAxesLimits(0,1,0,1);
+
+		if (bPlay)
+		{
+			//再生中のグラフの拡大
+			ImGui::SliderFloat("History", &s_History, 1, 30, "%.1f s");
+
+			ImPlot::SetupAxisLimits(ImAxis_X1, t - s_History, t, ImGuiCond_Always);
+			ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
+			ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
+		}
 
 		/*点置くところ*/
         if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(0) && ImGui::GetIO().KeyCtrl)
 		{
             ImPlotPoint pt = ImPlot::GetPlotMousePos();
             data.push_back(pt);
-
         }
 
         ImPlot::PlotScatter("Points", &data[0].x, &data[0].y, data.size(), 0, 2 * sizeof(double));
@@ -2007,7 +2049,8 @@ void ShowDemoWindow(bool* p_open) {
     ImGui::Spacing();
 
     if (ImGui::BeginTabBar("ImPlotDemoTabs")) {
-       /* if (ImGui::BeginTabItem("Plots")) {
+       //if (ImGui::BeginTabItem("Plots")) {
+		   /*
             if (ImGui::CollapsingHeader("Line Plots"))
                 ShowDemo_LinePlots();
             if (ImGui::CollapsingHeader("Filled Line Plots"))
@@ -2016,8 +2059,12 @@ void ShowDemoWindow(bool* p_open) {
                 ShowDemo_ShadedPlots();
             if (ImGui::CollapsingHeader("Scatter Plots"))
                 ShowDemo_ScatterPlots();
-            if (ImGui::CollapsingHeader("Realtime Plots"))
-                ShowDemo_RealtimePlots();
+				*/
+
+          /*  if (ImGui::CollapsingHeader("Realtime Plots"))
+                ShowDemo_RealtimePlots();*/
+
+			/*
             if (ImGui::CollapsingHeader("Stairstep Plots"))
                 ShowDemo_StairstepPlots();
             if (ImGui::CollapsingHeader("Bar Plots"))
@@ -2044,10 +2091,14 @@ void ShowDemoWindow(bool* p_open) {
                 ShowDemo_DigitalPlots();
             if (ImGui::CollapsingHeader("Images"))
                 ShowDemo_Images();
-            if (ImGui::CollapsingHeader("Markers and Text"))
-                ShowDemo_MarkersAndText();
-            ImGui::EndTabItem();
-        }
+				*/
+
+        //    if (ImGui::CollapsingHeader("Markers and Text"))
+        //        ShowDemo_MarkersAndText();
+        //    ImGui::EndTabItem();
+        //}
+
+	   /*
         if (ImGui::BeginTabItem("Subplots")) {
             if (ImGui::CollapsingHeader("Sizing"))
                 ShowDemo_SubplotsSizing();
