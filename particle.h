@@ -27,6 +27,19 @@ struct ParticleTex
 	float size;
 };
 
+//-------------------------------------------------
+// エフェクトのαブレンドの種別の列挙型
+// Auther : 唐﨑結斗
+// 概要 : 乗算、加算、減算
+//-------------------------------------------------
+enum ALPHABLENDTYPE 
+{
+	TYPE_ADD = 0,		// 加算
+	TYPE_SUB,			// 減算
+	TYPE_NONE,			// 乗算
+	MAX_TYPE,			// 種別の最大数
+};
+
 //エフェクトの構造体の定義
 struct Particle
 {
@@ -39,6 +52,7 @@ struct Particle
 	D3DXCOLOR colRandamMin;		// ランダムな色の範囲(最小)
 	D3DXCOLOR colTransition;	// 色の推移量
 	PARTICLETYPE type;			// エフェクトの種類
+	ALPHABLENDTYPE alphaBlend;	// αブレンディングの種別
 	float fWidth;				// 幅
 	float fHeight;				// 高さ
 	float fAngle;				// 角度
