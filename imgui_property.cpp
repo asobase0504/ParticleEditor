@@ -342,7 +342,6 @@ void UpdateImguiProperty(void)
 	}
 	////]ImGuiTable
 
-
 	//グラフ
 	static float v[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 	ImGui::Bezier("test22", v);       // draw
@@ -390,9 +389,6 @@ void UpdateImguiProperty(void)
 			v[3] = 0.0f;
 		}
 	}
-
-	//{ static float v[] = { 0.680f, -0.55f, 0.265f, 1.550f }; 
-	//ImGui::Bezier("test", v); }
 
 	// テキスト表示
 	ImGui::Text("FPS  : %.2f", ImGui::GetIO().Framerate);
@@ -466,8 +462,7 @@ void UpdateImguiProperty(void)
 			float rotY = imguiParticle.pos.y * sinf(s_fDeg) - imguiParticle.pos.y * cosf(s_fDeg);
 			float fAngle = atan2f(rotX, rotY);
 			imguiParticle.rot = D3DXVECTOR3(rotX, rotY, fAngle);
-
-			//if (ImGui::Checkbox("TextureRot", &bTexRot))
+			
 			if (imguiParticle.rot.z > D3DX_PI)
 			{
 				imguiParticle.rot.z -= D3DX_PI * 2;
@@ -506,9 +501,18 @@ void UpdateImguiProperty(void)
 			static int s_nSpeed = 1;
 			static int selecttype = 0;
 
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			ImGui::RadioButton("RPlus GSubtract", &selecttype, 1);
+			ImGui::PopStyleColor();
+
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
 			ImGui::RadioButton("GPlus BSubtract", &selecttype, 2);
+			ImGui::PopStyleColor();
+
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.4f, 1.0f, 1.0f));
 			ImGui::RadioButton("BPlus RSubtract", &selecttype, 3);
+			ImGui::PopStyleColor();
+
 			ImGui::RadioButton("Random", &selecttype, 4);
 
 			if (selecttype == 4)
@@ -536,21 +540,30 @@ void UpdateImguiProperty(void)
 				if (nTypeNum == 0)
 				{
 					ImGui::PlotLines("Custom Gradation", s_fCustR, IM_ARRAYSIZE(s_fCustR), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
-					ImGui::SliderFloat("Red", &s_fCustR[s_nSetTime], -0.5f, 0.5f);
-				}
 
-				//青
-				if (nTypeNum == 1)
-				{
-					ImGui::PlotLines("Custom Gradation", s_fCustG, IM_ARRAYSIZE(s_fCustG), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
-					ImGui::SliderFloat("Green", &s_fCustG[s_nSetTime], -0.5f, 0.5f);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+					ImGui::SliderFloat("Red", &s_fCustR[s_nSetTime], -0.5f, 0.5f);
+					ImGui::PopStyleColor();
 				}
 
 				//緑
+				if (nTypeNum == 1)
+				{
+					ImGui::PlotLines("Custom Gradation", s_fCustG, IM_ARRAYSIZE(s_fCustG), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+					ImGui::SliderFloat("Green", &s_fCustG[s_nSetTime], -0.5f, 0.5f);
+					ImGui::PopStyleColor();
+				}
+
+				//青
 				if (nTypeNum == 2)
 				{
 					ImGui::PlotLines("Custom Gradation", s_fCustB, IM_ARRAYSIZE(s_fCustB), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.6f, 1.0f, 1.0f));
 					ImGui::SliderFloat("Blue", &s_fCustB[s_nSetTime], -0.5f, 0.5f);
+					ImGui::PopStyleColor();
 				}
 
 				ImGui::SliderInt("SetKey", &s_nSetTime, 0, 9);
@@ -638,7 +651,7 @@ void UpdateImguiProperty(void)
 				break;
 			}
 
-			ImGui::SliderFloat("Alpha", &imguiParticle.colTransition.a, -1.0f, 0.0f);
+			ImGui::SliderFloat("Alpha", &imguiParticle.colTransition.a, -0.5f, 0.0f);
 
 			ImGui::TreePop();
 		}
@@ -649,7 +662,9 @@ void UpdateImguiProperty(void)
 			// 変数宣言
 			int	nBlendingType = (int)imguiParticle.alphaBlend;		// 種別変更用の変数
 
-			ImGui::SliderInt("AlphaBlendingType", &nBlendingType, 0, 2);
+			ImGui::RadioButton("AddBlend", &nBlendingType, 0);
+			ImGui::RadioButton("SubBlend", &nBlendingType, 1);
+			ImGui::RadioButton("BlendNone", &nBlendingType, 2);
 
 			imguiParticle.alphaBlend = (ALPHABLENDTYPE)nBlendingType;
 
