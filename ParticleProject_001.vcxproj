@@ -180,6 +180,7 @@
     <ClCompile Include="letter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="particle.cpp" />
+    <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BG.h" />
@@ -202,6 +203,7 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="resource1.h" />
+    <ClInclude Include="utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
