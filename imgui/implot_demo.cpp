@@ -976,7 +976,8 @@ void ShowDemo_TimeAxes() {
     if (ImPlot::BeginPlot("##Time", ImVec2(-1,0))) {
         ImPlot::SetupAxis(ImAxis_X1, NULL, ImPlotAxisFlags_Time);
         ImPlot::SetupAxesLimits(t_min,t_max,0,1);
-        if (data != NULL) {
+        if (data != NULL) 
+		{
             // downsample our data
             int downsample = (int)ImPlot::GetPlotLimits().X.Size() / 1000 + 1;
             int start = (int)(ImPlot::GetPlotLimits().X.Min - t_min);
@@ -987,6 +988,7 @@ void ShowDemo_TimeAxes() {
             // plot it
             ImPlot::PlotLine("Time Series", &data->Ts[start], &data->Ys[start], size, 0, sizeof(double)*downsample);
         }
+
         // plot time now
         double t_now = (double)time(0);
         double y_now = HugeTimeData::GetY(t_now);
@@ -1407,11 +1409,15 @@ void ShowDemo_Querying()
     if (ImPlot::BeginPlot("##Centroid")) 
 	{
         ImPlot::SetupAxesLimits(0,1,0,1);
-        if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(0) && ImGui::GetIO().KeyCtrl) {
+
+		/*“_’u‚­‚Æ‚±‚ë*/
+        if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(0) && ImGui::GetIO().KeyCtrl)
+		{
             ImPlotPoint pt = ImPlot::GetPlotMousePos();
             data.push_back(pt);
 
         }
+
         ImPlot::PlotScatter("Points", &data[0].x, &data[0].y, data.size(), 0, 2 * sizeof(double));
         if (ImPlot::IsPlotSelected())
 		{
