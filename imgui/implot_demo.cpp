@@ -589,99 +589,6 @@ void ShowDemo_InfiniteLines() {
     }
 }
 
-void ShowDemo_PieCharts() {
-    static const char* labels1[]   = {"Frogs","Hogs","Dogs","Logs"};
-    static float data1[]           = {0.15f,  0.30f,  0.2f, 0.05f};
-    static bool normalize          = false;
-    ImGui::SetNextItemWidth(250);
-    ImGui::DragFloat4("Values", data1, 0.01f, 0, 1);
-    if ((data1[0] + data1[1] + data1[2] + data1[3]) < 1) {
-        ImGui::SameLine();
-        ImGui::Checkbox("Normalize", &normalize);
-    }
-
-    if (ImPlot::BeginPlot("##Pie1", ImVec2(250,250), ImPlotFlags_Equal | ImPlotFlags_NoMouseText)) {
-        ImPlot::SetupAxes(NULL, NULL, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
-        ImPlot::SetupAxesLimits(0, 1, 0, 1);
-        ImPlot::PlotPieChart(labels1, data1, 4, 0.5, 0.5, 0.4, normalize, "%.2f");
-        ImPlot::EndPlot();
-    }
-
-    ImGui::SameLine();
-
-    static const char* labels2[]   = {"A","B","C","D","E"};
-    static int data2[]             = {1,1,2,3,5};
-
-    ImPlot::PushColormap(ImPlotColormap_Pastel);
-    if (ImPlot::BeginPlot("##Pie2", ImVec2(250,250), ImPlotFlags_Equal | ImPlotFlags_NoMouseText)) {
-        ImPlot::SetupAxes(NULL, NULL, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
-        ImPlot::SetupAxesLimits(0, 1, 0, 1);
-        ImPlot::PlotPieChart(labels2, data2, 5, 0.5, 0.5, 0.4, true, "%.0f", 180);
-        ImPlot::EndPlot();
-    }
-    ImPlot::PopColormap();
-}
-
-void ShowDemo_Heatmaps() {
-    static float values1[7][7]  = {{0.8f, 2.4f, 2.5f, 3.9f, 0.0f, 4.0f, 0.0f},
-                                    {2.4f, 0.0f, 4.0f, 1.0f, 2.7f, 0.0f, 0.0f},
-                                    {1.1f, 2.4f, 0.8f, 4.3f, 1.9f, 4.4f, 0.0f},
-                                    {0.6f, 0.0f, 0.3f, 0.0f, 3.1f, 0.0f, 0.0f},
-                                    {0.7f, 1.7f, 0.6f, 2.6f, 2.2f, 6.2f, 0.0f},
-                                    {1.3f, 1.2f, 0.0f, 0.0f, 0.0f, 3.2f, 5.1f},
-                                    {0.1f, 2.0f, 0.0f, 1.4f, 0.0f, 1.9f, 6.3f}};
-    static float scale_min       = 0;
-    static float scale_max       = 6.3f;
-    static const char* xlabels[] = {"C1","C2","C3","C4","C5","C6","C7"};
-    static const char* ylabels[] = {"R1","R2","R3","R4","R5","R6","R7"};
-
-    static ImPlotColormap map = ImPlotColormap_Viridis;
-    if (ImPlot::ColormapButton(ImPlot::GetColormapName(map),ImVec2(225,0),map)) {
-        map = (map + 1) % ImPlot::GetColormapCount();
-        // We bust the color cache of our plots so that item colors will
-        // resample the new colormap in the event that they have already
-        // been created. See documentation in implot.h.
-        BustColorCache("##Heatmap1");
-        BustColorCache("##Heatmap2");
-    }
-
-    ImGui::SameLine();
-    ImGui::LabelText("##Colormap Index", "%s", "Change Colormap");
-    ImGui::SetNextItemWidth(225);
-    ImGui::DragFloatRange2("Min / Max",&scale_min, &scale_max, 0.01f, -20, 20);
-    static ImPlotAxisFlags axes_flags = ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks;
-
-    ImPlot::PushColormap(map);
-
-    if (ImPlot::BeginPlot("##Heatmap1",ImVec2(225,225),ImPlotFlags_NoLegend|ImPlotFlags_NoMouseText)) {
-        ImPlot::SetupAxes(NULL, NULL, axes_flags, axes_flags);
-        ImPlot::SetupAxisTicks(ImAxis_X1,0 + 1.0/14.0, 1 - 1.0/14.0, 7, xlabels);
-        ImPlot::SetupAxisTicks(ImAxis_Y1,1 - 1.0/14.0, 0 + 1.0/14.0, 7, ylabels);
-        ImPlot::PlotHeatmap("heat",values1[0],7,7,scale_min,scale_max);
-        ImPlot::EndPlot();
-    }
-    ImGui::SameLine();
-    ImPlot::ColormapScale("##HeatScale",scale_min, scale_max, ImVec2(60,225));
-
-    ImGui::SameLine();
-
-    const int size = 80;
-    static double values2[size*size];
-    srand((unsigned int)(ImGui::GetTime()*1000000));
-    for (int i = 0; i < size*size; ++i)
-        values2[i] = RandomRange(0.0,1.0);
-
-    if (ImPlot::BeginPlot("##Heatmap2",ImVec2(225,225))) {
-        ImPlot::SetupAxes(NULL, NULL, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
-        ImPlot::SetupAxesLimits(-1,1,-1,1);
-        ImPlot::PlotHeatmap("heat1",values2,size,size,0,1,NULL);
-        ImPlot::PlotHeatmap("heat2",values2,size,size,0,1,NULL, ImPlotPoint(-1,-1), ImPlotPoint(0,0));
-        ImPlot::EndPlot();
-    }
-    ImPlot::PopColormap();
-
-}
-
 void ShowDemo_Histogram() {
     static int  bins       = 50;
     static bool cumulative = false;
@@ -750,30 +657,6 @@ void ShowDemo_Histogram() {
     }
 }
 
-void ShowDemo_Histogram2D() {
-    static int count     = 50000;
-    static int xybins[2] = {100,100};
-    static bool density2 = false;
-    ImGui::SliderInt("Count",&count,100,100000);
-    ImGui::SliderInt2("Bins",xybins,1,500);
-    ImGui::SameLine();
-    ImGui::Checkbox("Density##2",&density2);
-    static NormalDistribution<100000> dist1(1, 2);
-    static NormalDistribution<100000> dist2(1, 1);
-    double max_count = 0;
-    ImPlotAxisFlags flags = ImPlotAxisFlags_AutoFit|ImPlotAxisFlags_Foreground;
-    ImPlot::PushColormap("Hot");
-    if (ImPlot::BeginPlot("##Hist2D",ImVec2(ImGui::GetContentRegionAvail().x-100-ImGui::GetStyle().ItemSpacing.x,0))) {
-        ImPlot::SetupAxes(NULL, NULL, flags, flags);
-        ImPlot::SetupAxesLimits(-6,6,-6,6);
-        max_count = ImPlot::PlotHistogram2D("Hist2D",dist1.Data,dist2.Data,count,xybins[0],xybins[1],density2,ImPlotRect(-6,6,-6,6));
-        ImPlot::EndPlot();
-    }
-    ImGui::SameLine();
-    ImPlot::ColormapScale(density2 ? "Density" : "Count",0,max_count,ImVec2(100,0));
-    ImPlot::PopColormap();
-}
-
 void ShowDemo_DigitalPlots() {
     ImGui::BulletText("Digital plots do not respond to Y drag and zoom, so that");
     ImGui::Indent();
@@ -822,26 +705,6 @@ void ShowDemo_DigitalPlots() {
                     ImPlot::PlotLine(label, &dataAnalog[i].Data[0].x, &dataAnalog[i].Data[0].y, dataAnalog[i].Data.size(), dataAnalog[i].Offset, 2 * sizeof(float));
             }
         }
-        ImPlot::EndPlot();
-    }
-}
-
-void ShowDemo_Images() {
-    ImGui::BulletText("Below we are displaying the font texture, which is the only texture we have\naccess to in this demo.");
-    ImGui::BulletText("Use the 'ImTextureID' type as storage to pass pointers or identifiers to your\nown texture data.");
-    ImGui::BulletText("See ImGui Wiki page 'Image Loading and Displaying Examples'.");
-    static ImVec2 bmin(0,0);
-    static ImVec2 bmax(1,1);
-    static ImVec2 uv0(0,0);
-    static ImVec2 uv1(1,1);
-    static ImVec4 tint(1,1,1,1);
-    ImGui::SliderFloat2("Min", &bmin.x, -2, 2, "%.1f");
-    ImGui::SliderFloat2("Max", &bmax.x, -2, 2, "%.1f");
-    ImGui::SliderFloat2("UV0", &uv0.x, -2, 2, "%.1f");
-    ImGui::SliderFloat2("UV1", &uv1.x, -2, 2, "%.1f");
-    ImGui::ColorEdit4("Tint",&tint.x);
-    if (ImPlot::BeginPlot("##image")) {
-        ImPlot::PlotImage("my image",ImGui::GetIO().Fonts->TexID, bmin, bmax, uv0, uv1, tint);
         ImPlot::EndPlot();
     }
 }
@@ -1393,7 +1256,7 @@ void ShowDemo_Querying()
 
     if (init) 
 	{
-        for (int i = 0; i < 1; ++i)
+        for (int i = 0; i < 1; i++)
         {
             double x = RandomRange(0.0, 0.0);
             double y = RandomRange(0.0, 0.0);
@@ -1407,17 +1270,20 @@ void ShowDemo_Querying()
 
 	static ScrollingBuffer sdata1, sdata2;
 	static RollingBuffer   rdata1, rdata2;
+	ImPlotPoint pt;
 	ImVec2 mouse = ImGui::GetMousePos();
-	static bool bPlay = false;
+	static bool s_bPlay = false;
+	static float flt = 0.0f;
 	static float s_fStartTimeA = rdata1.Span;
 	static float s_fStartTimeB = rdata2.Span;
 	static float s_fStopTime = 0.0f;
 	static float s_History = 10.0f;
 	static float t = 0;
-	t += ImGui::GetIO().DeltaTime;
+
+	ImGui::Text("Ctrl + Left Click : Set point");
 
 	//グラフを再生させる
-	if (ImGui::Checkbox("Play", &bPlay))
+	if (ImGui::Checkbox("Play", &s_bPlay))
 	{
 		rdata1.Span = s_History;
 		rdata2.Span = s_History;
@@ -1433,7 +1299,8 @@ void ShowDemo_Querying()
 		rdata2.Span = s_fStartTimeB;
 	}
 
-	//if (ImPlot::BeginPlot("##Scrolling", ImVec2(-1, 150))) {
+	//if (ImPlot::BeginPlot("Scrolling", ImVec2(-1, 150))) 
+	//{
 		//ImPlot::PlotShaded("Mouse X", &sdata1.Data[0].x, &sdata1.Data[0].y, sdata1.Data.size(), -INFINITY, sdata1.Offset, 2 * sizeof(float));
 		//ImPlot::PlotLine("Mouse Y", &sdata2.Data[0].x, &sdata2.Data[0].y, sdata2.Data.size(), sdata2.Offset, 2 * sizeof(float));
 		//ImPlot::EndPlot();
@@ -1443,8 +1310,10 @@ void ShowDemo_Querying()
 	{
         ImPlot::SetupAxesLimits(0,1,0,1);
 
-		if (bPlay)
+		if (s_bPlay)
 		{
+			t += ImGui::GetIO().DeltaTime;
+
 			//再生中のグラフの拡大
 			ImGui::SliderFloat("History", &s_History, 1, 30, "%.1f s");
 
@@ -1460,7 +1329,10 @@ void ShowDemo_Querying()
             data.push_back(pt);
         }
 
+		/*線引く用*/
         ImPlot::PlotScatter("Points", &data[0].x, &data[0].y, data.size(), 0, 2 * sizeof(double));
+		ImPlot::PlotLine("Line", &data[0].x, &data[0].y, data.size(), 1, 2 * sizeof(double));
+
         if (ImPlot::IsPlotSelected())
 		{
             select = ImPlot::GetPlotSelection();
@@ -2064,8 +1936,8 @@ void ShowDemoWindow(bool* p_open) {
           /*  if (ImGui::CollapsingHeader("Realtime Plots"))
                 ShowDemo_RealtimePlots();*/
 
-			/*
-            if (ImGui::CollapsingHeader("Stairstep Plots"))
+			
+            /*if (ImGui::CollapsingHeader("Stairstep Plots"))
                 ShowDemo_StairstepPlots();
             if (ImGui::CollapsingHeader("Bar Plots"))
                 ShowDemo_BarPlots();
@@ -2079,27 +1951,19 @@ void ShowDemoWindow(bool* p_open) {
                 ShowDemo_StemPlots();
             if (ImGui::CollapsingHeader("Infinite Lines"))
                 ShowDemo_InfiniteLines();
-            if (ImGui::CollapsingHeader("Pie Charts"))
-                ShowDemo_PieCharts();
-            if (ImGui::CollapsingHeader("Heatmaps"))
-                ShowDemo_Heatmaps();
             if (ImGui::CollapsingHeader("Histogram"))
                 ShowDemo_Histogram();
-            if (ImGui::CollapsingHeader("Histogram 2D"))
-                ShowDemo_Histogram2D();
             if (ImGui::CollapsingHeader("Digital Plots"))
-                ShowDemo_DigitalPlots();
-            if (ImGui::CollapsingHeader("Images"))
-                ShowDemo_Images();
-				*/
+                ShowDemo_DigitalPlots();*/
+				
 
-        //    if (ImGui::CollapsingHeader("Markers and Text"))
-        //        ShowDemo_MarkersAndText();
+           /* if (ImGui::CollapsingHeader("Markers and Text"))
+                ShowDemo_MarkersAndText();*/
         //    ImGui::EndTabItem();
         //}
 
-	   /*
-        if (ImGui::BeginTabItem("Subplots")) {
+	   
+      /*  if (ImGui::BeginTabItem("Subplots")) {
             if (ImGui::CollapsingHeader("Sizing"))
                 ShowDemo_SubplotsSizing();
             if (ImGui::CollapsingHeader("Item Sharing"))
@@ -2109,8 +1973,8 @@ void ShowDemoWindow(bool* p_open) {
             if (ImGui::CollapsingHeader("Tables"))
                 ShowDemo_Tables();
             ImGui::EndTabItem();
-        }
-        if (ImGui::BeginTabItem("Axes")) {
+        }*/
+      /*  if (ImGui::BeginTabItem("Axes")) {
             if (ImGui::CollapsingHeader("Log Axes"))
                 ShowDemo_LogAxes();
             if (ImGui::CollapsingHeader("Time Axes"))
