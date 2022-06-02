@@ -11,14 +11,15 @@
 #include "imgui_property.h"
 #include "main.h"
 #include "file.h"
+#include "utility.h"
 #include <imgui_internal.h>
 #include <assert.h>
 #include <implot.h>
 
+//==================================================
+// マクロ定義
+//==================================================
 #define IMGUI_DEFINE_MATH_OPERATORS
-
-
-
 
 //==================================================
 // 定義
@@ -176,13 +177,13 @@ namespace ImGui
 		RenderFrame(bb.Min, bb.Max, GetColorU32(ImGuiCol_FrameBg, 1), true, Style.FrameRounding);
 
 		// background grid
-		for (int i = 0; i <= Canvas.x; i += (Canvas.x / 4)) {
+		for (int i = 0; i <= Canvas.x; i += (int)(Canvas.x * 0.25f)) {
 			DrawList->AddLine(
 				ImVec2(bb.Min.x + i, bb.Min.y),
 				ImVec2(bb.Min.x + i, bb.Max.y),
 				GetColorU32(ImGuiCol_TextDisabled));
 		}
-		for (int i = 0; i <= Canvas.y; i += (Canvas.y / 4)) {
+		for (int i = 0; i <= Canvas.y; i += (int)(Canvas.y * 0.25f)) {
 			DrawList->AddLine(
 				ImVec2(bb.Min.x, bb.Min.y + i),
 				ImVec2(bb.Max.x, bb.Min.y + i),
@@ -510,7 +511,7 @@ void UpdateImguiProperty(void)
 
 			if (selecttype == 5)
 			{
-				static int s_nSetTime = 0.0f;
+				static int s_nSetTime = 0;
 				static int nTypeNum = 0;
 				const char *Items[] = { "Red", "Green", "Blue"};
 				ImGui::Combo("ColorType", &nTypeNum, Items, IM_ARRAYSIZE(Items));
@@ -551,8 +552,6 @@ void UpdateImguiProperty(void)
 
 			ImGui::RadioButton("Gradation None", &selecttype, 0);
 
-			//色変更(ImGui)
-			D3DXCOLOR RandCol = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 			static int s_nCounter;
 			static int s_nTimer;
 			static int s_nColNum;
@@ -575,8 +574,9 @@ void UpdateImguiProperty(void)
 				break;
 
 			case 4:
-				RandCol = ((float)imguiParticle.colRandamMin + (((float)rand() * (float)imguiParticle.colRandamMax - (float)imguiParticle.colRandamMin + 1.0f) / (1.0f + RAND_MAX)));
-				imguiParticle.col = RandCol;
+				imguiParticle.col.r = FloatRandam(imguiParticle.colRandamMax.r, imguiParticle.colRandamMin.r);
+				imguiParticle.col.g = FloatRandam(imguiParticle.colRandamMax.g, imguiParticle.colRandamMin.g);
+				imguiParticle.col.b = FloatRandam(imguiParticle.colRandamMax.b, imguiParticle.colRandamMin.b);
 
 				imguiParticle.col.a = 1.0f;
 				break;
