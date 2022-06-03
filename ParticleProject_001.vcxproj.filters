@@ -75,6 +75,9 @@
     <ClCompile Include="imgui\implot_demo.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="imgui\imgui_widget_flamegraph.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BG.h">
@@ -135,6 +138,9 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\implot_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_widget_flamegraph.h">
       <Filter>imgui</Filter>
     </ClInclude>
   </ItemGroup>

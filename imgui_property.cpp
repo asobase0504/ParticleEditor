@@ -14,10 +14,19 @@
 #include <imgui_internal.h>
 #include <assert.h>
 #include <implot.h>
+#include <imgui_widget_flamegraph.h>
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 
+bool show_demo_window = true;
+bool show_another_window = true;
+bool show_profiler_window = true;
+ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+// Main loop
+
+bool firstFrame = false;
+Profiler profiler;
 
 
 //==================================================
@@ -34,6 +43,34 @@ static bool	s_window = false;	// ウインドウを使用するかどうか
 static Particle imguiParticle;	// ImGuiに保存されてるパーティクル情報
 static bool s_bEffectEnable = false;
 static float s_fScale = 50.0f;
+
+
+static void ProfilerValueGetter(float* startTimestamp, float* endTimestamp, ImU8* level, const char** caption, const void* data, int idx)
+{
+	auto entry = reinterpret_cast<const Profiler::Entry*>(data);
+	auto& stage = entry->_stages[idx];
+	if (startTimestamp)
+	{
+		std::chrono::duration<float, std::milli> fltStart = stage._start - entry->_frameStart;
+		*startTimestamp = fltStart.count();
+	}
+	if (endTimestamp)
+	{
+		*endTimestamp = stage._end.time_since_epoch().count() / 1000000.0f;
+
+		std::chrono::duration<float, std::milli> fltEnd = stage._end - entry->_frameStart;
+		*endTimestamp = fltEnd.count();
+	}
+	if (level)
+	{
+		*level = stage._level;
+	}
+	if (caption)
+	{
+		*caption = stageNames[idx];
+	}
+}
+
 
 //--------------------------------------------------
 // 初期化
@@ -318,11 +355,12 @@ void UpdateImguiProperty(void)
 	{// ウインドウを使用しない
 		return;
 	}
-
+	profiler.Frame();
+	profiler.Begin(Profiler::Stage::NewFrame);
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-
+	profiler.End(Profiler::Stage::NewFrame);
 	static D3DXCOLOR color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	static int mode = 0;
 	static int sliderInt = 0;
@@ -368,8 +406,49 @@ void UpdateImguiProperty(void)
 	{
 		OutputStatus();
 	}
-	////]ImGuiTable
 
+
+	profiler.Frame();
+	// Poll and handle events (inputs, window resize, etc.)
+	// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+	// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
+	// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
+	// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+
+
+	// Start the Dear ImGui frame
+	profiler.Begin(Profiler::Stage::Plot);
+
+
+	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+	profiler.Begin(Profiler::Stage::DemoWindow);
+	if (show_demo_window)
+		//ImGui::ShowDemoWindow(&show_demo_window);
+	profiler.End(Profiler::Stage::DemoWindow);
+
+	// 3. Show another simple window.
+	profiler.Begin(Profiler::Stage::AnotherWindow);
+	if (show_another_window)
+	{
+		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Text("Hello from another window!");
+		if (ImGui::Button("Close Me"))
+			show_another_window = false;
+		ImGui::End();
+	}
+	profiler.End(Profiler::Stage::AnotherWindow);
+
+	// 4. Show Profiler
+	profiler.Begin(Profiler::Stage::ProfilerWindow);
+	if (show_profiler_window && !firstFrame)
+	{
+		ImGui::Begin("Profiler Window", &show_profiler_window);
+		auto& entry = profiler._entries[profiler.GetCurrentEntryIndex()];
+		ImGuiWidgetFlameGraph::PlotFlame("CPU", &ProfilerValueGetter, &entry, Profiler::_StageCount, 0, "Main Thread", FLT_MAX, FLT_MAX, ImVec2(400, 0));
+		ImGui::End();
+	}
+
+	
 
 	static float v[] = { 0.390f, 0.575f, 0.565f, 1.000f };
 	ImGui::Bezier("あああ", v);       // draw
@@ -622,6 +701,24 @@ void UpdateImguiProperty(void)
 		//ツリーを閉じる
 		ImGui::TreePop();
 	}
+
+	profiler.End(Profiler::Stage::ProfilerWindow);
+	profiler.End(Profiler::Stage::Plot);
+
+	// Rendering
+	profiler.Begin(Profiler::Stage::Rendering);
+	profiler.Begin(Profiler::Stage::ImGuiRender);
+	//ImGui::Render();
+
+	profiler.End(Profiler::Stage::ImGuiRender);
+	profiler.Begin(Profiler::Stage::SwapWindow);
+	//SDL_GL_SwapWindow(window);
+	profiler.End(Profiler::Stage::SwapWindow);
+	profiler.End(Profiler::Stage::Rendering);
+
+	firstFrame = false;
+
+
 
 	ImPlot::ShowDemoWindow();
 

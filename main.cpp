@@ -214,14 +214,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 				dwFPSLastTime = dwCurrentTime;
 				dwFrameCount = 0;
 			}
+		
 
-			if ((dwCurrentTime - dwExedastTime) >= (1000 / 60))
+			//if ((dwCurrentTime - dwExedastTime) >= (1000 / 60))
 			{//60分の1秒経過
 				dwExedastTime = dwCurrentTime;	// 処理開始の時刻[現在時刻]を保存
 
 				// imguiの更新
 				UpdateImguiProperty();
-
 				// 更新
 				Update();
 
