@@ -129,7 +129,7 @@ void UpdateParticle(void)
 		// 推移
 		pParticle->nLife--;											// 体力の減少
 		pParticle->move.y += pParticle->fWeight;					// 重力
-		pParticle->col += pParticle->colTransition;					// 色の推移
+		pParticle->color.col += pParticle->color.colTransition;	// 色の推移
 		pParticle->move *= pParticle->fAttenuation;					// 移動量の推移
 		pParticle->fWeight += pParticle->fWeightTransition;			// 重さの推移
 
@@ -152,10 +152,10 @@ void UpdateParticle(void)
 		pVtx[3].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, pParticle->fHeight, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[0].col = pParticle->col;
-		pVtx[1].col = pParticle->col;
-		pVtx[2].col = pParticle->col;
-		pVtx[3].col = pParticle->col;
+		pVtx[0].col = pParticle->color.col;
+		pVtx[1].col = pParticle->color.col;
+		pVtx[2].col = pParticle->color.col;
+		pVtx[3].col = pParticle->color.col;
 		
 		//頂点バッファをアンロックする
 		s_pVtxBuff->Unlock();
@@ -291,10 +291,10 @@ void SetParticleImgui(Particle& inParticle)
 		pVtx[3].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, pParticle->fHeight, 0.0f);
 
 		// 頂点カラーの設定
-		pVtx[0].col = pParticle->col;
-		pVtx[1].col = pParticle->col;
-		pVtx[2].col = pParticle->col;
-		pVtx[3].col = pParticle->col;
+		pVtx[0].col = pParticle->color.col;
+		pVtx[1].col = pParticle->color.col;
+		pVtx[2].col = pParticle->color.col;
+		pVtx[3].col = pParticle->color.col;
 
 		// 頂点バッファをアンロックする
 		s_pVtxBuff->Unlock();

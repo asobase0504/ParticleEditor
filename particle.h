@@ -28,6 +28,21 @@ struct ParticleTex
 };
 
 //-------------------------------------------------
+// エフェクトのカラー構造体
+// Auther : 唐﨑結斗
+// 概要 : エフェクトの色関係の構造体
+//-------------------------------------------------
+struct ParticleColor			// ※新規追加構造体(ファイルに追加後消してください)
+{
+	D3DXCOLOR			col;					// 色
+	D3DXCOLOR			colRandamMax;			// ランダムな色の範囲(最大)
+	D3DXCOLOR			colRandamMin;			// ランダムな色の範囲(最小)
+	D3DXCOLOR			colTransition;			// 色の推移量
+	D3DXCOLOR			destCol;				// 目的の色
+	int					nEndTime;				// 遷移完了までの時間
+};
+
+//-------------------------------------------------
 // エフェクトのαブレンドの種別の列挙型
 // Auther : 唐﨑結斗
 // 概要 : 乗算、加算、減算
@@ -44,16 +59,13 @@ enum ALPHABLENDTYPE
 struct Particle
 {
 	D3DXVECTOR3			pos;					// 位置
-	D3DXVECTOR3			maxPopPos;				// 発生位置(最大)	 ※新規追加変数
-	D3DXVECTOR3			minPopPos;				// 発生位置(最小)	 ※新規追加変数
+	D3DXVECTOR3			maxPopPos;				// 発生位置(最大)				※新規追加変数(ファイルに追加後消してください)
+	D3DXVECTOR3			minPopPos;				// 発生位置(最小)				※新規追加変数(ファイルに追加後消してください)
 	D3DXVECTOR3			move;					// 移動量
 	D3DXVECTOR3			moveTransition;			// 移動量の推移量
 	D3DXVECTOR3			rot;					// 向き
-	D3DXCOLOR			col;					// 色
-	D3DXCOLOR			colRandamMax;			// ランダムな色の範囲(最大)
-	D3DXCOLOR			colRandamMin;			// ランダムな色の範囲(最小)
-	D3DXCOLOR			colTransition;			// 色の推移量
 	PARTICLETYPE		type;					// エフェクトの種類
+	ParticleColor		color;					// カラー						※新規追加変数(ファイルに追加後消してください)
 	ALPHABLENDTYPE		alphaBlend;				// αブレンディングの種別
 	float				fWidth;					// 幅
 	float				fHeight;				// 高さ

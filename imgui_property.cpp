@@ -398,7 +398,9 @@ void UpdateImguiProperty(void)
 	//エフェクト関係
 	if (ImGui::TreeNode("Effecttree1", "EffectSetting"))
 	{
-		imguiParticle.col.a = 1.0f;
+		imguiParticle.color.col.a = 1.0f;
+		imguiParticle.color.destCol.a = 1.0f;
+
 		//imguiParticle.fScale = 50.0f;
 
 		if (ImGui::Button("LOAD TEXTURE"))
@@ -432,7 +434,7 @@ void UpdateImguiProperty(void)
 			imguiParticle.minPopPos.y = 0.0f;
 			imguiParticle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-			imguiParticle.col = D3DXCOLOR(0.5f,0.0f,1.0f,1.0f);
+			imguiParticle.color.col = D3DXCOLOR(0.5f,0.0f,1.0f,1.0f);
 			imguiParticle.nLife = 60;
 			imguiParticle.fScale = 50.0f;
 			imguiParticle.fRadius = 4.5f;
@@ -500,7 +502,8 @@ void UpdateImguiProperty(void)
 		}
 
 		//カラーパレット
-		ImGui::ColorEdit4("clear color", (float*)&imguiParticle.col);
+		ImGui::ColorEdit4("clear color", (float*)&imguiParticle.color.col);
+		ImGui::ColorEdit4("clear destColor", (float*)&imguiParticle.color.destCol);
 
 		//グラデーション
 		if (ImGui::TreeNode("Effecttree3", "Gradation"))
@@ -532,8 +535,8 @@ void UpdateImguiProperty(void)
 				ImGui::InputFloat("RandomMin", &randColMin);
 				ImGui::InputFloat("RandomMax", &randColMax);
 
-				imguiParticle.colRandamMin = D3DXCOLOR(randColMin, randColMin, randColMin, 1.0f);
-				imguiParticle.colRandamMax = D3DXCOLOR(randColMax, randColMax, randColMax, 1.0f);
+				imguiParticle.color.colRandamMin = D3DXCOLOR(randColMin, randColMin, randColMin, 1.0f);
+				imguiParticle.color.colRandamMax = D3DXCOLOR(randColMax, randColMax, randColMax, 1.0f);
 				
 			}
 
@@ -590,6 +593,13 @@ void UpdateImguiProperty(void)
 					}
 				}
 			}
+		
+			ImGui::RadioButton("ColorTransition", &selecttype, 6);
+			if (selecttype == 6)
+			{
+				ImGui::SliderInt("MaxPopPosX", &imguiParticle.color.nEndTime, 0, imguiParticle.nLife);
+			}
+
 
 			ImGui::RadioButton("Gradation None", &selecttype, 0);
 
@@ -600,26 +610,26 @@ void UpdateImguiProperty(void)
 			switch (selecttype)
 			{
 			case 1:
-				imguiParticle.colTransition = D3DXCOLOR(0.0f, -0.01f, 0.0f, 0.0f);
-				imguiParticle.col.r = 1.0f;
+				imguiParticle.color.colTransition = D3DXCOLOR(0.0f, -0.01f, 0.0f, 0.0f);
+				imguiParticle.color.col.r = 1.0f;
 				break;
 
 			case 2:
-				imguiParticle.colTransition = D3DXCOLOR(0.0f, 0.0f, -0.01f, 0.0f);
-				imguiParticle.col.g = 1.0f;
+				imguiParticle.color.colTransition = D3DXCOLOR(0.0f, 0.0f, -0.01f, 0.0f);
+				imguiParticle.color.col.g = 1.0f;
 				break;
 
 			case 3:
-				imguiParticle.colTransition = D3DXCOLOR(-0.01f, 0.0f, 0.0f, 0.0f);
-				imguiParticle.col.b = 1.0f;
+				imguiParticle.color.colTransition = D3DXCOLOR(-0.01f, 0.0f, 0.0f, 0.0f);
+				imguiParticle.color.col.b = 1.0f;
 				break;
 
 			case 4:
-				imguiParticle.col.r = FloatRandam(imguiParticle.colRandamMax.r, imguiParticle.colRandamMin.r);
-				imguiParticle.col.g = FloatRandam(imguiParticle.colRandamMax.g, imguiParticle.colRandamMin.g);
-				imguiParticle.col.b = FloatRandam(imguiParticle.colRandamMax.b, imguiParticle.colRandamMin.b);
+				imguiParticle.color.col.r = FloatRandam(imguiParticle.color.colRandamMax.r, imguiParticle.color.colRandamMin.r);
+				imguiParticle.color.col.g = FloatRandam(imguiParticle.color.colRandamMax.g, imguiParticle.color.colRandamMin.g);
+				imguiParticle.color.col.b = FloatRandam(imguiParticle.color.colRandamMax.b, imguiParticle.color.colRandamMin.b);
 
-				imguiParticle.col.a = 1.0f;
+				imguiParticle.color.col.a = 1.0f;
 				break;
 
 			case 5:
@@ -637,7 +647,7 @@ void UpdateImguiProperty(void)
 
 					if (s_nTimer >= 5)
 					{
-						imguiParticle.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
+						imguiParticle.color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
 						s_nColNum++;
 						s_nTimer = 0;
 					}
@@ -655,13 +665,18 @@ void UpdateImguiProperty(void)
 
 				break;
 
+			case 6:
+				imguiParticle.color.colTransition.r = (imguiParticle.color.destCol.r - imguiParticle.color.col.r) / imguiParticle.color.nEndTime;
+				imguiParticle.color.colTransition.g = (imguiParticle.color.destCol.g - imguiParticle.color.col.g) / imguiParticle.color.nEndTime;
+				imguiParticle.color.colTransition.b = (imguiParticle.color.destCol.b - imguiParticle.color.col.b) / imguiParticle.color.nEndTime;
+				break;
 			case 0:
 				break;
 			default:
 				break;
 			}
 
-			ImGui::SliderFloat("Alpha", &imguiParticle.colTransition.a, -0.5f, 0.0f);
+			ImGui::SliderFloat("Alpha", &imguiParticle.color.colTransition.a, -0.5f, 0.0f);
 
 			ImGui::TreePop();
 		}
