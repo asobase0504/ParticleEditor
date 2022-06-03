@@ -99,32 +99,7 @@ void UninitBg(void)
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 void UpdateBg(void)
 {
-	//テクスチャ座標の更新
-	VERTEX_2D*pVtx;
 
-	//g_aBg.nCounterAnim++;		//カウンターを加算
-
-	//頂点バッファをロックし、頂点情報へのポインタを取得
-	g_pVtxBuffBg->Lock(0, 0, (void**)&pVtx, 0);
-
-	//for (nCntBG = 0; nCntBG < NUM_BG; nCntBG++)
-	//{
-	//	if ((g_aBg.nCounterAnim % 60) == 0)
-	//	{//一定時間経過
-	//	 //パターンNo.を更新
-	//		g_aBg.nPatternAnim = (g_aBg.nPatternAnim + 1) % 2;
-	//		g_aBg.nPatternAnim++;
-
-	//		if (g_aBg.nPatternAnim == 8)
-	//		{
-	//			g_aBg.nPatternAnim = 0;
-	//		}
-	//	}
-	//	pVtx += 4;
-	//}
-
-	//頂点バッファのアンロック
-	g_pVtxBuffBg->Unlock();
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
