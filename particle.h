@@ -34,15 +34,16 @@ struct ParticleTex
 //-------------------------------------------------
 struct ParticleColor			// ※新規追加構造体(ファイルに追加後消してください)
 {
-	D3DXCOLOR			col;					// 色
-	D3DXCOLOR			colRandamMax;			// ランダムな色の範囲(最大)
-	D3DXCOLOR			colRandamMin;			// ランダムな色の範囲(最小)
-	D3DXCOLOR			colTransition;			// 色の推移量
-	D3DXCOLOR			destCol;				// 目的の色
-	int					nEndTime;				// 遷移完了までの時間			※新規追加変数(ファイルに追加後消してください)
-	int					nCntTransitionTime;		// 遷移カウント					※新規追加変数(ファイルに追加後消してください)
-	bool				bColTransition;			// カラー遷移					※新規追加変数(ファイルに追加後消してください)
-	bool				bColRandom;				// ランダムカラー				※新規追加変数(ファイルに追加後消してください)
+	D3DXCOLOR			col;						// 色
+	D3DXCOLOR			colRandamMax;				// ランダムな色の範囲(最大)
+	D3DXCOLOR			colRandamMin;				// ランダムな色の範囲(最小)
+	D3DXCOLOR			colTransition;				// 色の推移量
+	D3DXCOLOR			destCol;					// 目的の色
+	int					nEndTime;					// 遷移完了までの時間			※新規追加変数(ファイルに追加後消してください)
+	int					nCntTransitionTime;			// 遷移カウント					※新規追加変数(ファイルに追加後消してください)
+	bool				bColTransition;				// カラー遷移					※新規追加変数(ファイルに追加後消してください)
+	bool				bColRandom;					// ランダムカラー				※新規追加変数(ファイルに追加後消してください)
+	bool				bRandomTransitionTime;		// 遷移時間の乱数				※新規追加変数(ファイルに追加後消してください)
 };
 
 //-------------------------------------------------

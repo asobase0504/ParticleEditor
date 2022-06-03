@@ -526,7 +526,13 @@ void UpdateImguiProperty(void)
 			if (imguiParticle.color.bColTransition)
 			{// 目的の色
 				ImGui::ColorEdit4("clear destColor", (float*)&imguiParticle.color.destCol);
-				ImGui::SliderInt("EndTime", &imguiParticle.color.nEndTime, 0, imguiParticle.nLife);
+
+				ImGui::Checkbox("RandomTransitionTime", &imguiParticle.color.bRandomTransitionTime);
+
+				if (!imguiParticle.color.bRandomTransitionTime)
+				{
+					ImGui::SliderInt("EndTime", &imguiParticle.color.nEndTime, 0, imguiParticle.nLife);
+				}
 			}
 
 			//ツリーを閉じる

@@ -292,15 +292,24 @@ void SetParticleImgui(Particle& inParticle)
 
 			if (pParticle->color.bColTransition)
 			{// 目的の色の設定
+				if (pParticle->color.bRandomTransitionTime)
+				{
+					pParticle->color.nEndTime = rand() % pParticle->nLife + 1;
+				}
+
 				pParticle->color.destCol.r = FloatRandam(pParticle->color.colRandamMax.r, pParticle->color.colRandamMin.r);
 				pParticle->color.destCol.g = FloatRandam(pParticle->color.colRandamMax.g, pParticle->color.colRandamMin.g);
 				pParticle->color.destCol.b = FloatRandam(pParticle->color.colRandamMax.b, pParticle->color.colRandamMin.b);
-				pParticle->color.nEndTime = IntRandam(0, pParticle->nLife);
 			}
 		}
 
 		if (pParticle->color.bColTransition)
 		{// トラディシオンカラーを使用
+			if (pParticle->color.bRandomTransitionTime)
+			{
+				pParticle->color.nEndTime =  rand() % pParticle->nLife + 1;
+			}
+
 			pParticle->color.colTransition.r = (pParticle->color.destCol.r - pParticle->color.col.r) / pParticle->color.nEndTime;
 			pParticle->color.colTransition.g = (pParticle->color.destCol.g - pParticle->color.col.g) / pParticle->color.nEndTime;
 			pParticle->color.colTransition.b = (pParticle->color.destCol.b - pParticle->color.col.b) / pParticle->color.nEndTime;
