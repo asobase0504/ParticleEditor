@@ -5,6 +5,7 @@
 #include "particle.h"
 #include <time.h>
 #include "imgui_property.h"
+#include "utility.h"
 
 //==================================================
 // グローバル変数
@@ -126,11 +127,11 @@ void UpdateParticle(void)
 		pParticle->pos += pParticle->move;
 
 		// 推移
-		pParticle->nLife--;	// 体力の減少
-		pParticle->move.y += pParticle->fWeight;			// 重力
-		pParticle->col += pParticle->colTransition;			// 色の推移
-		pParticle->move *= pParticle->fAttenuation;		// 移動量の推移
-		pParticle->fWeight += pParticle->fWeightTransition;	// 重さの推移
+		pParticle->nLife--;											// 体力の減少
+		pParticle->move.y += pParticle->fWeight;					// 重力
+		pParticle->col += pParticle->colTransition;					// 色の推移
+		pParticle->move *= pParticle->fAttenuation;					// 移動量の推移
+		pParticle->fWeight += pParticle->fWeightTransition;			// 重さの推移
 
 		if (pParticle->nLife <= 0)
 		{//エフェクトの寿命
@@ -212,6 +213,7 @@ void DrawParticle(void)
 			break;
 
 		default:
+			assert(false);
 			break;
 		}
 		
@@ -269,6 +271,11 @@ void SetParticleImgui(Particle& inParticle)
 		pParticle->fWidth = g_aParticle->fScale;
 		pParticle->fHeight = g_aParticle->fScale;
 		pParticle->bUse = true;
+
+		// 生成位置の算出
+		pParticle->pos.x += FloatRandam(pParticle->maxPopPos.x, -pParticle->minPopPos.x);
+		pParticle->pos.y += FloatRandam(pParticle->maxPopPos.y, -pParticle->minPopPos.y);
+		pParticle->pos.z += FloatRandam(pParticle->maxPopPos.z, -pParticle->minPopPos.z);
 
 		VERTEX_2D*pVtx;	// 頂点情報へのポインタ
 

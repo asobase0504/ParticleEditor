@@ -414,6 +414,10 @@ void UpdateImguiProperty(void)
 		{
 			imguiParticle.pos.x = (float)SCREEN_WIDTH * 0.5f;
 			imguiParticle.pos.y = (float)SCREEN_HEIGHT * 0.5f;
+			imguiParticle.maxPopPos.x = 0.0f;
+			imguiParticle.maxPopPos.y = 0.0f;
+			imguiParticle.minPopPos.x = 0.0f;
+			imguiParticle.minPopPos.y = 0.0f;
 			imguiParticle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.col = D3DXCOLOR(0.5f,0.0f,1.0f,1.0f);
@@ -427,6 +431,12 @@ void UpdateImguiProperty(void)
 		//EffectData *Effect = GetStatus();
 		ImGui::SliderFloat("PosX", &imguiParticle.pos.x, 0, (float)SCREEN_WIDTH);
 		ImGui::SliderFloat("PosY", &imguiParticle.pos.y, 0, (float)SCREEN_HEIGHT);
+
+		// ê∂ê¨îÕàÕÇÃê›íË
+		ImGui::SliderFloat("MaxPopPosX", &imguiParticle.maxPopPos.x, 0, (float)SCREEN_WIDTH);
+		ImGui::SliderFloat("MinPopPosX", &imguiParticle.minPopPos.x, 0, (float)SCREEN_WIDTH);
+		ImGui::SliderFloat("MaxPopPosY", &imguiParticle.maxPopPos.y, 0, (float)SCREEN_HEIGHT);
+		ImGui::SliderFloat("MinPopPosY", &imguiParticle.minPopPos.y, 0, (float)SCREEN_HEIGHT);
 
 		ImGui::InputFloat3("SettingEffectMove", imguiParticle.move, "%f");
 		ImGui::SliderFloat("MoveX", &imguiParticle.move.x, -100.0f, 100.0f);
