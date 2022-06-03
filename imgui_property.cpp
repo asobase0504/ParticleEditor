@@ -434,12 +434,17 @@ void UpdateImguiProperty(void)
 			imguiParticle.minPopPos.y = 0.0f;
 			imguiParticle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-			imguiParticle.color.col = D3DXCOLOR(0.5f,0.0f,1.0f,1.0f);
+			imguiParticle.color.col = D3DXCOLOR(1.0f,0.0f,0.0f,1.0f);
+			imguiParticle.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+			imguiParticle.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			imguiParticle.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+			imguiParticle.color.colTransition = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 			imguiParticle.nLife = 60;
 			imguiParticle.fScale = 50.0f;
 			imguiParticle.fRadius = 4.5f;
 			imguiParticle.fAngle = 20.5f;
 			imguiParticle.fAttenuation = 0.98f;
+			imguiParticle.alphaBlend = (ALPHABLENDTYPE)0;
 		}
 
 		//EffectData *Effect = GetStatus();
@@ -501,12 +506,35 @@ void UpdateImguiProperty(void)
 			ImGui::TreePop();
 		}
 
-		//カラーパレット
-		ImGui::ColorEdit4("clear color", (float*)&imguiParticle.color.col);
-		ImGui::ColorEdit4("clear destColor", (float*)&imguiParticle.color.destCol);
+		if (ImGui::TreeNode("Effecttree3", "Color"))
+		{
+			//カラーパレット
+			ImGui::ColorEdit4("clear color", (float*)&imguiParticle.color.col);
+
+			// ランダムカラー
+			ImGui::Checkbox("ColorRandom", &imguiParticle.color.bColRandom);
+
+			if (imguiParticle.color.bColRandom)
+			{
+				ImGui::ColorEdit4("clear RandamMax", (float*)&imguiParticle.color.colRandamMax);
+				ImGui::ColorEdit4("clear RandamMin", (float*)&imguiParticle.color.colRandamMin);
+			}
+
+			// カラートラディション
+			ImGui::Checkbox("ColorTransition", &imguiParticle.color.bColTransition);
+
+			if (imguiParticle.color.bColTransition)
+			{// 目的の色
+				ImGui::ColorEdit4("clear destColor", (float*)&imguiParticle.color.destCol);
+				ImGui::SliderInt("EndTime", &imguiParticle.color.nEndTime, 0, imguiParticle.nLife);
+			}
+
+			//ツリーを閉じる
+			ImGui::TreePop();
+		}
 
 		//グラデーション
-		if (ImGui::TreeNode("Effecttree3", "Gradation"))
+		if (ImGui::TreeNode("Effecttree4", "Gradation"))
 		{
 			static float s_fCustR[10];
 			static float s_fCustG[10];
@@ -514,35 +542,9 @@ void UpdateImguiProperty(void)
 			static int s_nSpeed = 1;
 			static int selecttype = 0;
 
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-			ImGui::RadioButton("RPlus GSubtract", &selecttype, 1);
-			ImGui::PopStyleColor();
+			ImGui::RadioButton("Custom", &selecttype, 1);
 
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-			ImGui::RadioButton("GPlus BSubtract", &selecttype, 2);
-			ImGui::PopStyleColor();
-
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.4f, 1.0f, 1.0f));
-			ImGui::RadioButton("BPlus RSubtract", &selecttype, 3);
-			ImGui::PopStyleColor();
-
-			ImGui::RadioButton("Random", &selecttype, 4);
-
-			if (selecttype == 4)
-			{
-				static float randColMax = 1.0f;
-				static float randColMin = 0.0f;
-				ImGui::InputFloat("RandomMin", &randColMin);
-				ImGui::InputFloat("RandomMax", &randColMax);
-
-				imguiParticle.color.colRandamMin = D3DXCOLOR(randColMin, randColMin, randColMin, 1.0f);
-				imguiParticle.color.colRandamMax = D3DXCOLOR(randColMax, randColMax, randColMax, 1.0f);
-				
-			}
-
-			ImGui::RadioButton("Custom", &selecttype, 5);
-
-			if (selecttype == 5)
+			if (selecttype == 1)
 			{
 				static int s_nSetTime = 0;
 				static int nTypeNum = 0;
@@ -593,13 +595,6 @@ void UpdateImguiProperty(void)
 					}
 				}
 			}
-		
-			ImGui::RadioButton("ColorTransition", &selecttype, 6);
-			if (selecttype == 6)
-			{
-				ImGui::SliderInt("MaxPopPosX", &imguiParticle.color.nEndTime, 0, imguiParticle.nLife);
-			}
-
 
 			ImGui::RadioButton("Gradation None", &selecttype, 0);
 
@@ -610,29 +605,6 @@ void UpdateImguiProperty(void)
 			switch (selecttype)
 			{
 			case 1:
-				imguiParticle.color.colTransition = D3DXCOLOR(0.0f, -0.01f, 0.0f, 0.0f);
-				imguiParticle.color.col.r = 1.0f;
-				break;
-
-			case 2:
-				imguiParticle.color.colTransition = D3DXCOLOR(0.0f, 0.0f, -0.01f, 0.0f);
-				imguiParticle.color.col.g = 1.0f;
-				break;
-
-			case 3:
-				imguiParticle.color.colTransition = D3DXCOLOR(-0.01f, 0.0f, 0.0f, 0.0f);
-				imguiParticle.color.col.b = 1.0f;
-				break;
-
-			case 4:
-				imguiParticle.color.col.r = FloatRandam(imguiParticle.color.colRandamMax.r, imguiParticle.color.colRandamMin.r);
-				imguiParticle.color.col.g = FloatRandam(imguiParticle.color.colRandamMax.g, imguiParticle.color.colRandamMin.g);
-				imguiParticle.color.col.b = FloatRandam(imguiParticle.color.colRandamMax.b, imguiParticle.color.colRandamMin.b);
-
-				imguiParticle.color.col.a = 1.0f;
-				break;
-
-			case 5:
 				s_nCounter++;
 
 				//ゼロ除算回避
@@ -665,10 +637,8 @@ void UpdateImguiProperty(void)
 
 				break;
 
-			case 6:
-				imguiParticle.color.colTransition.r = (imguiParticle.color.destCol.r - imguiParticle.color.col.r) / imguiParticle.color.nEndTime;
-				imguiParticle.color.colTransition.g = (imguiParticle.color.destCol.g - imguiParticle.color.col.g) / imguiParticle.color.nEndTime;
-				imguiParticle.color.colTransition.b = (imguiParticle.color.destCol.b - imguiParticle.color.col.b) / imguiParticle.color.nEndTime;
+			case 2:
+				
 				break;
 			case 0:
 				break;
@@ -682,7 +652,7 @@ void UpdateImguiProperty(void)
 		}
 
 		// αブレンディングの種類
-		if (ImGui::TreeNode("Effecttree4", "AlphaBlending"))
+		if (ImGui::TreeNode("Effecttree5", "AlphaBlending"))
 		{
 			// 変数宣言
 			int	nBlendingType = (int)imguiParticle.alphaBlend;		// 種別変更用の変数

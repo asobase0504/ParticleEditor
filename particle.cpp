@@ -129,9 +129,17 @@ void UpdateParticle(void)
 		// 推移
 		pParticle->nLife--;											// 体力の減少
 		pParticle->move.y += pParticle->fWeight;					// 重力
-		pParticle->color.col += pParticle->color.colTransition;	// 色の推移
 		pParticle->move *= pParticle->fAttenuation;					// 移動量の推移
 		pParticle->fWeight += pParticle->fWeightTransition;			// 重さの推移
+
+		if (pParticle->color.bColTransition)
+		{// 色の推移
+			if (pParticle->color.nEndTime >= pParticle->color.nCntTransitionTime)
+			{
+				pParticle->color.nCntTransitionTime++;
+				pParticle->color.col += pParticle->color.colTransition;
+			}
+		}
 
 		if (pParticle->nLife <= 0)
 		{//エフェクトの寿命
@@ -265,17 +273,38 @@ void SetParticleImgui(Particle& inParticle)
 		*pParticle = inParticle;
 		pParticle->type = PARTICLETYPE_NORMAL;
 
-		// αブレンディングの種別
-		pParticle->alphaBlend = g_aParticle->alphaBlend;
-
 		pParticle->fWidth = g_aParticle->fScale;
 		pParticle->fHeight = g_aParticle->fScale;
+		pParticle->color.nCntTransitionTime = 0;
 		pParticle->bUse = true;
 
 		// 生成位置の算出
 		pParticle->pos.x += FloatRandam(pParticle->maxPopPos.x, -pParticle->minPopPos.x);
 		pParticle->pos.y += FloatRandam(pParticle->maxPopPos.y, -pParticle->minPopPos.y);
 		pParticle->pos.z += FloatRandam(pParticle->maxPopPos.z, -pParticle->minPopPos.z);
+
+		// 色の算出
+		if (pParticle->color.bColRandom)
+		{// ランダムカラーを使用
+			pParticle->color.col.r = FloatRandam(pParticle->color.colRandamMax.r, pParticle->color.colRandamMin.r);
+			pParticle->color.col.g = FloatRandam(pParticle->color.colRandamMax.g, pParticle->color.colRandamMin.g);
+			pParticle->color.col.b = FloatRandam(pParticle->color.colRandamMax.b, pParticle->color.colRandamMin.b);
+
+			if (pParticle->color.bColTransition)
+			{// 目的の色の設定
+				pParticle->color.destCol.r = FloatRandam(pParticle->color.colRandamMax.r, pParticle->color.colRandamMin.r);
+				pParticle->color.destCol.g = FloatRandam(pParticle->color.colRandamMax.g, pParticle->color.colRandamMin.g);
+				pParticle->color.destCol.b = FloatRandam(pParticle->color.colRandamMax.b, pParticle->color.colRandamMin.b);
+				pParticle->color.nEndTime = IntRandam(0, pParticle->nLife);
+			}
+		}
+
+		if (pParticle->color.bColTransition)
+		{// トラディシオンカラーを使用
+			pParticle->color.colTransition.r = (pParticle->color.destCol.r - pParticle->color.col.r) / pParticle->color.nEndTime;
+			pParticle->color.colTransition.g = (pParticle->color.destCol.g - pParticle->color.col.g) / pParticle->color.nEndTime;
+			pParticle->color.colTransition.b = (pParticle->color.destCol.b - pParticle->color.col.b) / pParticle->color.nEndTime;
+		}
 
 		VERTEX_2D*pVtx;	// 頂点情報へのポインタ
 
