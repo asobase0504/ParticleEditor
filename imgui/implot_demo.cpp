@@ -866,7 +866,6 @@ void ShowDemo_DragPoints() {
             B[i] = ImPlotPoint(w1*P[0].x + w2*P[1].x + w3*P[2].x + w4*P[3].x, w1*P[0].y + w2*P[1].y + w3*P[2].y + w4*P[3].y);
         }
 
-
         ImPlot::SetNextLineStyle(ImVec4(1,0.5f,1,1));
         ImPlot::PlotLine("##h1",&P[0].x, &P[0].y, 2, 0, sizeof(ImPlotPoint));
         ImPlot::SetNextLineStyle(ImVec4(0,0.5f,1,1));
@@ -947,9 +946,12 @@ void ShowDemo_Querying()
 
 	static ScrollingBuffer sdata1, sdata2;
 	static RollingBuffer   rdata1, rdata2;
+	static ImPlotDragToolFlags flags = ImPlotDragToolFlags_None;
+	ImPlotAxisFlags ax_flags = ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks;
 	ImPlotPoint pt;
 	ImVec2 mouse = ImGui::GetMousePos();
 	static bool s_bPlay = false;
+	static int s_fOffset = 0;
 	static float flt = 0.0f;
 	static float s_fStartTimeA = rdata1.Span;
 	static float s_fStartTimeB = rdata2.Span;
@@ -976,7 +978,34 @@ void ShowDemo_Querying()
 		rdata2.Span = s_fStartTimeB;
 	}
 
-    if (ImPlot::BeginPlot("##Centroid")) 
+	/*if (ImPlot::BeginPlot("##Bezier", ImVec2(-1, 0), ImPlotFlags_CanvasOnly))
+	{
+		ImPlot::SetupAxes(0, 0, ax_flags, ax_flags);
+		ImPlot::SetupAxesLimits(0, 1, 0, 1);
+		static ImPlotPoint P[] = { ImPlotPoint(.05f,.05f), ImPlotPoint(0.2,0.4),  ImPlotPoint(0.8,0.6),  ImPlotPoint(.95f,.95f) };
+
+		static ImPlotPoint B[100];
+		for (int i = 0; i < 100; ++i) {
+			double t = i / 99.0;
+			double u = 1 - t;
+			double w1 = u*u*u;
+			double w2 = 3 * u*u*t;
+			double w3 = 3 * u*t*t;
+			double w4 = t*t*t;
+			B[i] = ImPlotPoint(w1*P[0].x + w2*P[1].x + w3*P[2].x + w4*P[3].x, w1*P[0].y + w2*P[1].y + w3*P[2].y + w4*P[3].y);
+		}
+
+		ImPlot::SetNextLineStyle(ImVec4(1, 0.5f, 1, 1));
+		ImPlot::PlotLine("##h1", &P[0].x, &P[0].y, 2, 0, sizeof(ImPlotPoint));
+		ImPlot::SetNextLineStyle(ImVec4(0, 0.5f, 1, 1));
+		ImPlot::PlotLine("##h2", &P[2].x, &P[2].y, 2, 0, sizeof(ImPlotPoint));
+		ImPlot::SetNextLineStyle(ImVec4(0, 0.9f, 0, 1), 2);
+		ImPlot::PlotLine("##bez", &B[0].x, &B[0].y, 100, 0, sizeof(ImPlotPoint));
+
+		ImPlot::EndPlot();
+	}*/
+
+    if (ImPlot::BeginPlot("Centroid")) 
 	{
         ImPlot::SetupAxesLimits(0,1,0,1);
 
@@ -992,42 +1021,61 @@ void ShowDemo_Querying()
 			ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
 		}
 
-		/*点置くところ*/
+		//点置くところ
         if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(0) && ImGui::GetIO().KeyCtrl)
 		{
-            ImPlotPoint pt = ImPlot::GetPlotMousePos();
+            pt = ImPlot::GetPlotMousePos();
             data.push_back(pt);
+			s_fOffset++;
         }
 
-		/*線引く用*/
-        ImPlot::PlotScatter("Points", &data[0].x, &data[0].y, data.size(), 0, 2 * sizeof(double));
-		ImPlot::PlotLine("Line", &data[0].x, &data[0].y, data.size(), 1, 2 * sizeof(double));
+		//点動かす用
+		for (int i = 0; i < s_fOffset + 1; i++)
+		{
+			ImPlot::DragPoint(s_fOffset + i, &data[i].x, &data[i].y, ImVec4(0, 0.9f, 0, 1), 4, flags);
+
+		}
+
+		//線引く用
+        ImPlot::PlotScatter("Points", &data[0].x, &data[0].y, data.size(), s_fOffset, 2 * sizeof(double));
+		ImPlot::PlotLine("Line", &data[0].x, &data[0].y, data.size(), s_fOffset + 1, 2 * sizeof(double));
+
+		
+		//ImPlot::SetNextLineStyle(ImVec4(0, 0.9f, 0, 1), 2);
+		//ImPlot::PlotLine("##bez", &B[0].x, &B[0].y, 100, 0, sizeof(ImPlotPoint));
 
         if (ImPlot::IsPlotSelected())
 		{
             select = ImPlot::GetPlotSelection();
             int cnt;
             ImPlotPoint centroid = FindCentroid(data,select,cnt);
+
             if (cnt > 0)
 			{
                 ImPlot::SetNextMarkerStyle(ImPlotMarker_Square,6);
                 ImPlot::PlotScatter("Centroid", &centroid.x, &centroid.y, 1);
             }
+
             if (ImGui::IsMouseClicked(ImPlot::GetInputMap().SelectCancel)) 
 			{
                 CancelPlotSelection();
                 rects.push_back(select);
             }
         }
-        for (int i = 0; i < rects.size(); ++i) {
+
+        for (int i = 0; i < rects.size(); ++i) 
+		{
             int cnt;
             ImPlotPoint centroid = FindCentroid(data,rects[i],cnt);
+
             if (cnt > 0) {
                 ImPlot::SetNextMarkerStyle(ImPlotMarker_Square,6);
                 ImPlot::PlotScatter("Centroid", &centroid.x, &centroid.y, 1);
             }
-            ImPlot::DragRect(i,&rects[i].X.Min,&rects[i].Y.Min,&rects[i].X.Max,&rects[i].Y.Max,ImVec4(1,0,1,1));
+
+			ImPlot::DragRect(i, &rects[i].X.Min, &rects[i].Y.Min, &rects[i].X.Max, &rects[i].Y.Max, ImVec4(1, 0, 1, 1));
         }
+
         limits  = ImPlot::GetPlotLimits();
         ImPlot::EndPlot();
     }
