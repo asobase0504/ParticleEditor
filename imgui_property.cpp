@@ -374,8 +374,7 @@ void UpdateImguiProperty(void)
 	//グラフ
 	static float v[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 	ImGui::Bezier("test22", v);       // draw
-	static float v[] = { 0.390f, 0.575f, 0.565f, 1.000f };
-	ImGui::Bezier("あああ", v);       // draw
+
 	float y = ImGui::BezierValue(0.5f, v); // x delta in [0..1] range
 
 	//グラフの四角からでないようにするやつ
