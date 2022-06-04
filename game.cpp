@@ -50,7 +50,6 @@ void UpdateGame(void)
 
 	if (bSetImguiParticle())
 	{
-
 		SetParticleImgui(GetImguiParticle());
 	}
 }

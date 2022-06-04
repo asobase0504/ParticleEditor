@@ -29,29 +29,8 @@
 
 //マクロ定義
 #define MAX_NAME (7)
-#define IMGUI_DEFINE_MATH_OPERATORS
 #define CLASS_NAME	"WindowClass"
 #define WINDOW_NAME	"effect"
-#define IMGUI_DEFINE_MATH_OPERATORS
-
-//グローバル変数
-//LPDIRECT3D9			g_pD3D = NULL;
-//LPDIRECT3DDEVICE9	g_pD3DDevice = NULL;
-
-//ImGui
-//ImVec4 clear_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-//D3DXVECTOR3 setpos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-//D3DXVECTOR3 setmove = D3DXVECTOR3(0.0f,0.0f,0.0f);
-//D3DXVECTOR3 setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-//static int selecttype = 0;
-//static int nLife = 0;
-//static float fRadius = 0;
-//bool show_demo_window = true;
-//bool show_another_window = false;
-//bool useEffect = false;
-//bool bMove = false;
-//bool bBackRot = false;
-//bool bEffectEnable = false;
 
 //=================================================
 // 静的変数
@@ -73,32 +52,10 @@ void Draw(void);
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 //ImGui
-static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-D3DXVECTOR3 setpos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-D3DXVECTOR3 setmove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-D3DXVECTOR3 setrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-inline unsigned long FloattoDword(float fVal) { return *((unsigned long*)&fVal); }
-static bool show_demo_window = true;
-static bool show_another_window = false;
-static float s_fRadius = 0;
-static char Txet[8] = "";
-static int s_selecttype = 0;
-static int s_nLife = 0;
-static int selecttype = 0;
-static bool s_bBackRot = false;
-static bool s_bTextureRot = false;
-static bool s_bEffectEnable = false;
-static int s_nItem = 0;
-static float s_fAlpha = 0.0f;
-static float s_fAttenuation = 4.0f;
 static float s_fAngle = 20.0f;
-static float s_fScale = 50.0f;
-static float s_fRandMin = 0;
-static float s_fRandMax = 0;
 static char FileString[MAX_PATH * 256];
-static bool useEffect = false;
-static bool bMove = false;
 static bool bTexUse = false;
+inline unsigned long FloattoDword(float fVal) { return *((unsigned long*)&fVal); }
 
 //===================
 //メイン関数

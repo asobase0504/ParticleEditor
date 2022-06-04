@@ -5,6 +5,7 @@
 #include "particle.h"
 #include <time.h>
 #include "imgui_property.h"
+#include "utility.h"
 
 //==================================================
 // グローバル変数
@@ -126,11 +127,19 @@ void UpdateParticle(void)
 		pParticle->pos += pParticle->move;
 
 		// 推移
-		pParticle->nLife--;	// 体力の減少
-		pParticle->move.y += pParticle->fWeight;			// 重力
-		pParticle->col += pParticle->colTransition;			// 色の推移
-		pParticle->move *= pParticle->fAttenuation;		// 移動量の推移
-		pParticle->fWeight += pParticle->fWeightTransition;	// 重さの推移
+		pParticle->nLife--;											// 体力の減少
+		pParticle->move.y += pParticle->fWeight;					// 重力
+		pParticle->move *= pParticle->fAttenuation;					// 移動量の推移
+		pParticle->fWeight += pParticle->fWeightTransition;			// 重さの推移
+
+		if (pParticle->color.bColTransition)
+		{// 色の推移
+			if (pParticle->color.nEndTime >= pParticle->color.nCntTransitionTime)
+			{
+				pParticle->color.nCntTransitionTime++;
+				pParticle->color.col += pParticle->color.colTransition;
+			}
+		}
 
 		if (pParticle->nLife <= 0)
 		{//エフェクトの寿命
@@ -151,10 +160,10 @@ void UpdateParticle(void)
 		pVtx[3].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, pParticle->fHeight, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[0].col = pParticle->col;
-		pVtx[1].col = pParticle->col;
-		pVtx[2].col = pParticle->col;
-		pVtx[3].col = pParticle->col;
+		pVtx[0].col = pParticle->color.col;
+		pVtx[1].col = pParticle->color.col;
+		pVtx[2].col = pParticle->color.col;
+		pVtx[3].col = pParticle->color.col;
 		
 		//頂点バッファをアンロックする
 		s_pVtxBuff->Unlock();
@@ -167,11 +176,6 @@ void UpdateParticle(void)
 void DrawParticle(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
-
-	//アルファブレンディングを加算合成に設定
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 
 	//点に貼る(true)、ポリゴンに貼る(false)
 	//pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE,true);
@@ -197,6 +201,30 @@ void DrawParticle(void)
 
 		/* ↓使用しているなら↓ */
 
+		switch (g_aParticle[nCnt].alphaBlend)
+		{
+		case TYPE_NONE:		// 乗算
+			break;
+
+		case TYPE_ADD:		// 加算
+			//アルファブレンディングを加算合成に設定
+			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+			break;
+
+		case TYPE_SUB:			// 減算
+			// αブレンディングを減算合成に設定
+			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
+			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+			break;
+
+		default:
+			assert(false);
+			break;
+		}
+		
 		//頂点バッファをデータストリームに設定
 		pDevice->SetStreamSource(0, s_pVtxBuff, 0, sizeof(VERTEX_2D));
 
@@ -209,15 +237,15 @@ void DrawParticle(void)
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
 		//pDevice->DrawPrimitive(D3DPT_POINTLIST,0, nCnt);
+
+		//αブレンディングを元に戻す
+		pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+		pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
 
 	//ポイントスプライトを解除する
 	//pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE, false);
-
-	//αブレンディングを元に戻す
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	//テクスチャを引き継がない
 	pDevice->SetTexture(0, NULL);
@@ -247,7 +275,45 @@ void SetParticleImgui(Particle& inParticle)
 
 		pParticle->fWidth = g_aParticle->fScale;
 		pParticle->fHeight = g_aParticle->fScale;
+		pParticle->color.nCntTransitionTime = 0;
 		pParticle->bUse = true;
+
+		// 生成位置の算出
+		pParticle->pos.x += FloatRandam(pParticle->maxPopPos.x, -pParticle->minPopPos.x);
+		pParticle->pos.y += FloatRandam(pParticle->maxPopPos.y, -pParticle->minPopPos.y);
+		pParticle->pos.z += FloatRandam(pParticle->maxPopPos.z, -pParticle->minPopPos.z);
+
+		// 色の算出
+		if (pParticle->color.bColRandom)
+		{// ランダムカラーを使用
+			pParticle->color.col.r = FloatRandam(pParticle->color.colRandamMax.r, pParticle->color.colRandamMin.r);
+			pParticle->color.col.g = FloatRandam(pParticle->color.colRandamMax.g, pParticle->color.colRandamMin.g);
+			pParticle->color.col.b = FloatRandam(pParticle->color.colRandamMax.b, pParticle->color.colRandamMin.b);
+
+			if (pParticle->color.bColTransition)
+			{// 目的の色の設定
+				if (pParticle->color.bRandomTransitionTime)
+				{
+					pParticle->color.nEndTime = rand() % pParticle->nLife + 1;
+				}
+
+				pParticle->color.destCol.r = FloatRandam(pParticle->color.colRandamMax.r, pParticle->color.colRandamMin.r);
+				pParticle->color.destCol.g = FloatRandam(pParticle->color.colRandamMax.g, pParticle->color.colRandamMin.g);
+				pParticle->color.destCol.b = FloatRandam(pParticle->color.colRandamMax.b, pParticle->color.colRandamMin.b);
+			}
+		}
+
+		if (pParticle->color.bColTransition)
+		{// トラディシオンカラーを使用
+			if (pParticle->color.bRandomTransitionTime)
+			{
+				pParticle->color.nEndTime =  rand() % pParticle->nLife + 1;
+			}
+
+			pParticle->color.colTransition.r = (pParticle->color.destCol.r - pParticle->color.col.r) / pParticle->color.nEndTime;
+			pParticle->color.colTransition.g = (pParticle->color.destCol.g - pParticle->color.col.g) / pParticle->color.nEndTime;
+			pParticle->color.colTransition.b = (pParticle->color.destCol.b - pParticle->color.col.b) / pParticle->color.nEndTime;
+		}
 
 		VERTEX_2D*pVtx;	// 頂点情報へのポインタ
 
@@ -263,10 +329,10 @@ void SetParticleImgui(Particle& inParticle)
 		pVtx[3].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, pParticle->fHeight, 0.0f);
 
 		// 頂点カラーの設定
-		pVtx[0].col = pParticle->col;
-		pVtx[1].col = pParticle->col;
-		pVtx[2].col = pParticle->col;
-		pVtx[3].col = pParticle->col;
+		pVtx[0].col = pParticle->color.col;
+		pVtx[1].col = pParticle->color.col;
+		pVtx[2].col = pParticle->color.col;
+		pVtx[3].col = pParticle->color.col;
 
 		// 頂点バッファをアンロックする
 		s_pVtxBuff->Unlock();

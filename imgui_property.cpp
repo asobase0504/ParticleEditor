@@ -11,22 +11,16 @@
 #include "imgui_property.h"
 #include "main.h"
 #include "file.h"
+#include "utility.h"
 #include <imgui_internal.h>
 #include <assert.h>
 #include <implot.h>
 #include <imgui_widget_flamegraph.h>
 
+//==================================================
+// マクロ定義
+//==================================================
 #define IMGUI_DEFINE_MATH_OPERATORS
-
-bool show_demo_window = true;
-bool show_another_window = true;
-bool show_profiler_window = true;
-ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-// Main loop
-
-bool firstFrame = false;
-Profiler profiler;
 
 
 //==================================================
@@ -141,18 +135,20 @@ void UninitImguiProperty(HWND hWnd, WNDCLASSEX wcex)
 #endif // _DEBUG
 }
 
-
 //--------------------------------------------------
 // 曲線制作サインカーブ
 //--------------------------------------------------
 namespace ImGui
 {
 	template<int steps>
-	void bezier_table(ImVec2 P[4], ImVec2 results[steps + 1]) {
+	void bezier_table(ImVec2 P[4], ImVec2 results[steps + 1]) 
+	{
 		static float C[(steps + 1) * 4], *K = 0;
-		if (!K) {
+		if (!K) 
+		{
 			K = C;
-			for (unsigned step = 0; step <= steps; ++step) {
+			for (unsigned step = 0; step <= steps; ++step) 
+			{
 				float t = (float)step / (float)steps;
 				C[step * 4 + 0] = (1 - t)*(1 - t)*(1 - t);   // * P0
 				C[step * 4 + 1] = 3 * (1 - t)*(1 - t) * t; // * P1
@@ -160,7 +156,8 @@ namespace ImGui
 				C[step * 4 + 3] = t*t*t;               // * P3
 			}
 		}
-		for (unsigned step = 0; step <= steps; ++step) {
+		for (unsigned step = 0; step <= steps; ++step) 
+		{
 			ImVec2 point = {
 				K[step * 4 + 0] * P[0].x + K[step * 4 + 1] * P[1].x + K[step * 4 + 2] * P[2].x + K[step * 4 + 3] * P[3].x,
 				K[step * 4 + 0] * P[0].y + K[step * 4 + 1] * P[1].y + K[step * 4 + 2] * P[2].y + K[step * 4 + 3] * P[3].y
@@ -169,8 +166,9 @@ namespace ImGui
 		}
 	}
 
-	float BezierValue(float dt01, float P[4]) {
-		enum { STEPS = 256 };
+	float BezierValue(float dt01, float P[4]) 
+	{
+		enum { STEPS = 512 };
 		ImVec2 Q[4] = { { 0, 0 },{ P[0], P[1] },{ P[2], P[3] },{ 1, 1 } };
 		ImVec2 results[STEPS + 1];
 		bezier_table<STEPS>(Q, results);
@@ -200,6 +198,8 @@ namespace ImGui
 		// prepare canvas
 		const float avail = GetContentRegionAvail().x;
 		const float dim = ImMin(avail, 128.f);
+
+		/*width, height*/
 		ImVec2 Canvas(dim, dim);
 
 		ImRect bb(Window->DC.CursorPos, Window->DC.CursorPos + Canvas);
@@ -213,13 +213,13 @@ namespace ImGui
 		RenderFrame(bb.Min, bb.Max, GetColorU32(ImGuiCol_FrameBg, 1), true, Style.FrameRounding);
 
 		// background grid
-		for (int i = 0; i <= Canvas.x; i += (Canvas.x / 4)) {
+		for (int i = 0; i <= Canvas.x; i += (int)(Canvas.x * 0.25f)) {
 			DrawList->AddLine(
 				ImVec2(bb.Min.x + i, bb.Min.y),
 				ImVec2(bb.Min.x + i, bb.Max.y),
 				GetColorU32(ImGuiCol_TextDisabled));
 		}
-		for (int i = 0; i <= Canvas.y; i += (Canvas.y / 4)) {
+		for (int i = 0; i <= Canvas.y; i += (int)(Canvas.y * 0.25f)) {
 			DrawList->AddLine(
 				ImVec2(bb.Min.x, bb.Min.y + i),
 				ImVec2(bb.Max.x, bb.Min.y + i),
@@ -288,41 +288,6 @@ namespace ImGui
 		}
 
 		return changed;
-	}
-
-	void ShowBezierDemo()
-	{
-		{ static float v[] = { 0.000f, 0.000f, 1.000f, 1.000f }; Bezier("easeLinear", v); }
-		{ static float v[] = { 0.470f, 0.000f, 0.745f, 0.715f }; Bezier("easeInSine", v); }
-		{ static float v[] = { 0.390f, 0.575f, 0.565f, 1.000f }; Bezier("easeOutSine", v); }
-		{ static float v[] = { 0.445f, 0.050f, 0.550f, 0.950f }; Bezier("easeInOutSine", v); }
-		{ static float v[] = { 0.550f, 0.085f, 0.680f, 0.530f }; Bezier("easeInQuad", v); }
-		{ static float v[] = { 0.250f, 0.460f, 0.450f, 0.940f }; Bezier("easeOutQuad", v); }
-		{ static float v[] = { 0.455f, 0.030f, 0.515f, 0.955f }; Bezier("easeInOutQuad", v); }
-		{ static float v[] = { 0.550f, 0.055f, 0.675f, 0.190f }; Bezier("easeInCubic", v); }
-		{ static float v[] = { 0.215f, 0.610f, 0.355f, 1.000f }; Bezier("easeOutCubic", v); }
-		{ static float v[] = { 0.645f, 0.045f, 0.355f, 1.000f }; Bezier("easeInOutCubic", v); }
-		{ static float v[] = { 0.895f, 0.030f, 0.685f, 0.220f }; Bezier("easeInQuart", v); }
-		{ static float v[] = { 0.165f, 0.840f, 0.440f, 1.000f }; Bezier("easeOutQuart", v); }
-		{ static float v[] = { 0.770f, 0.000f, 0.175f, 1.000f }; Bezier("easeInOutQuart", v); }
-		{ static float v[] = { 0.755f, 0.050f, 0.855f, 0.060f }; Bezier("easeInQuint", v); }
-		{ static float v[] = { 0.230f, 1.000f, 0.320f, 1.000f }; Bezier("easeOutQuint", v); }
-		{ static float v[] = { 0.860f, 0.000f, 0.070f, 1.000f }; Bezier("easeInOutQuint", v); }
-		{ static float v[] = { 0.950f, 0.050f, 0.795f, 0.035f }; Bezier("easeInExpo", v); }
-		{ static float v[] = { 0.190f, 1.000f, 0.220f, 1.000f }; Bezier("easeOutExpo", v); }
-		{ static float v[] = { 1.000f, 0.000f, 0.000f, 1.000f }; Bezier("easeInOutExpo", v); }
-		{ static float v[] = { 0.600f, 0.040f, 0.980f, 0.335f }; Bezier("easeInCirc", v); }
-		{ static float v[] = { 0.075f, 0.820f, 0.165f, 1.000f }; Bezier("easeOutCirc", v); }
-		{ static float v[] = { 0.785f, 0.135f, 0.150f, 0.860f }; Bezier("easeInOutCirc", v); }
-		{ static float v[] = { 0.600f, -0.28f, 0.735f, 0.045f }; Bezier("easeInBack", v); }
-		{ static float v[] = { 0.175f, 0.885f, 0.320f, 1.275f }; Bezier("easeOutBack", v); }
-		{ static float v[] = { 0.680f, -0.55f, 0.265f, 1.550f }; Bezier("easeInOutBack", v); }
-		// easeInElastic: not a bezier
-		// easeOutElastic: not a bezier
-		// easeInOutElastic: not a bezier
-		// easeInBounce: not a bezier
-		// easeOutBounce: not a bezier
-		// easeInOutBounce: not a bezier
 	}
 }
 void ShowDemo_DragLines()
@@ -406,16 +371,55 @@ void UpdateImguiProperty(void)
 		OutputStatus();
 	}
 
-
-	
-
-	
-
+	//グラフ
+	static float v[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	ImGui::Bezier("test22", v);       // draw
 	static float v[] = { 0.390f, 0.575f, 0.565f, 1.000f };
 	ImGui::Bezier("あああ", v);       // draw
 	float y = ImGui::BezierValue(0.5f, v); // x delta in [0..1] range
 
-	{ static float v[] = { 0.680f, -0.55f, 0.265f, 1.550f }; ImGui::Bezier("easeInOutBack", v); }
+	//グラフの四角からでないようにするやつ
+	{
+		if (v[0] <= 0.0f)
+		{
+			v[0] = 0.0f;
+		}
+
+		if (v[0] >= 1.0f)
+		{
+			v[0] = 1.0f;
+		}
+
+		if (v[1] <= 0.0f)
+		{
+			v[1] = 0.0f;
+		}
+
+		if (v[1] >= 1.0f)
+		{
+			v[1] = 1.0f;
+		}
+
+		if (v[2] >= 1.0f)
+		{
+			v[2] = 1.0f;
+		}
+
+		if (v[2] <= 0.0f)
+		{
+			v[2] = 0.0f;
+		}
+
+		if (v[3] >= 1.0f)
+		{
+			v[3] = 1.0f;
+		}
+
+		if (v[3] <= 0.0f)
+		{
+			v[3] = 0.0f;
+		}
+	}
 
 	// テキスト表示
 	ImGui::Text("FPS  : %.2f", ImGui::GetIO().Framerate);
@@ -425,7 +429,9 @@ void UpdateImguiProperty(void)
 	//エフェクト関係
 	if (ImGui::TreeNode("Effecttree1", "EffectSetting"))
 	{
-		imguiParticle.col.a = 1.0f;
+		imguiParticle.color.col.a = 1.0f;
+		imguiParticle.color.destCol.a = 1.0f;
+
 		//imguiParticle.fScale = 50.0f;
 
 		if (ImGui::Button("LOAD TEXTURE"))
@@ -453,19 +459,34 @@ void UpdateImguiProperty(void)
 		{
 			imguiParticle.pos.x = (float)SCREEN_WIDTH * 0.5f;
 			imguiParticle.pos.y = (float)SCREEN_HEIGHT * 0.5f;
+			imguiParticle.maxPopPos.x = 0.0f;
+			imguiParticle.maxPopPos.y = 0.0f;
+			imguiParticle.minPopPos.x = 0.0f;
+			imguiParticle.minPopPos.y = 0.0f;
 			imguiParticle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-			imguiParticle.col = D3DXCOLOR(0.5f,0.0f,1.0f,1.0f);
+			imguiParticle.color.col = D3DXCOLOR(1.0f,0.0f,0.0f,1.0f);
+			imguiParticle.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+			imguiParticle.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			imguiParticle.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+			imguiParticle.color.colTransition = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 			imguiParticle.nLife = 60;
 			imguiParticle.fScale = 50.0f;
 			imguiParticle.fRadius = 4.5f;
 			imguiParticle.fAngle = 20.5f;
 			imguiParticle.fAttenuation = 0.98f;
+			imguiParticle.alphaBlend = (ALPHABLENDTYPE)0;
 		}
 
 		//EffectData *Effect = GetStatus();
 		ImGui::SliderFloat("PosX", &imguiParticle.pos.x, 0, (float)SCREEN_WIDTH);
 		ImGui::SliderFloat("PosY", &imguiParticle.pos.y, 0, (float)SCREEN_HEIGHT);
+
+		// 生成範囲の設定
+		ImGui::SliderFloat("MaxPopPosX", &imguiParticle.maxPopPos.x, 0, (float)SCREEN_WIDTH);
+		ImGui::SliderFloat("MinPopPosX", &imguiParticle.minPopPos.x, 0, (float)SCREEN_WIDTH);
+		ImGui::SliderFloat("MaxPopPosY", &imguiParticle.maxPopPos.y, 0, (float)SCREEN_HEIGHT);
+		ImGui::SliderFloat("MinPopPosY", &imguiParticle.minPopPos.y, 0, (float)SCREEN_HEIGHT);
 
 		ImGui::InputFloat3("SettingEffectMove", imguiParticle.move, "%f");
 		ImGui::SliderFloat("MoveX", &imguiParticle.move.x, -100.0f, 100.0f);
@@ -489,8 +510,7 @@ void UpdateImguiProperty(void)
 			float rotY = imguiParticle.pos.y * sinf(s_fDeg) - imguiParticle.pos.y * cosf(s_fDeg);
 			float fAngle = atan2f(rotX, rotY);
 			imguiParticle.rot = D3DXVECTOR3(rotX, rotY, fAngle);
-
-			//if (ImGui::Checkbox("TextureRot", &bTexRot))
+			
 			if (imguiParticle.rot.z > D3DX_PI)
 			{
 				imguiParticle.rot.z -= D3DX_PI * 2;
@@ -517,11 +537,41 @@ void UpdateImguiProperty(void)
 			ImGui::TreePop();
 		}
 
-		//カラーパレット
-		ImGui::ColorEdit4("clear color", (float*)&imguiParticle.col);
+		if (ImGui::TreeNode("Effecttree3", "Color"))
+		{
+			//カラーパレット
+			ImGui::ColorEdit4("clear color", (float*)&imguiParticle.color.col);
+
+			// ランダムカラー
+			ImGui::Checkbox("ColorRandom", &imguiParticle.color.bColRandom);
+
+			if (imguiParticle.color.bColRandom)
+			{
+				ImGui::ColorEdit4("clear RandamMax", (float*)&imguiParticle.color.colRandamMax);
+				ImGui::ColorEdit4("clear RandamMin", (float*)&imguiParticle.color.colRandamMin);
+			}
+
+			// カラートラディション
+			ImGui::Checkbox("ColorTransition", &imguiParticle.color.bColTransition);
+
+			if (imguiParticle.color.bColTransition)
+			{// 目的の色
+				ImGui::ColorEdit4("clear destColor", (float*)&imguiParticle.color.destCol);
+
+				ImGui::Checkbox("RandomTransitionTime", &imguiParticle.color.bRandomTransitionTime);
+
+				if (!imguiParticle.color.bRandomTransitionTime)
+				{
+					ImGui::SliderInt("EndTime", &imguiParticle.color.nEndTime, 0, imguiParticle.nLife);
+				}
+			}
+
+			//ツリーを閉じる
+			ImGui::TreePop();
+		}
 
 		//グラデーション
-		if (ImGui::TreeNode("Effecttree3", "Gradation"))
+		if (ImGui::TreeNode("Effecttree4", "Gradation"))
 		{
 			static float s_fCustR[10];
 			static float s_fCustG[10];
@@ -529,54 +579,48 @@ void UpdateImguiProperty(void)
 			static int s_nSpeed = 1;
 			static int selecttype = 0;
 
-			ImGui::RadioButton("RPlus GSubtract", &selecttype, 1);
-			ImGui::RadioButton("GPlus BSubtract", &selecttype, 2);
-			ImGui::RadioButton("BPlus RSubtract", &selecttype, 3);
-			ImGui::RadioButton("Random", &selecttype, 4);
+			ImGui::RadioButton("Custom", &selecttype, 1);
 
-			if (selecttype == 4)
+			if (selecttype == 1)
 			{
-				static float randColMax = 1.0f;
-				static float randColMin = 0.0f;
-				ImGui::InputFloat("RandomMin", &randColMin);
-				ImGui::InputFloat("RandomMax", &randColMax);
-
-				imguiParticle.colRandamMin = D3DXCOLOR(randColMin, randColMin, randColMin, 1.0f);
-				imguiParticle.colRandamMax = D3DXCOLOR(randColMax, randColMax, randColMax, 1.0f);
-				
-			}
-
-			ImGui::RadioButton("Custom", &selecttype, 5);
-
-			if (selecttype == 5)
-			{
-				static int s_nSetTime = 0.0f;
+				static int s_nSetTime = 0;
 				static int nTypeNum = 0;
 				const char *Items[] = { "Red", "Green", "Blue"};
 				ImGui::Combo("ColorType", &nTypeNum, Items, IM_ARRAYSIZE(Items));
 
+				//赤
 				if (nTypeNum == 0)
 				{
 					ImGui::PlotLines("Custom Gradation", s_fCustR, IM_ARRAYSIZE(s_fCustR), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 					ImGui::SliderFloat("Red", &s_fCustR[s_nSetTime], -0.5f, 0.5f);
+					ImGui::PopStyleColor();
 				}
 
+				//緑
 				if (nTypeNum == 1)
 				{
 					ImGui::PlotLines("Custom Gradation", s_fCustG, IM_ARRAYSIZE(s_fCustG), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
 					ImGui::SliderFloat("Green", &s_fCustG[s_nSetTime], -0.5f, 0.5f);
+					ImGui::PopStyleColor();
 				}
 
+				//青
 				if (nTypeNum == 2)
 				{
 					ImGui::PlotLines("Custom Gradation", s_fCustB, IM_ARRAYSIZE(s_fCustB), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.6f, 1.0f, 1.0f));
 					ImGui::SliderFloat("Blue", &s_fCustB[s_nSetTime], -0.5f, 0.5f);
+					ImGui::PopStyleColor();
 				}
 
-				ImGui::SliderInt("SetTime", &s_nSetTime, 0, 10);
+				ImGui::SliderInt("SetKey", &s_nSetTime, 0, 9);
 				ImGui::SliderInt("Speed", &s_nSpeed, 1, 30);		//数値が高くなると変化速度がゆっくりになる
 
-				ImGui::SameLine();
 				/*グラフの全ての色の数値を０にする*/
 				if (ImGui::Button("All Zero"))
 				{
@@ -591,8 +635,6 @@ void UpdateImguiProperty(void)
 
 			ImGui::RadioButton("Gradation None", &selecttype, 0);
 
-			//色変更(ImGui)
-			D3DXCOLOR RandCol = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 			static int s_nCounter;
 			static int s_nTimer;
 			static int s_nColNum;
@@ -600,29 +642,13 @@ void UpdateImguiProperty(void)
 			switch (selecttype)
 			{
 			case 1:
-				imguiParticle.colTransition = D3DXCOLOR(0.0f, -0.01f, 0.0f, 0.0f);
-				imguiParticle.col.r = 1.0f;
-				break;
-
-			case 2:
-				imguiParticle.colTransition = D3DXCOLOR(0.0f, 0.0f, -0.01f, 0.0f);
-				imguiParticle.col.g = 1.0f;
-				break;
-
-			case 3:
-				imguiParticle.colTransition = D3DXCOLOR(-0.01f, 0.0f, 0.0f, 0.0f);
-				imguiParticle.col.b = 1.0f;
-				break;
-
-			case 4:
-				RandCol = ((float)imguiParticle.colRandamMin + (((float)rand() * (float)imguiParticle.colRandamMax - (float)imguiParticle.colRandamMin + 1.0f) / (1.0f + RAND_MAX)));
-				imguiParticle.col = RandCol;
-
-				imguiParticle.col.a = 1.0f;
-				break;
-
-			case 5:
 				s_nCounter++;
+
+				//ゼロ除算回避
+				if (s_nSpeed <= 0)
+				{
+					s_nSpeed = 1;
+				}
 
 				if ((s_nCounter % s_nSpeed) == 0)
 				{//一定時間経過
@@ -630,7 +656,7 @@ void UpdateImguiProperty(void)
 
 					if (s_nTimer >= 5)
 					{
-						imguiParticle.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
+						imguiParticle.color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
 						s_nColNum++;
 						s_nTimer = 0;
 					}
@@ -648,14 +674,33 @@ void UpdateImguiProperty(void)
 
 				break;
 
+			case 2:
+				
+				break;
 			case 0:
 				break;
 			default:
 				break;
 			}
 
-			ImGui::SliderFloat("Alpha", &imguiParticle.colTransition.a, -1.0f, 0.0f);
+			ImGui::SliderFloat("Alpha", &imguiParticle.color.colTransition.a, -0.5f, 0.0f);
 
+			ImGui::TreePop();
+		}
+
+		// αブレンディングの種類
+		if (ImGui::TreeNode("Effecttree5", "AlphaBlending"))
+		{
+			// 変数宣言
+			int	nBlendingType = (int)imguiParticle.alphaBlend;		// 種別変更用の変数
+
+			ImGui::RadioButton("AddBlend", &nBlendingType, 0);
+			ImGui::RadioButton("SubBlend", &nBlendingType, 1);
+			ImGui::RadioButton("BlendNone", &nBlendingType, 2);
+
+			imguiParticle.alphaBlend = (ALPHABLENDTYPE)nBlendingType;
+
+			//ツリーを閉じる
 			ImGui::TreePop();
 		}
 
