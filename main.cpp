@@ -173,7 +173,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 			}
 		
 
-			//if ((dwCurrentTime - dwExedastTime) >= (1000 / 60))
+			if ((dwCurrentTime - dwExedastTime) >= (1000 / 60))
 			{//60•ª‚Ì1•bŒo‰ß
 				dwExedastTime = dwCurrentTime;	// ˆ—ŠJn‚Ì[Œ»İ]‚ğ•Û‘¶
 

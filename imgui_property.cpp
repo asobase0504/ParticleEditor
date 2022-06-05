@@ -17,6 +17,24 @@
 #include <implot.h>
 #include <imgui_widget_flamegraph.h>
 
+//------------------------------
+//CPU
+//------------------------------
+#include <stdio.h>
+#include <Windows.h>
+
+//------------------------
+//GPU
+//------------------------
+#include <nvml.h>
+
+#if _DEBUG
+#pragma comment(lib, "nvml.lib")
+#else
+#pragma comment(lib, "nvml.lib")
+#endif
+
+
 //==================================================
 // マクロ定義
 //==================================================
@@ -37,7 +55,15 @@ static bool	s_window = false;	// ウインドウを使用するかどうか
 static Particle imguiParticle;	// ImGuiに保存されてるパーティクル情報
 static bool s_bEffectEnable = false;
 static float s_fScale = 50.0f;
+static const unsigned int gpu_id = 0;
+static nvmlDevice_t device;
 
+//unsigned MemoryUsageMegaBytes(void)
+//{
+//	MEMORYSTATUSEX m = { sizeof m };
+//	GlobalMemoryStatusEx(&m);
+//	return (unsigned)(((512 * 1024) + (m.ullTotalVirtual - m.ullAvailVirtual)) / (1024 * 1024));
+//}
 
 static void ProfilerValueGetter(float* startTimestamp, float* endTimestamp, ImU8* level, const char** caption, const void* data, int idx)
 {
@@ -109,6 +135,11 @@ void InitImguiProperty(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 	// プラットフォームの設定/Renderer backends
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX9_Init(pDevice);
+
+
+	//GPU
+	nvmlInit();//初期化
+	nvmlDeviceGetHandleByIndex(gpu_id, &device);
 
 #endif // _DEBUG
 }
@@ -370,6 +401,23 @@ void UpdateImguiProperty(void)
 	{
 		OutputStatus();
 	}
+
+	//ImGui::Text("CPU1  : %d", MemoryUsageMegaBytes());
+	//void* const p = malloc(512 * 1024 * 1024);
+	// テキスト表示
+	//ImGui::Text("CPU2  : %d", MemoryUsageMegaBytes());
+	//free(p);
+	//ImGui::Text("CPU3  : %d", MemoryUsageMegaBytes());
+
+	unsigned int clockMZ = 0;
+
+	//現在の使用率取得
+	nvmlDeviceGetClock(device, NVML_CLOCK_MEM, NVML_CLOCK_ID_CURRENT, &clockMZ);
+
+	float clockNau = (float)clockMZ *0.1f;
+
+	// テキスト表示
+	ImGui::Text("GPU  : %.2f%%", clockNau);
 
 	//グラフ
 	static float v[] = { 0.0f, 0.0f, 1.0f, 1.0f };
