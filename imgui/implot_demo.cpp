@@ -1193,30 +1193,36 @@ void ShowDemo_TickLabels()  {
 // DEMO WINDOW
 //-----------------------------------------------------------------------------
 
-void ShowDemoWindow(bool* p_open) {
+void ShowDemoWindow(bool* p_open) 
+{
     static bool show_imgui_metrics       = false;
     static bool show_implot_metrics      = false;
     static bool show_imgui_style_editor  = false;
     static bool show_implot_style_editor = false;
     static bool show_implot_benchmark    = false;
-    if (show_imgui_metrics) {
+    if (show_imgui_metrics)
+	{
         ImGui::ShowMetricsWindow(&show_imgui_metrics);
     }
-    if (show_implot_metrics) {
+    if (show_implot_metrics) 
+	{
         ImPlot::ShowMetricsWindow(&show_implot_metrics);
     }
-    if (show_imgui_style_editor) {
+    if (show_imgui_style_editor) 
+	{
         ImGui::Begin("Style Editor (ImGui)", &show_imgui_style_editor);
         ImGui::ShowStyleEditor();
         ImGui::End();
     }
-    if (show_implot_style_editor) {
+    if (show_implot_style_editor) 
+	{
         ImGui::SetNextWindowSize(ImVec2(415,762), ImGuiCond_Appearing);
         ImGui::Begin("Style Editor (ImPlot)", &show_implot_style_editor);
         ImPlot::ShowStyleEditor();
         ImGui::End();
     }
-    if (show_implot_benchmark) {
+    if (show_implot_benchmark) 
+	{
         ImGui::SetNextWindowSize(ImVec2(530,740), ImGuiCond_Appearing);
         ImGui::Begin("ImPlot Benchmark Tool", &show_implot_benchmark);
         ImPlot::ShowBenchmarkTool();
@@ -1226,8 +1232,10 @@ void ShowDemoWindow(bool* p_open) {
     ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(600, 750), ImGuiCond_FirstUseEver);
     ImGui::Begin("ImPlot Demo", p_open, ImGuiWindowFlags_MenuBar);
-    if (ImGui::BeginMenuBar()) {
-        if (ImGui::BeginMenu("Tools")) {
+    if (ImGui::BeginMenuBar()) 
+	{
+        if (ImGui::BeginMenu("Tools")) 
+		{
             ImGui::MenuItem("Metrics (ImGui)",       NULL, &show_imgui_metrics);
             ImGui::MenuItem("Metrics (ImPlot)",      NULL, &show_implot_metrics);
             ImGui::MenuItem("Style Editor (ImGui)",  NULL, &show_imgui_style_editor);
@@ -1241,7 +1249,8 @@ void ShowDemoWindow(bool* p_open) {
     ImGui::Text("ImPlot says hello. (%s)", IMPLOT_VERSION);
     // display warning about 16-bit indices
     static bool showWarning = sizeof(ImDrawIdx)*8 == 16 && (ImGui::GetIO().BackendFlags & ImGuiBackendFlags_RendererHasVtxOffset) == false;
-    if (showWarning) {
+    if (showWarning) 
+	{
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1,1,0,1));
         ImGui::TextWrapped("WARNING: ImDrawIdx is 16-bit and ImGuiBackendFlags_RendererHasVtxOffset is false. Expect visual glitches and artifacts! See README for more information.");
         ImGui::PopStyleColor();
@@ -1249,9 +1258,10 @@ void ShowDemoWindow(bool* p_open) {
 
     ImGui::Spacing();
 
-    if (ImGui::BeginTabBar("ImPlotDemoTabs")) {
-      /* if (ImGui::BeginTabItem("Plots")) {
-		   
+    if (ImGui::BeginTabBar("ImPlotDemoTabs"))
+	{
+       //if (ImGui::BeginTabItem("Plots")) {
+		   /*
             if (ImGui::CollapsingHeader("Line Plots"))
                 ShowDemo_LinePlots();*/
 
@@ -1309,10 +1319,11 @@ void ShowDemoWindow(bool* p_open) {
                 ShowDemo_AutoFittingData();
             ImGui::EndTabItem();
         }*/
-
         if (ImGui::BeginTabItem("Tools")) 
 		{
-          /*  if (ImGui::CollapsingHeader("Drag Points"))
+      /*      if (ImGui::CollapsingHeader("Offset and Stride"))
+                ShowDemo_OffsetAndStride();
+            if (ImGui::CollapsingHeader("Drag Points"))
                 ShowDemo_DragPoints();
             if (ImGui::CollapsingHeader("Drag Lines"))
                 ShowDemo_DragLines();*/

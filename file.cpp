@@ -32,13 +32,23 @@ void OutputStatus()
 	DataEffect = GetImguiParticle();
 
 	j["POS"] = {{ "X", DataEffect.pos.x} ,{ "Y", DataEffect.pos.y} ,{ "Z", DataEffect.pos.z } };
+	j["POSMAX"] = {{ "X", DataEffect.maxPopPos.x } ,{ "Y", DataEffect.maxPopPos.y } ,{ "Z", DataEffect.maxPopPos.z } };
+	j["POSMIN"] = {{ "X", DataEffect.minPopPos.x } ,{ "Y", DataEffect.minPopPos.y } ,{ "Z", DataEffect.minPopPos.z } };
 	j["MOVE"] = { { "X", DataEffect.move.x } ,{ "Y", DataEffect.move.y } ,{ "Z", DataEffect.move.z } };
 	j["MOVETRANSITION"] = { { "X", DataEffect.moveTransition.x } ,{ "Y", DataEffect.moveTransition.y } ,{ "Z", DataEffect.moveTransition.z } };
 	j["ROT"] = { {"X", DataEffect.rot.x} ,{ "Y", DataEffect.rot.y },{ "Z", DataEffect.rot.z } };
-	j["COL"] = { { "R", DataEffect.col.r }, {"G" ,DataEffect.col.g} ,{ "B", DataEffect.col.b } ,{ "A", DataEffect.col.a } };
-	j["COLRANDAMMAX"] = { { "R", DataEffect.colRandamMax.r },{ "G" ,DataEffect.colRandamMax.g } ,{ "B", DataEffect.colRandamMax.b } ,{ "A", DataEffect.colRandamMax.a } };
-	j["COLRANDAMMIN"] = { { "R", DataEffect.colRandamMin.r },{ "G" ,DataEffect.colRandamMin.g } ,{ "B", DataEffect.colRandamMin.b } ,{ "A", DataEffect.colRandamMin.a } };
-	j["COLTRANSITION"] = { { "R", DataEffect.colTransition.r },{ "G" ,DataEffect.colTransition.g } ,{ "B", DataEffect.colTransition.b } ,{ "A", DataEffect.colTransition.a } };
+	
+	j["COL"] = { { "R", DataEffect.color.col.r }, {"G" ,DataEffect.color.col.g} ,{ "B", DataEffect.color.col.b } ,{ "A", DataEffect.color.col.a } };
+	j["COLRANDAMMAX"] = { { "R", DataEffect.color.colRandamMax.r },{ "G" ,DataEffect.color.colRandamMax.g } ,{ "B", DataEffect.color.colRandamMax.b } ,{ "A", DataEffect.color.colRandamMax.a } };
+	j["COLRANDAMMIN"] = { { "R", DataEffect.color.colRandamMin.r },{ "G" ,DataEffect.color.colRandamMin.g } ,{ "B", DataEffect.color.colRandamMin.b } ,{ "A", DataEffect.color.colRandamMin.a } };
+	j["COLTRANSITION"] = { { "R", DataEffect.color.colTransition.r },{ "G" ,DataEffect.color.colTransition.g } ,{ "B", DataEffect.color.colTransition.b } ,{ "A", DataEffect.color.colTransition.a } };
+	j["DESTCOL"] = { { "R", DataEffect.color.destCol.r },{ "G" ,DataEffect.color.destCol.g } ,{ "B", DataEffect.color.destCol.b } ,{ "A", DataEffect.color.destCol.a } };
+	j["ENDTIME"] = DataEffect.color.nEndTime;
+	j["CNTTRANSITIONTIME"] = DataEffect.color.nCntTransitionTime;
+	j["BCOLTRANSITION"] = DataEffect.color.bColTransition;
+	j["COLRANDOM"] = DataEffect.color.bColRandom;
+	j["RANDOMTRANSITIONTIME"] = DataEffect.color.bRandomTransitionTime;
+	
 	j["TYPE"] = DataEffect.type;
 	j["WIDTH"] = DataEffect.fWidth;
 	j["HEIGHT"] = DataEffect.fHeight;
@@ -75,10 +85,18 @@ void LoodJson(const wchar_t* cUrl)
 		DataEffect.move = D3DXVECTOR3(j["MOVE"]["X"], j["MOVE"]["Y"], j["MOVE"]["Z"]);
 		DataEffect.rot = D3DXVECTOR3(j["ROT"] ["X"], j["ROT"] ["Y"], j["ROT"] ["Z"]);
 		DataEffect.moveTransition = D3DXVECTOR3(j["MOVETRANSITION"]["X"], j["MOVETRANSITION"]["Y"], j["MOVETRANSITION"]["Z"]);;
-		DataEffect.col = D3DXCOLOR(j["COL"] ["R"], j["COL"] ["G"], j["COL"] ["B"], j["COL"] ["A"]);
-		DataEffect.colRandamMax = D3DXCOLOR(j["COLRANDAMMAX"]["R"], j["COLRANDAMMAX"]["G"], j["COLRANDAMMAX"]["B"], j["COLRANDAMMAX"]["A"]);
-		DataEffect.colRandamMin = D3DXCOLOR(j["COLRANDAMMIN"]["R"], j["COLRANDAMMIN"]["G"], j["COLRANDAMMIN"]["B"], j["COLRANDAMMIN"]["A"]);
-		DataEffect.colTransition = D3DXCOLOR(j["COLTRANSITION"]["R"], j["COLTRANSITION"]["G"], j["COLTRANSITION"]["B"], j["COLTRANSITION"]["A"]);
+		
+		DataEffect.color.col = D3DXCOLOR(j["COL"] ["R"], j["COL"] ["G"], j["COL"] ["B"], j["COL"] ["A"]);
+		DataEffect.color.colRandamMax = D3DXCOLOR(j["COLRANDAMMAX"]["R"], j["COLRANDAMMAX"]["G"], j["COLRANDAMMAX"]["B"], j["COLRANDAMMAX"]["A"]);
+		DataEffect.color.colRandamMin = D3DXCOLOR(j["COLRANDAMMIN"]["R"], j["COLRANDAMMIN"]["G"], j["COLRANDAMMIN"]["B"], j["COLRANDAMMIN"]["A"]);
+		DataEffect.color.colTransition = D3DXCOLOR(j["COLTRANSITION"]["R"], j["COLTRANSITION"]["G"], j["COLTRANSITION"]["B"], j["COLTRANSITION"]["A"]);
+		DataEffect.color.destCol = D3DXCOLOR(j["DESTCOL"]["R"], j["DESTCOL"]["G"], j["DESTCOL"]["B"], j["DESTCOL"]["A"]);
+		DataEffect.color.nEndTime = j["ENDTIME"];
+		DataEffect.color.nCntTransitionTime = j["CNTTRANSITIONTIME"];
+		DataEffect.color.bColTransition = j["BCOLTRANSITION"];
+		DataEffect.color.bColRandom = j["COLRANDOM"];
+		DataEffect.color.bRandomTransitionTime = j["RANDOMTRANSITIONTIME"];
+		
 		DataEffect.type = j["TYPE"];
 		DataEffect.fWidth = j["WIDTH"];
 		DataEffect.fHeight = j["HEIGHT"];

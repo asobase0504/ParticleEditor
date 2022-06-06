@@ -15,11 +15,31 @@
 #include <imgui_internal.h>
 #include <assert.h>
 #include <implot.h>
+#include <imgui_widget_flamegraph.h>
+
+//------------------------------
+//CPU
+//------------------------------
+#include <stdio.h>
+#include <Windows.h>
+
+//------------------------
+//GPU
+//------------------------
+#include <nvml.h>
+
+#if _DEBUG
+#pragma comment(lib, "nvml.lib")
+#else
+#pragma comment(lib, "nvml.lib")
+#endif
+
 
 //==================================================
 // マクロ定義
 //==================================================
 #define IMGUI_DEFINE_MATH_OPERATORS
+
 
 //==================================================
 // 定義
@@ -35,6 +55,42 @@ static bool	s_window = false;	// ウインドウを使用するかどうか
 static Particle imguiParticle;	// ImGuiに保存されてるパーティクル情報
 static bool s_bEffectEnable = false;
 static float s_fScale = 50.0f;
+static const unsigned int gpu_id = 0;
+static nvmlDevice_t device;
+
+//unsigned MemoryUsageMegaBytes(void)
+//{
+//	MEMORYSTATUSEX m = { sizeof m };
+//	GlobalMemoryStatusEx(&m);
+//	return (unsigned)(((512 * 1024) + (m.ullTotalVirtual - m.ullAvailVirtual)) / (1024 * 1024));
+//}
+
+static void ProfilerValueGetter(float* startTimestamp, float* endTimestamp, ImU8* level, const char** caption, const void* data, int idx)
+{
+	auto entry = reinterpret_cast<const Profiler::Entry*>(data);
+	auto& stage = entry->_stages[idx];
+	if (startTimestamp)
+	{
+		std::chrono::duration<float, std::milli> fltStart = stage._start - entry->_frameStart;
+		*startTimestamp = fltStart.count();
+	}
+	if (endTimestamp)
+	{
+		*endTimestamp = stage._end.time_since_epoch().count() / 1000000.0f;
+
+		std::chrono::duration<float, std::milli> fltEnd = stage._end - entry->_frameStart;
+		*endTimestamp = fltEnd.count();
+	}
+	if (level)
+	{
+		*level = stage._level;
+	}
+	if (caption)
+	{
+		*caption = stageNames[idx];
+	}
+}
+
 
 //--------------------------------------------------
 // 初期化
@@ -79,6 +135,11 @@ void InitImguiProperty(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 	// プラットフォームの設定/Renderer backends
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX9_Init(pDevice);
+
+
+	//GPU
+	nvmlInit();//初期化
+	nvmlDeviceGetHandleByIndex(gpu_id, &device);
 
 #endif // _DEBUG
 }
@@ -340,11 +401,28 @@ void UpdateImguiProperty(void)
 	{
 		OutputStatus();
 	}
-	////]ImGuiTable
+
+	//ImGui::Text("CPU1  : %d", MemoryUsageMegaBytes());
+	//void* const p = malloc(512 * 1024 * 1024);
+	// テキスト表示
+	//ImGui::Text("CPU2  : %d", MemoryUsageMegaBytes());
+	//free(p);
+	//ImGui::Text("CPU3  : %d", MemoryUsageMegaBytes());
+
+	unsigned int clockMZ = 0;
+
+	//現在の使用率取得
+	nvmlDeviceGetClock(device, NVML_CLOCK_MEM, NVML_CLOCK_ID_CURRENT, &clockMZ);
+
+	float clockNau = (float)clockMZ *0.1f;
+
+	// テキスト表示
+	ImGui::Text("GPU  : %.2f%%", clockNau);
 
 	//グラフ
 	static float v[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 	ImGui::Bezier("test22", v);       // draw
+
 	float y = ImGui::BezierValue(0.5f, v); // x delta in [0..1] range
 
 	//グラフの四角からでないようにするやつ
@@ -398,7 +476,9 @@ void UpdateImguiProperty(void)
 	//エフェクト関係
 	if (ImGui::TreeNode("Effecttree1", "EffectSetting"))
 	{
-		imguiParticle.col.a = 1.0f;
+		imguiParticle.color.col.a = 1.0f;
+		imguiParticle.color.destCol.a = 1.0f;
+
 		//imguiParticle.fScale = 50.0f;
 
 		if (ImGui::Button("LOAD TEXTURE"))
@@ -432,12 +512,17 @@ void UpdateImguiProperty(void)
 			imguiParticle.minPopPos.y = 0.0f;
 			imguiParticle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-			imguiParticle.col = D3DXCOLOR(0.5f,0.0f,1.0f,1.0f);
+			imguiParticle.color.col = D3DXCOLOR(1.0f,0.0f,0.0f,1.0f);
+			imguiParticle.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+			imguiParticle.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			imguiParticle.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+			imguiParticle.color.colTransition = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 			imguiParticle.nLife = 60;
 			imguiParticle.fScale = 50.0f;
 			imguiParticle.fRadius = 4.5f;
 			imguiParticle.fAngle = 20.5f;
 			imguiParticle.fAttenuation = 0.98f;
+			imguiParticle.alphaBlend = (ALPHABLENDTYPE)0;
 		}
 
 		//EffectData *Effect = GetStatus();
@@ -499,11 +584,41 @@ void UpdateImguiProperty(void)
 			ImGui::TreePop();
 		}
 
-		//カラーパレット
-		ImGui::ColorEdit4("clear color", (float*)&imguiParticle.col);
+		if (ImGui::TreeNode("Effecttree3", "Color"))
+		{
+			//カラーパレット
+			ImGui::ColorEdit4("clear color", (float*)&imguiParticle.color.col);
+
+			// ランダムカラー
+			ImGui::Checkbox("ColorRandom", &imguiParticle.color.bColRandom);
+
+			if (imguiParticle.color.bColRandom)
+			{
+				ImGui::ColorEdit4("clear RandamMax", (float*)&imguiParticle.color.colRandamMax);
+				ImGui::ColorEdit4("clear RandamMin", (float*)&imguiParticle.color.colRandamMin);
+			}
+
+			// カラートラディション
+			ImGui::Checkbox("ColorTransition", &imguiParticle.color.bColTransition);
+
+			if (imguiParticle.color.bColTransition)
+			{// 目的の色
+				ImGui::ColorEdit4("clear destColor", (float*)&imguiParticle.color.destCol);
+
+				ImGui::Checkbox("RandomTransitionTime", &imguiParticle.color.bRandomTransitionTime);
+
+				if (!imguiParticle.color.bRandomTransitionTime)
+				{
+					ImGui::SliderInt("EndTime", &imguiParticle.color.nEndTime, 0, imguiParticle.nLife);
+				}
+			}
+
+			//ツリーを閉じる
+			ImGui::TreePop();
+		}
 
 		//グラデーション
-		if (ImGui::TreeNode("Effecttree3", "Gradation"))
+		if (ImGui::TreeNode("Effecttree4", "Gradation"))
 		{
 			static float s_fCustR[10];
 			static float s_fCustG[10];
@@ -511,35 +626,9 @@ void UpdateImguiProperty(void)
 			static int s_nSpeed = 1;
 			static int selecttype = 0;
 
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-			ImGui::RadioButton("RPlus GSubtract", &selecttype, 1);
-			ImGui::PopStyleColor();
+			ImGui::RadioButton("Custom", &selecttype, 1);
 
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-			ImGui::RadioButton("GPlus BSubtract", &selecttype, 2);
-			ImGui::PopStyleColor();
-
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.4f, 1.0f, 1.0f));
-			ImGui::RadioButton("BPlus RSubtract", &selecttype, 3);
-			ImGui::PopStyleColor();
-
-			ImGui::RadioButton("Random", &selecttype, 4);
-
-			if (selecttype == 4)
-			{
-				static float randColMax = 1.0f;
-				static float randColMin = 0.0f;
-				ImGui::InputFloat("RandomMin", &randColMin);
-				ImGui::InputFloat("RandomMax", &randColMax);
-
-				imguiParticle.colRandamMin = D3DXCOLOR(randColMin, randColMin, randColMin, 1.0f);
-				imguiParticle.colRandamMax = D3DXCOLOR(randColMax, randColMax, randColMax, 1.0f);
-				
-			}
-
-			ImGui::RadioButton("Custom", &selecttype, 5);
-
-			if (selecttype == 5)
+			if (selecttype == 1)
 			{
 				static int s_nSetTime = 0;
 				static int nTypeNum = 0;
@@ -602,29 +691,6 @@ void UpdateImguiProperty(void)
 			switch (selecttype)
 			{
 			case 1:
-				imguiParticle.colTransition = D3DXCOLOR(0.0f, -0.01f, 0.0f, 0.0f);
-				imguiParticle.col.r = 1.0f;
-				break;
-
-			case 2:
-				imguiParticle.colTransition = D3DXCOLOR(0.0f, 0.0f, -0.01f, 0.0f);
-				imguiParticle.col.g = 1.0f;
-				break;
-
-			case 3:
-				imguiParticle.colTransition = D3DXCOLOR(-0.01f, 0.0f, 0.0f, 0.0f);
-				imguiParticle.col.b = 1.0f;
-				break;
-
-			case 4:
-				imguiParticle.col.r = FloatRandam(imguiParticle.colRandamMax.r, imguiParticle.colRandamMin.r);
-				imguiParticle.col.g = FloatRandam(imguiParticle.colRandamMax.g, imguiParticle.colRandamMin.g);
-				imguiParticle.col.b = FloatRandam(imguiParticle.colRandamMax.b, imguiParticle.colRandamMin.b);
-
-				imguiParticle.col.a = 1.0f;
-				break;
-
-			case 5:
 				s_nCounter++;
 
 				//ゼロ除算回避
@@ -639,7 +705,7 @@ void UpdateImguiProperty(void)
 
 					if (s_nTimer >= 5)
 					{
-						imguiParticle.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
+						imguiParticle.color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
 						s_nColNum++;
 						s_nTimer = 0;
 					}
@@ -657,19 +723,22 @@ void UpdateImguiProperty(void)
 
 				break;
 
+			case 2:
+				
+				break;
 			case 0:
 				break;
 			default:
 				break;
 			}
 
-			ImGui::SliderFloat("Alpha", &imguiParticle.colTransition.a, -0.5f, 0.0f);
+			ImGui::SliderFloat("Alpha", &imguiParticle.color.colTransition.a, -0.5f, 0.0f);
 
 			ImGui::TreePop();
 		}
 
 		// αブレンディングの種類
-		if (ImGui::TreeNode("Effecttree4", "AlphaBlending"))
+		if (ImGui::TreeNode("Effecttree5", "AlphaBlending"))
 		{
 			// 変数宣言
 			int	nBlendingType = (int)imguiParticle.alphaBlend;		// 種別変更用の変数
@@ -687,6 +756,8 @@ void UpdateImguiProperty(void)
 		//ツリーを閉じる
 		ImGui::TreePop();
 	}
+
+
 
 	ImPlot::ShowDemoWindow();
 

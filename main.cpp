@@ -171,6 +171,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 				dwFPSLastTime = dwCurrentTime;
 				dwFrameCount = 0;
 			}
+		
 
 			if ((dwCurrentTime - dwExedastTime) >= (1000 / 60))
 			{//60分の1秒経過
@@ -178,7 +179,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 
 				// imguiの更新
 				UpdateImguiProperty();
-
 				// 更新
 				Update();
 
