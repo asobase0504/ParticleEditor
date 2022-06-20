@@ -267,7 +267,7 @@ void CParticle::Draw()
 // --------------------------------------------------
 // ê∂ê¨
 // --------------------------------------------------
-void CParticle::Create(Particle& inParticle)
+void CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inpos)
 {
 	for (int i = 0; i < maxNumber; i++)
 	{
@@ -284,6 +284,7 @@ void CParticle::Create(Particle& inParticle)
 		Delete(i);
 
 		*pParticle = inParticle;
+		pParticle->pos = inpos;
 		pParticle->type = PARTICLETYPE_NORMAL;
 
 		pParticle->fWidth = g_aParticle->fScale;

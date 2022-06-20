@@ -1,5 +1,6 @@
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //particle.h
+// Author : Tanaka Kouta
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 #ifndef _PARTICLE_H_		//このマクロが定義されてなかったら
 #define _PARTICLE_H_		//2重インクルード防止のマクロ定義
@@ -74,13 +75,13 @@ public: // 構造体
 	struct Particle
 	{
 		D3DXVECTOR3			pos;				// 位置
-		D3DXVECTOR3			maxPopPos;			// 発生位置(最大)				※新規追加変数(ファイルに追加後消してください)
-		D3DXVECTOR3			minPopPos;			// 発生位置(最小)				※新規追加変数(ファイルに追加後消してください)
+		D3DXVECTOR3			maxPopPos;			// 発生位置(最大)			※新規追加変数(ファイルに追加後消してください)
+		D3DXVECTOR3			minPopPos;			// 発生位置(最小)			※新規追加変数(ファイルに追加後消してください)
 		D3DXVECTOR3			move;				// 移動量
 		D3DXVECTOR3			moveTransition;		// 移動量の推移量
 		D3DXVECTOR3			rot;				// 向き
 		PARTICLETYPE		type;				// エフェクトの種類
-		ParticleColor		color;				// カラー						※新規追加変数(ファイルに追加後消してください)
+		ParticleColor		color;				// カラー					※新規追加変数(ファイルに追加後消してください)
 		ALPHABLENDTYPE		alphaBlend;			// αブレンディングの種別
 		float				fWidth;				// 幅
 		float				fHeight;			// 高さ
@@ -96,6 +97,7 @@ public: // 構造体
 		bool				bTexturerot;		// テクスチャ回転させるかどうか
 		bool				bUse;				// 使用しているか
 	};
+
 public:
 	CParticle();
 	~CParticle();
@@ -104,7 +106,7 @@ public:
 	void Uninit();
 	void Update();
 	void Draw();
-	void Create(Particle& inParticle);
+	void Create(const Particle& inParticle,const D3DXVECTOR3& inpos);
 	void LoadTex();
 	void Delete(const int data);
 	void DeleteAll();

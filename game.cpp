@@ -52,7 +52,7 @@ void UpdateGame(void)
 
 	if (bSetImguiParticle())
 	{
-		particle->Create(GetImguiParticle());
+		particle->Create(GetImguiParticle(), D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f));
 	}
 }
 
