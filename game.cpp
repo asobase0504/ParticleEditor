@@ -21,14 +21,16 @@
 //==================================================
 // 静的変数
 //==================================================
+CParticle* particle;
 
 //--------------------------------------------------
 // 初期化
 //--------------------------------------------------
 void InitGame(void)
 {
+	particle = new CParticle;
 	InitBg();		// 背景
-	InitParticle();	// パーティクル
+	particle->Init();	// パーティクル
 }
 
 //--------------------------------------------------
@@ -37,7 +39,7 @@ void InitGame(void)
 void UninitGame(void)
 {
 	UninitBg();			// 背景
-	UninitParticle();	// パーティクル
+	particle->Uninit();	// パーティクル
 }
 
 //--------------------------------------------------
@@ -46,11 +48,11 @@ void UninitGame(void)
 void UpdateGame(void)
 {
 	UpdateBg();			// 背景
-	UpdateParticle();	// パーティクル
+	particle->Update();	// パーティクル
 
 	if (bSetImguiParticle())
 	{
-		SetParticleImgui(GetImguiParticle());
+		particle->Create(GetImguiParticle());
 	}
 }
 
@@ -60,5 +62,5 @@ void UpdateGame(void)
 void DrawGame(void)
 {
 	DrawBg();		// 背景
-	DrawParticle();	// パーティクル
+	particle->Draw();	// パーティクル
 }

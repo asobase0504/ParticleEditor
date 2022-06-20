@@ -10,7 +10,7 @@
 #include "particle.h"
 #include "imgui_property.h"
 
-Particle DataEffect;
+CParticle::Particle DataEffect;
 namespace nl = nlohmann;
 
 nl::json j;//リストの生成
@@ -19,7 +19,7 @@ nl::json j;//リストの生成
 //============================
 //ゲット関数
 //============================
-Particle GetStatus(void)
+CParticle::Particle GetStatus(void)
 {
 	return DataEffect;
 }

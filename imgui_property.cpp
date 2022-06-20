@@ -52,7 +52,7 @@ static const char*	WINDOW_NAME = "test";	// ウインドウの名前 (キャプションに表示
 //==================================================
 static char FileString[MAX_PATH * 256];	// ファイル名
 static bool	s_window = false;	// ウインドウを使用するかどうか
-static Particle imguiParticle;	// ImGuiに保存されてるパーティクル情報
+static CParticle::Particle imguiParticle;	// ImGuiに保存されてるパーティクル情報
 static bool s_bEffectEnable = false;
 static float s_fScale = 50.0f;
 static const unsigned int gpu_id = 0;
@@ -522,7 +522,7 @@ void UpdateImguiProperty(void)
 			imguiParticle.fRadius = 4.5f;
 			imguiParticle.fAngle = 20.5f;
 			imguiParticle.fAttenuation = 0.98f;
-			imguiParticle.alphaBlend = (ALPHABLENDTYPE)0;
+			imguiParticle.alphaBlend = (CParticle::ALPHABLENDTYPE)0;
 		}
 
 		//EffectData *Effect = GetStatus();
@@ -576,8 +576,8 @@ void UpdateImguiProperty(void)
 			//挙動おかしくなっちゃった時用
 			if (ImGui::Button("DataRemove"))
 			{
-				DeleteParticleAll();
-				RemoveAngle();
+				//DeleteParticleAll();
+				//RemoveAngle();
 			}
 
 			//ツリーを閉じる
@@ -747,7 +747,7 @@ void UpdateImguiProperty(void)
 			ImGui::RadioButton("SubBlend", &nBlendingType, 1);
 			ImGui::RadioButton("BlendNone", &nBlendingType, 2);
 
-			imguiParticle.alphaBlend = (ALPHABLENDTYPE)nBlendingType;
+			imguiParticle.alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
 
 			//ツリーを閉じる
 			ImGui::TreePop();
@@ -787,7 +787,7 @@ void DrawImguiProperty(void)
 //--------------------------------------------------
 // Imguiの取得
 //--------------------------------------------------
-Particle& GetImguiParticle(void)
+CParticle::Particle& GetImguiParticle(void)
 {
 	return imguiParticle;
 }
