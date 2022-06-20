@@ -1,123 +1,123 @@
-//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-//effect.cpp
-//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+// ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+// effect.cpp
+// ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 #include "main.h"
 #include "particle.h"
 #include <time.h>
 #include "imgui_property.h"
 #include "utility.h"
 
-//
+// ==================================================
 // 静的メンバー変数
-//
+// ==================================================
 CParticle::Particle CParticle::g_aParticle[] = {};
 
-//--------------------------------------------------
+// --------------------------------------------------
 // コンストラクタ
-//--------------------------------------------------
+// --------------------------------------------------
 CParticle::CParticle()
 {
 }
 
-//--------------------------------------------------
+// --------------------------------------------------
 // デストラクタ
-//--------------------------------------------------
+// --------------------------------------------------
 CParticle::~CParticle()
 {
 }
 
-//--------------------------------------------------
+// --------------------------------------------------
 // 初期化
-//--------------------------------------------------
+// --------------------------------------------------
 HRESULT CParticle::Init()
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();	// デバイスの取得
 
-	//テクスチャの読み込み
+	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\flare.png",
-		&s_pTexture[PARTICLETYPE_NORMAL]);
+		&pTexture[PARTICLETYPE_NORMAL]);
 
-	//テクスチャの読み込み
+	// テクスチャの読み込み
 	memset(g_aParticle, 0, sizeof(g_aParticle));
 
-	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * maxNumber,	//確保するバッファのサイズ
+	// 頂点バッファの生成
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * maxNumber,	// 確保するバッファのサイズ
 		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_2D,			//頂点フォーマット
+		FVF_VERTEX_2D,			// 頂点フォーマット
 		D3DPOOL_MANAGED,
-		&s_pVtxBuff,
+		&pVtxBuff,
 		NULL);
 
-	VERTEX_2D *pVtx = NULL;		//頂点情報へのポインタ
+	VERTEX_2D *pVtx = NULL;		// 頂点情報へのポインタ
 
-	//頂点バッファをロックし、頂点情報へのポインタを取得
-	s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	for (int nCnt = 0; nCnt < maxNumber; nCnt++)
 	{
-		//頂点座標の設定
+		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-		//rhwの設定
+		// rhwの設定
 		pVtx[0].rhw = 1.0f;
 		pVtx[1].rhw = 1.0f;
 		pVtx[2].rhw = 1.0f;
 		pVtx[3].rhw = 1.0f;
 
-		//頂点カラーの設定
+		// 頂点カラーの設定
 		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
-		//テクスチャ座標の設定
+		// テクスチャ座標の設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-		pVtx += 4;		//頂点データのポインタを4つ分集める
+		pVtx += 4;		// 頂点データのポインタを4つ分集める
 	}
 
-	//頂点バッファをアンロックする
-	s_pVtxBuff->Unlock();
+	// 頂点バッファをアンロックする
+	pVtxBuff->Unlock();
 
 	return S_OK;
 }
 
-//--------------------------------------------------
+// --------------------------------------------------
 // 終了
-//--------------------------------------------------
+// --------------------------------------------------
 void CParticle::Uninit()
 {
 	for (int i = 0; i < numType; i++)
 	{
-		//テクスチャの破棄
-		if (s_pTexture[i] != NULL)
+		// テクスチャの破棄
+		if (pTexture[i] != NULL)
 		{
-			s_pTexture[i]->Release();
-			s_pTexture[i] = NULL;
+			pTexture[i]->Release();
+			pTexture[i] = NULL;
 		}
 	}
 
-	//頂点バッファの破壊
-	if (s_pVtxBuff != NULL)
+	// 頂点バッファの破壊
+	if (pVtxBuff != NULL)
 	{
-		s_pVtxBuff->Release();
-		s_pVtxBuff = NULL;
+		pVtxBuff->Release();
+		pVtxBuff = NULL;
 	}
 }
 
-//--------------------------------------------------
+// --------------------------------------------------
 // 更新
-//--------------------------------------------------
+// --------------------------------------------------
 void CParticle::Update()
 {
-	//(ImGui)
+	// (ImGui)
 	bool bTex = TexUse();
 
 	if (bTex)
@@ -130,20 +130,20 @@ void CParticle::Update()
 		Particle* pParticle = &g_aParticle[i];
 
 		if (!pParticle->bUse)
-		{//エフェクトが使用されているなら
+		{// エフェクトが使用されているなら
 			continue;
 		}
 
 		/* ↓使用しているなら↓ */
 
-		//エフェクトの移動
+		// エフェクトの移動
 		pParticle->pos += pParticle->move;
 
 		// 推移
-		pParticle->nLife--;											// 体力の減少
-		pParticle->move.y += pParticle->fWeight;					// 重力
-		pParticle->move *= pParticle->fAttenuation;					// 移動量の推移
-		pParticle->fWeight += pParticle->fWeightTransition;			// 重さの推移
+		pParticle->nLife--;									// 体力の減少
+		pParticle->move.y += pParticle->fWeight;			// 重力
+		pParticle->move *= pParticle->fAttenuation;			// 移動量の推移
+		pParticle->fWeight += pParticle->fWeightTransition;	// 重さの推移
 
 		if (pParticle->color.bColTransition)
 		{// 色の推移
@@ -155,55 +155,55 @@ void CParticle::Update()
 		}
 
 		if (pParticle->nLife <= 0)
-		{//エフェクトの寿命
+		{// エフェクトの寿命
 			Delete(i);
 		}
 
-		VERTEX_2D *pVtx = nullptr;		//頂点情報へのポインタ
+		VERTEX_2D *pVtx = nullptr;		// 頂点情報へのポインタ
 
-										//頂点バッファをロック
-		s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+		// 頂点バッファをロック
+		pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-		pVtx += i * 4;		//頂点データのポインタを4つ分集める
+		pVtx += i * 4;		// 頂点データのポインタを4つ分集める
 
-							//頂点座標の設定
+		// 頂点座標の設定
 		pVtx[0].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, -pParticle->fHeight, 0.0f);
 		pVtx[1].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, -pParticle->fHeight, 0.0f);
 		pVtx[2].pos = pParticle->pos + D3DXVECTOR3(-pParticle->fWidth, pParticle->fHeight, 0.0f);
 		pVtx[3].pos = pParticle->pos + D3DXVECTOR3(pParticle->fWidth, pParticle->fHeight, 0.0f);
 
-		//頂点カラーの設定
+		// 頂点カラーの設定
 		pVtx[0].col = pParticle->color.col;
 		pVtx[1].col = pParticle->color.col;
 		pVtx[2].col = pParticle->color.col;
 		pVtx[3].col = pParticle->color.col;
 
-		//頂点バッファをアンロックする
-		s_pVtxBuff->Unlock();
+		// 頂点バッファをアンロックする
+		pVtxBuff->Unlock();
 	}
 }
 
-//--------------------------------------------------
+// --------------------------------------------------
 // 描画
-//--------------------------------------------------
+// --------------------------------------------------
 void CParticle::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	// デバイスの取得
 
 	// 点に貼る(true)、ポリゴンに貼る(false)
-	//pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE,true);
+	// pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE,true);
 
 	// カメラの位置(true)、スクリーンの位置(false)
-	//pDevice->SetRenderState(D3DRS_POINTSCALEENABLE,false);
+	// pDevice->SetRenderState(D3DRS_POINTSCALEENABLE,false);
 
 	// サイズを設定
-	//pDevice->SetRenderState(D3DRS_POINTSIZE,FloattoDword(1.0f));
-	//pDevice->SetRenderState(D3DRS_POINTSIZE_MIN, FloattoDword(0.0f));
+	// pDevice->SetRenderState(D3DRS_POINTSIZE,FloattoDword(1.0f));
+	// pDevice->SetRenderState(D3DRS_POINTSIZE_MIN, FloattoDword(0.0f));
 
 	// ポイントサイズの計算
-	//pDevice->SetRenderState(D3DRS_POINTSCALE_A, FloattoDword(0.0f));
-	//pDevice->SetRenderState(D3DRS_POINTSCALE_B, FloattoDword(0.0f));
-	//pDevice->SetRenderState(D3DRS_POINTSCALE_C, FloattoDword(1.0f));
+	// pDevice->SetRenderState(D3DRS_POINTSCALE_A, FloattoDword(0.0f));
+	// pDevice->SetRenderState(D3DRS_POINTSCALE_B, FloattoDword(0.0f));
+	// pDevice->SetRenderState(D3DRS_POINTSCALE_C, FloattoDword(1.0f));
 
 	for (int nCnt = 0; nCnt < maxNumber; nCnt++)
 	{
@@ -220,7 +220,7 @@ void CParticle::Draw()
 			break;
 
 		case TYPE_ADD:		// 加算
-			//アルファブレンディングを加算合成に設定
+			// アルファブレンディングを加算合成に設定
 			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
@@ -238,35 +238,35 @@ void CParticle::Draw()
 			break;
 		}
 
-		//頂点バッファをデータストリームに設定
-		pDevice->SetStreamSource(0, s_pVtxBuff, 0, sizeof(VERTEX_2D));
+		// 頂点バッファをデータストリームに設定
+		pDevice->SetStreamSource(0, pVtxBuff, 0, sizeof(VERTEX_2D));
 
-		//頂点フォーマットの設定
+		// 頂点フォーマットの設定
 		pDevice->SetFVF(FVF_VERTEX_2D);
 
-		//テクスチャの設定
-		pDevice->SetTexture(0, s_pTexture[g_aParticle[nCnt].type]);
+		// テクスチャの設定
+		pDevice->SetTexture(0, pTexture[g_aParticle[nCnt].type]);
 
-		//ポリゴンの描画
+		// ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
-		//pDevice->DrawPrimitive(D3DPT_POINTLIST,0, nCnt);
+		// pDevice->DrawPrimitive(D3DPT_POINTLIST,0, nCnt);
 
-		//αブレンディングを元に戻す
+		// αブレンディングを元に戻す
 		pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 		pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
 
-	//ポイントスプライトを解除する
-	//pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE, false);
+	// ポイントスプライトを解除する
+	// pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE, false);
 
-	//テクスチャを引き継がない
+	// テクスチャを引き継がない
 	pDevice->SetTexture(0, NULL);
 }
 
-//--------------------------------------------------
+// --------------------------------------------------
 // 生成
-//--------------------------------------------------
+// --------------------------------------------------
 void CParticle::Create(Particle& inParticle)
 {
 	for (int i = 0; i < maxNumber; i++)
@@ -331,7 +331,7 @@ void CParticle::Create(Particle& inParticle)
 		VERTEX_2D*pVtx;	// 頂点情報へのポインタ
 
 						// 頂点バッファをロックし、頂点情報へのポインタを取得
-		s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+		pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 		pVtx += i * 4;	// 頂点データのポインタを4つ分集める
 
@@ -348,7 +348,7 @@ void CParticle::Create(Particle& inParticle)
 		pVtx[3].col = pParticle->color.col;
 
 		// 頂点バッファをアンロックする
-		s_pVtxBuff->Unlock();
+		pVtxBuff->Unlock();
 
 		float ImAngle = GetAngle();
 		float fRad = 0.0f;
@@ -356,7 +356,7 @@ void CParticle::Create(Particle& inParticle)
 
 		if (pParticle->bBackrot)
 		{
-			//float fRad = (pParticle->fAngle) * (D3DX_PI / 180);
+			// float fRad = (pParticle->fAngle) * (D3DX_PI / 180);
 			fGRad = (pParticle->rot.z - g_fAngle);
 		}
 		else
@@ -365,14 +365,14 @@ void CParticle::Create(Particle& inParticle)
 			fGRad = (pParticle->rot.z + g_fAngle);
 		}
 
-		//挙動
+		// 挙動
 		{
 			/*
 			g_fAngle += 30.0f * i;
 			pParticle->move.x = sinf(fGRad) * 1.3f;
 			pParticle->move.y = cosf(fGRad) * 1.3f;
 
-			//∞
+			// ∞
 			g_fAngle += 0.7f;
 			pParticle->move.x = sinf((D3DX_PI / 180) * 17 * g_fAngle) * pParticle->fAttenuation;
 			pParticle->move.y = sinf((D3DX_PI / 180) * 8 * g_fAngle) * pParticle->fAttenuation;
@@ -384,9 +384,9 @@ void CParticle::Create(Particle& inParticle)
 			pParticle->move.y += (pParticle->fRadius * cosf(fGRad)) * pParticle->fAttenuation;
 		}
 
-		//======================
+		// ======================
 		// 正規化
-		//======================
+		// ======================
 		if (pParticle->fRadius > D3DX_PI)
 		{
 			pParticle->fRadius -= D3DX_PI * 2;
@@ -409,9 +409,9 @@ void CParticle::Create(Particle& inParticle)
 	}
 }
 
-//--------------------------------------------------
+// --------------------------------------------------
 // テクスチャの読込み
-//--------------------------------------------------
+// --------------------------------------------------
 void CParticle::LoadTex()
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
@@ -422,27 +422,27 @@ void CParticle::LoadTex()
 
 	if (ImTex)
 	{
-		//テクスチャの読み込み
+		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,
 			GetFileName(),
-			&s_pTexture[PARTICLETYPE_NORMAL]);
+			&pTexture[PARTICLETYPE_NORMAL]);
 
 		ImTex = false;
 	}
 }
 
-//--------------------------------------------------
+// --------------------------------------------------
 // 情報の削除
-//--------------------------------------------------
+// --------------------------------------------------
 void CParticle::Delete(const int data)
 {
 	// データのリセット
 	memset(&g_aParticle[data], 0, sizeof(g_aParticle[data]));
 }
 
-//--------------------------------------------------
+// --------------------------------------------------
 // 情報を全て削除
-//--------------------------------------------------
+// --------------------------------------------------
 void CParticle::DeleteAll()
 {
 	for (int i = 0; i < maxNumber; i++)
@@ -451,17 +451,17 @@ void CParticle::DeleteAll()
 	}
 }
 
-//--------------------------------------------------
+// --------------------------------------------------
 // 角度の初期化
-//--------------------------------------------------
+// --------------------------------------------------
 void CParticle::RemoveAngle(void)
 {
 	g_fAngle = 0;
 }
 
-//--------------------------------------------------
+// --------------------------------------------------
 // float を DWORD に変換
-//--------------------------------------------------
+// --------------------------------------------------
 DWORD CParticle::FloattoDword(float fVal)
 {
 	return *((DWORD*)&fVal);
