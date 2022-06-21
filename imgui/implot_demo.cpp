@@ -952,7 +952,7 @@ void ShowDemo_Querying()
 	ImPlotPoint pt;
 	ImVec2 mouse = ImGui::GetMousePos();
 	static bool s_bPlay = false;
-	static int s_nOffset = 0;
+	static int s_nIndex = 0;
 	static float flt = 0.0f;
 	static float s_fStartTimeA = rdata1.Span;
 	static float s_fStartTimeB = rdata2.Span;
@@ -1025,18 +1025,32 @@ void ShowDemo_Querying()
 		{
 			pt = ImPlot::GetPlotMousePos();
 			data.push_back(pt);
-			s_nOffset++;
+			s_nIndex++;
         }
 
-		//点動かす用
-		for (int i = 0; i < s_nOffset + 1; i++)
+		/*点の位置のソート*/
+		for (int i = 0; i < s_nIndex; i++)
 		{
-			ImPlot::DragPoint(s_nOffset + i,&data[i].x, &data[i].y, ImVec4(0, 0.9f, 0, 1), 4, flags);
+			for (int j = i; j < s_nIndex; j++)
+			{
+				if (data[i].x > data[j].x)
+				{
+					ImPlotPoint Sort = data[i];
+					data[i] = data[j];
+					data[j] = Sort;
+				}
+			}
+		}
+
+		//点動かす用
+		for (int i = 0; i < s_nIndex + 1; i++)
+		{
+			ImPlot::DragPoint(s_nIndex + i,&data[i].x, &data[i].y, ImVec4(0, 0.9f, 0, 1), 4, flags);
 		}
 
 		//線引く用
-        ImPlot::PlotScatter("Points", &data[0].x, &data[0].y, data.size(), s_nOffset, 2 * sizeof(double));
-		ImPlot::PlotLine("Line", &data[0].x, &data[0].y, data.size(), s_nOffset + 1, 2 * sizeof(double));
+        ImPlot::PlotScatter("Points", &data[0].x, &data[0].y, data.size(), s_nIndex, 2 * sizeof(double));
+		ImPlot::PlotLine("Line", &data[0].x, &data[0].y, data.size(), s_nIndex + 1, 2 * sizeof(double));
 
         if (ImPlot::IsPlotSelected())
 		{

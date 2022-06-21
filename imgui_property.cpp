@@ -680,8 +680,6 @@ void UpdateImguiProperty(void)
 				}
 			}
 
-			ImGui::RadioButton("Custom", &selecttype, 5);
-
 			ImGui::RadioButton("Gradation None", &selecttype, 0);
 
 			static int s_nCounter;
