@@ -11,6 +11,7 @@
 // 静的メンバー変数
 // ==================================================
 CParticle* CParticle::g_aParticle[] = {};
+float CParticle::g_fAngle = 0.0f;
 
 //--------------------------------------------------
 // コンストラクタ
@@ -128,7 +129,7 @@ void CParticle::Update()
 	data.pos += data.move;
 
 	// 推移
-	data.nLife--;									// 体力の減少
+	data.nLife--;							// 体力の減少
 	data.move.y += data.fWeight;			// 重力
 	data.move *= data.fAttenuation;			// 移動量の推移
 	data.fWeight += data.fWeightTransition;	// 重さの推移
