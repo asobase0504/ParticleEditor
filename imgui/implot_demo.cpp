@@ -951,16 +951,18 @@ void ShowDemo_Querying()
 	ImPlotAxisFlags ax_flags = ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks;
 	ImPlotPoint pt;
 	ImVec2 mouse = ImGui::GetMousePos();
+	ImVec2 ptPos[512] = {};
 	static bool s_bPlay = false;
 	static int s_nIndex = 0;
 	static float flt = 0.0f;
 	static float s_fStartTimeA = rdata1.Span;
 	static float s_fStartTimeB = rdata2.Span;
 	static float s_fStopTime = 0.0f;
-	static float s_History = 10.0f;
+	static float s_History = 0.0f;
 	static float t = 0;
 
 	ImGui::Text("Ctrl + Left Click : Set point");
+	ImGui::Text("Del + Left Click : Delete point");
 
 	//グラフを再生させる
 	if (ImGui::Checkbox("Play", &s_bPlay))
@@ -979,7 +981,7 @@ void ShowDemo_Querying()
 		rdata2.Span = s_fStartTimeB;
 	}
 
-    if (ImPlot::BeginPlot("Centroid")) 
+    if (ImPlot::BeginPlot("Timeline")) 
 	{
 		static ImPlotPoint point[] = {ImPlotPoint(0.2f,0.4f), ImPlotPoint(0.95f,0.95f) };
 		ImPlot::SetupAxes(0, 0, ax_flags, ax_flags);
@@ -997,29 +999,6 @@ void ShowDemo_Querying()
 			ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
 		}
 
-		/*ImPlot::DragPoint(0, &P[0].x, &P[0].y, ImVec4(0, 0.9f, 0, 1), 4, flags);
-		
-		ImPlot::DragPoint(2, &P[2].x, &P[2].y, ImVec4(0, 0.5f, 1, 1), 4, flags);
-		ImPlot::DragPoint(3, &P[3].x, &P[3].y, ImVec4(0, 0.9f, 0, 1), 4, flags);*/
-
-		//static ImPlotPoint B[100];
-		//for (int i = 0; i < 100; ++i) {
-		//	double t = i / 99.0;
-		//	double u = 1 - t;
-		//	double w1 = u*u*u;
-		//	double w2 = 3 * u*u*t;
-		//	double w3 = 3 * u*t*t;
-		//	double w4 = t*t*t;
-		//	B[i] = ImPlotPoint(w1*P[0].x + w2*P[1].x + w3*P[2].x + w4*P[3].x, w1*P[0].y + w2*P[1].y + w3*P[2].y + w4*P[3].y);
-		//}
-
-	/*	ImPlot::SetNextLineStyle(ImVec4(1, 0.5f, 1, 1));
-		ImPlot::PlotLine("##h1", &P[0].x, &P[0].y, 2, 0, sizeof(ImPlotPoint));
-		ImPlot::SetNextLineStyle(ImVec4(0, 0.5f, 1, 1));
-		ImPlot::PlotLine("##h2", &P[2].x, &P[2].y, 2, 0, sizeof(ImPlotPoint));
-		ImPlot::SetNextLineStyle(ImVec4(0, 0.9f, 0, 1), 2);
-		ImPlot::PlotLine("##bez", &B[0].x, &B[0].y, 100, 0, sizeof(ImPlotPoint));*/
-
 		//点置くところ
         if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(0) && ImGui::GetIO().KeyCtrl)
 		{
@@ -1028,16 +1007,19 @@ void ShowDemo_Querying()
 			s_nIndex++;
         }
 
-		/*点の位置のソート*/
+		//点の位置のソート
 		for (int i = 0; i < s_nIndex; i++)
 		{
-			for (int j = i; j < s_nIndex; j++)
+			for (int j = i; j < s_nIndex + 1; j++)
 			{
 				if (data[i].x > data[j].x)
 				{
 					ImPlotPoint Sort = data[i];
 					data[i] = data[j];
 					data[j] = Sort;
+
+					//点の位置の数値を保存
+					ptPos[i] = ImVec2((float)data[i].x, (float)data[i].y);
 				}
 			}
 		}
@@ -1050,25 +1032,55 @@ void ShowDemo_Querying()
 
 		//線引く用
         ImPlot::PlotScatter("Points", &data[0].x, &data[0].y, data.size(), s_nIndex, 2 * sizeof(double));
-		ImPlot::PlotLine("Line", &data[0].x, &data[0].y, data.size(), s_nIndex + 1, 2 * sizeof(double));
+		ImPlot::PlotLine("##Line", &data[0].x, &data[0].y, data.size(), s_nIndex + 1, 2 * sizeof(double));
 
+		//右クリックの範囲選択
         if (ImPlot::IsPlotSelected())
 		{
             select = ImPlot::GetPlotSelection();
-            int cnt;
-            ImPlotPoint centroid = FindCentroid(data,select,cnt);
 
+            int cnt;
+			int ptNum = 0;
+			pt = FindCentroid(data, select, cnt);
+
+			//点の番号を取る
+			for (int i = 0; i < data.size(); ++i) 
+			{
+				if (select.Contains(data[i].x, data[i].y)) 
+				{
+					//点を削除
+					if (ImGui::IsMouseClicked(0) && ImGui::GetIO().KeysDown[ImGuiKey_Delete])
+					{//Deleteを押下した場合
+						if (s_nIndex > 0)
+						{
+							//選択した１点のみを削除
+							for (int j = i; j < s_nIndex; j++)
+							{
+								data[j] = data[j + 1];
+							}
+
+							data.pop_back();
+							s_nIndex--;
+						}
+					}
+
+					ptNum++;
+				}
+			}
+
+			//選択範囲の中の点をとる
             if (cnt > 0)
 			{
                 ImPlot::SetNextMarkerStyle(ImPlotMarker_Square,6);
-                ImPlot::PlotScatter("Centroid", &centroid.x, &centroid.y, 1);
+
+                ImPlot::PlotScatter("Centroid", &pt.x, &pt.y, 1);
             }
 
-            if (ImGui::IsMouseClicked(ImPlot::GetInputMap().SelectCancel)) 
-			{
-                CancelPlotSelection();
-                rects.push_back(select);
-            }
+   //         if (ImGui::IsMouseClicked(ImPlot::GetInputMap().SelectCancel)) 
+			//{
+   //             CancelPlotSelection();
+   //             rects.push_back(select);
+   //         }
         }
 
         for (int i = 0; i < rects.size(); ++i) 
@@ -1345,8 +1357,8 @@ void ShowDemoWindow(bool* p_open)
             if (ImGui::CollapsingHeader("Querying"))
                 ShowDemo_Querying();
 
-          /*  if (ImGui::CollapsingHeader("Tags"))
-                ShowDemo_Tags();*/
+            if (ImGui::CollapsingHeader("Tags"))
+                ShowDemo_Tags();
             ImGui::EndTabItem();
         }
 
