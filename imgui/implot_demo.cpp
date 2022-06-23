@@ -948,11 +948,11 @@ void ShowDemo_Querying()
 	static ScrollingBuffer sdata1, sdata2;
 	static RollingBuffer   rdata1, rdata2;
 	static ImPlotDragToolFlags flags = ImPlotDragToolFlags_None;
-	ImPlotAxisFlags ax_flags = ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks;
 	ImPlotPoint pt;
 	ImVec2 mouse = ImGui::GetMousePos();
 	ImVec2 ptPos[512] = {};
 	static bool s_bPlay = false;
+	static bool s_bLoop = false;
 	static int s_nIndex = 0;
 	static float flt = 0.0f;
 	static float s_fStartTimeA = rdata1.Span;
@@ -981,10 +981,12 @@ void ShowDemo_Querying()
 		rdata2.Span = s_fStartTimeB;
 	}
 
+	ImGui::Checkbox("Loop", &s_bLoop);
+
     if (ImPlot::BeginPlot("Timeline")) 
 	{
 		static ImPlotPoint point[] = {ImPlotPoint(0.2f,0.4f), ImPlotPoint(0.95f,0.95f) };
-		ImPlot::SetupAxes(0, 0, ax_flags, ax_flags);
+		ImPlot::SetupAxes(0, 0, flags, flags);
         ImPlot::SetupAxesLimits(0,1,0,1);
 
 		if (s_bPlay)
@@ -997,6 +999,15 @@ void ShowDemo_Querying()
 			ImPlot::SetupAxisLimits(ImAxis_X1, t - s_History, t, ImGuiCond_Always);
 			ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
 			ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
+
+			//最後の点に到達したらまた最初から開始
+			if (s_bLoop)
+			{
+				if (data[s_nIndex].x < t)
+				{
+					t = 0;
+				}
+			}
 		}
 
 		//点置くところ
@@ -1050,7 +1061,7 @@ void ShowDemo_Querying()
 				{
 					//点を削除
 					if (ImGui::IsMouseClicked(0) && ImGui::GetIO().KeysDown[ImGuiKey_Delete])
-					{//Deleteを押下した場合
+					{//Deleteを押下したまま、クリックした場合
 						if (s_nIndex > 0)
 						{
 							//選択した１点のみを削除
@@ -1357,8 +1368,8 @@ void ShowDemoWindow(bool* p_open)
             if (ImGui::CollapsingHeader("Querying"))
                 ShowDemo_Querying();
 
-            if (ImGui::CollapsingHeader("Tags"))
-                ShowDemo_Tags();
+            //if (ImGui::CollapsingHeader("Tags"))
+            //    ShowDemo_Tags();
             ImGui::EndTabItem();
         }
 
