@@ -165,6 +165,9 @@ void CParticle::Update()
 
 }
 
+//--------------------------------------------------
+// 全てを更新
+//--------------------------------------------------
 void CParticle::AllUpdate()
 {
 	for (int i = 0; i < maxNumber; i++)
@@ -191,23 +194,6 @@ void CParticle::AllUpdate()
 void CParticle::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	// デバイスの取得
-
-	// 点に貼る(true)、ポリゴンに貼る(false)
-	// pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE,true);
-
-	// カメラの位置(true)、スクリーンの位置(false)
-	// pDevice->SetRenderState(D3DRS_POINTSCALEENABLE,false);
-
-	// サイズを設定
-	// pDevice->SetRenderState(D3DRS_POINTSIZE,FloattoDword(1.0f));
-	// pDevice->SetRenderState(D3DRS_POINTSIZE_MIN, FloattoDword(0.0f));
-
-	// ポイントサイズの計算
-	// pDevice->SetRenderState(D3DRS_POINTSCALE_A, FloattoDword(0.0f));
-	// pDevice->SetRenderState(D3DRS_POINTSCALE_B, FloattoDword(0.0f));
-	// pDevice->SetRenderState(D3DRS_POINTSCALE_C, FloattoDword(1.0f));
-
-	/* ↓使用しているなら↓ */
 
 	switch (data.alphaBlend)
 	{
@@ -244,15 +230,11 @@ void CParticle::Draw()
 
 	// ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
-	// pDevice->DrawPrimitive(D3DPT_POINTLIST,0, nCnt);
 
 	// αブレンディングを元に戻す
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
-	// ポイントスプライトを解除する
-	// pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE, false);
 
 	// テクスチャを引き継がない
 	pDevice->SetTexture(0, NULL);
