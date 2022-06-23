@@ -85,6 +85,7 @@ public: // 構造体
 		float				fWeightTransition;		// 重さの推移量
 		float				fScale;
 		int					nLife;					// 寿命
+		int                 nMaxLife;
 		bool				bUseWeight;				// 重さを使用するかどうか
 		bool				bBackrot;				// 逆回転させるかどうか
 		bool				bTexturerot;			// テクスチャ回転させるかどうか

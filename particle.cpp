@@ -86,6 +86,8 @@ HRESULT CParticle::Init()
 	//頂点バッファをアンロックする
 	s_pVtxBuff->Unlock();
 
+
+
 	return S_OK;
 }
 
@@ -150,7 +152,10 @@ void CParticle::Update()
 			if (pParticle->color.nEndTime >= pParticle->color.nCntTransitionTime)
 			{
 				pParticle->color.nCntTransitionTime++;
-				pParticle->color.col += pParticle->color.colTransition;
+				pParticle->color.col.r += pParticle->color.colTransition.r;
+				pParticle->color.col.g += pParticle->color.colTransition.g;
+				pParticle->color.col.b += pParticle->color.colTransition.b;
+
 			}
 		}
 
@@ -158,6 +163,8 @@ void CParticle::Update()
 		{//エフェクトの寿命
 			Delete(i);
 		}
+
+		pParticle->color.col.a -= 1.0f / pParticle->nMaxLife;
 
 		VERTEX_2D *pVtx = nullptr;		//頂点情報へのポインタ
 
@@ -285,7 +292,7 @@ void CParticle::Create(Particle& inParticle)
 
 		*pParticle = inParticle;
 		pParticle->type = PARTICLETYPE_NORMAL;
-
+		pParticle->nMaxLife = pParticle->nLife;
 		pParticle->fWidth = g_aParticle->fScale;
 		pParticle->fHeight = g_aParticle->fScale;
 		pParticle->color.nCntTransitionTime = 0;
