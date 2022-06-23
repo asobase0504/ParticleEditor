@@ -28,9 +28,8 @@ CParticle* particle;
 //--------------------------------------------------
 void InitGame(void)
 {
-	particle = new CParticle;
+	particle = new CParticle[CParticle::maxNumber];
 	InitBg();		// 背景
-	particle->Init();	// パーティクル
 }
 
 //--------------------------------------------------
@@ -39,7 +38,6 @@ void InitGame(void)
 void UninitGame(void)
 {
 	UninitBg();			// 背景
-	particle->Uninit();	// パーティクル
 }
 
 //--------------------------------------------------
@@ -48,11 +46,11 @@ void UninitGame(void)
 void UpdateGame(void)
 {
 	UpdateBg();			// 背景
-	particle->Update();	// パーティクル
+	CParticle::AllUpdate();
 
 	if (bSetImguiParticle())
 	{
-		particle->Create(GetImguiParticle());
+		CParticle::Create(GetImguiParticle(), D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f));
 	}
 }
 
@@ -62,5 +60,5 @@ void UpdateGame(void)
 void DrawGame(void)
 {
 	DrawBg();		// 背景
-	particle->Draw();	// パーティクル
+	CParticle::AllDraw();
 }
