@@ -481,6 +481,7 @@ void UpdateImguiProperty(void)
 
 		//imguiParticle.fScale = 50.0f;
 
+		//‚±‚±TEX‚æ‚Ý‚±‚Ý
 		if (ImGui::Button("LOAD TEXTURE"))
 		{
 			GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
