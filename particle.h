@@ -1,31 +1,31 @@
-//
+//ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼
 //particle.h
 // Author : Tanaka Kouta
-//
-#ifndef _PARTICLE_H_		//‚±‚Ìƒ}ƒNƒ‚ª’è‹`‚³‚ê‚Ä‚È‚©‚Á‚½‚ç
-#define _PARTICLE_H_		//2dƒCƒ“ƒNƒ‹[ƒh–hŽ~‚Ìƒ}ƒNƒ’è‹`
+//ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼
+#ifndef _PARTICLE_H_		//ã“ã®ãƒžã‚¯ãƒ­ãŒå®šç¾©ã•ã‚Œã¦ãªã‹ã£ãŸã‚‰
+#define _PARTICLE_H_		//2é‡ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰é˜²æ­¢ã®ãƒžã‚¯ãƒ­å®šç¾©
 
 #include "main.h"
 
-//ƒ}ƒNƒ’è‹`
+//ãƒžã‚¯ãƒ­å®šç¾©
 #define FVF_VERTEX_PARTICLE	(D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_PSIZE)
 
 //-------------------------------------------------
-// ƒp[ƒeƒBƒNƒ‹ƒNƒ‰ƒX
+// ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚¯ãƒ©ã‚¹
 // Author : Tanaka Kouta
 // Author : Yuda Kaito
-// ŠT—v : ƒp[ƒeƒBƒNƒ‹‚Ìˆ—‚ð’S“–‚·‚éƒNƒ‰ƒX
+// æ¦‚è¦ : ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã®å‡¦ç†ã‚’æ‹…å½“ã™ã‚‹ã‚¯ãƒ©ã‚¹
 //-------------------------------------------------
 class CParticle
 {
-public:	// ’è”
+public:	// å®šæ•°
 	static const int maxNumber = 21000;
 	static const int numType = 10;
-public:	// Ã“I•Ï”
+public:	// é™çš„å¤‰æ•°
 	static CParticle* g_aParticle[maxNumber];
-	static float g_fAngle;	// ”­ŽËŠp“x
-public:	// —ñ‹“Œ^
-	//ƒGƒtƒFƒNƒg‚ÌŽí•Ê
+	static float g_fAngle;	// ç™ºå°„è§’åº¦
+public:	// åˆ—æŒ™åž‹
+	//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ç¨®åˆ¥
 	enum PARTICLETYPE
 	{
 		PARTICLETYPE_NONE = 0,
@@ -33,12 +33,12 @@ public:	// —ñ‹“Œ^
 		PARTICLETYPE_PLAYER,
 		PARTICLETYPE_MAX
 	};
-public: // \‘¢‘Ì
+public: // æ§‹é€ ä½“
 
 	//-------------------------------------------------
-	// ƒeƒNƒXƒ`ƒƒî•ñ
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£æƒ…å ±
 	// Author : 
-	// ŠT—v : ƒeƒNƒXƒ`ƒƒ‚ÉŠÖ‚·‚éƒf[ƒ^\‘¢‘Ì
+	// æ¦‚è¦ : ãƒ†ã‚¯ã‚¹ãƒãƒ£ã«é–¢ã™ã‚‹ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“
 	//-------------------------------------------------
 	struct ParticleTex
 	{
@@ -48,68 +48,69 @@ public: // \‘¢‘Ì
 	};
 
 	//-------------------------------------------------
-	// ƒGƒtƒFƒNƒg‚ÌƒJƒ‰[\‘¢‘Ì
-	// Author : “‚ú±Œ‹“l
-	// ŠT—v : ƒGƒtƒFƒNƒg‚ÌFŠÖŒW‚Ì\‘¢‘Ì
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚«ãƒ©ãƒ¼æ§‹é€ ä½“
+	// Author : å”ï¨‘çµæ–—
+	// æ¦‚è¦ : ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®è‰²é–¢ä¿‚ã®æ§‹é€ ä½“
 	//-------------------------------------------------
-	struct Color	// ¦V‹K’Ç‰Á\‘¢‘Ì(ƒtƒ@ƒCƒ‹‚É’Ç‰ÁŒãÁ‚µ‚Ä‚­‚¾‚³‚¢)
+	struct Color	// â€»æ–°è¦è¿½åŠ æ§‹é€ ä½“(ãƒ•ã‚¡ã‚¤ãƒ«ã«è¿½åŠ å¾Œæ¶ˆã—ã¦ãã ã•ã„)
 	{
-		D3DXCOLOR col;				// F
-		D3DXCOLOR colRandamMax;		// ƒ‰ƒ“ƒ_ƒ€‚ÈF‚Ì”ÍˆÍ(Å‘å)
-		D3DXCOLOR colRandamMin;		// ƒ‰ƒ“ƒ_ƒ€‚ÈF‚Ì”ÍˆÍ(Å¬)
-		D3DXCOLOR colTransition;	// F‚Ì‘JˆÚ—Ê
-		D3DXCOLOR destCol;			// –Ú“I‚ÌF
-		int nEndTime;				// ‘JˆÚŠ®—¹‚Ü‚Å‚ÌŽžŠÔ			¦V‹K’Ç‰Á•Ï”(ƒtƒ@ƒCƒ‹‚É’Ç‰ÁŒãÁ‚µ‚Ä‚­‚¾‚³‚¢)
-		int nCntTransitionTime;		// ‘JˆÚƒJƒEƒ“ƒg					¦V‹K’Ç‰Á•Ï”(ƒtƒ@ƒCƒ‹‚É’Ç‰ÁŒãÁ‚µ‚Ä‚­‚¾‚³‚¢)
-		bool bColTransition;		// ƒJƒ‰[‘JˆÚ					¦V‹K’Ç‰Á•Ï”(ƒtƒ@ƒCƒ‹‚É’Ç‰ÁŒãÁ‚µ‚Ä‚­‚¾‚³‚¢)
-		bool bColRandom;			// ƒ‰ƒ“ƒ_ƒ€ƒJƒ‰[				¦V‹K’Ç‰Á•Ï”(ƒtƒ@ƒCƒ‹‚É’Ç‰ÁŒãÁ‚µ‚Ä‚­‚¾‚³‚¢)
-		bool bRandomTransitionTime;	// ‘JˆÚŽžŠÔ‚Ì—”				¦V‹K’Ç‰Á•Ï”(ƒtƒ@ƒCƒ‹‚É’Ç‰ÁŒãÁ‚µ‚Ä‚­‚¾‚³‚¢)
+		D3DXCOLOR col;				// è‰²
+		D3DXCOLOR colRandamMax;		// ãƒ©ãƒ³ãƒ€ãƒ ãªè‰²ã®ç¯„å›²(æœ€å¤§)
+		D3DXCOLOR colRandamMin;		// ãƒ©ãƒ³ãƒ€ãƒ ãªè‰²ã®ç¯„å›²(æœ€å°)
+		D3DXCOLOR colTransition;	// è‰²ã®é·ç§»é‡
+		D3DXCOLOR destCol;			// ç›®çš„ã®è‰²
+		int nEndTime;				// é·ç§»å®Œäº†ã¾ã§ã®æ™‚é–“			â€»æ–°è¦è¿½åŠ å¤‰æ•°(ãƒ•ã‚¡ã‚¤ãƒ«ã«è¿½åŠ å¾Œæ¶ˆã—ã¦ãã ã•ã„)
+		int nCntTransitionTime;		// é·ç§»ã‚«ã‚¦ãƒ³ãƒˆ					â€»æ–°è¦è¿½åŠ å¤‰æ•°(ãƒ•ã‚¡ã‚¤ãƒ«ã«è¿½åŠ å¾Œæ¶ˆã—ã¦ãã ã•ã„)
+		bool bColTransition;		// ã‚«ãƒ©ãƒ¼é·ç§»					â€»æ–°è¦è¿½åŠ å¤‰æ•°(ãƒ•ã‚¡ã‚¤ãƒ«ã«è¿½åŠ å¾Œæ¶ˆã—ã¦ãã ã•ã„)
+		bool bColRandom;			// ãƒ©ãƒ³ãƒ€ãƒ ã‚«ãƒ©ãƒ¼				â€»æ–°è¦è¿½åŠ å¤‰æ•°(ãƒ•ã‚¡ã‚¤ãƒ«ã«è¿½åŠ å¾Œæ¶ˆã—ã¦ãã ã•ã„)
+		bool bRandomTransitionTime;	// é·ç§»æ™‚é–“ã®ä¹±æ•°				â€»æ–°è¦è¿½åŠ å¤‰æ•°(ãƒ•ã‚¡ã‚¤ãƒ«ã«è¿½åŠ å¾Œæ¶ˆã—ã¦ãã ã•ã„)
 	};
 
 	//-------------------------------------------------
-	// ƒGƒtƒFƒNƒg‚Ìƒ¿ƒuƒŒƒ“ƒh‚ÌŽí•Ê‚Ì—ñ‹“Œ^
-	// Author : “‚ú±Œ‹“l
-	// ŠT—v : æŽZA‰ÁŽZAŒ¸ŽZ
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®Î±ãƒ–ãƒ¬ãƒ³ãƒ‰ã®ç¨®åˆ¥ã®åˆ—æŒ™åž‹
+	// Author : å”ï¨‘çµæ–—
+	// æ¦‚è¦ : ä¹—ç®—ã€åŠ ç®—ã€æ¸›ç®—
 	//-------------------------------------------------
 	enum ALPHABLENDTYPE
 	{
-		TYPE_ADD = 0,		// ‰ÁŽZ
-		TYPE_SUB,			// Œ¸ŽZ
-		TYPE_NONE,			// æŽZ
-		MAX_TYPE,			// Ží•Ê‚ÌÅ‘å”
+		TYPE_ADD = 0,		// åŠ ç®—
+		TYPE_SUB,			// æ¸›ç®—
+		TYPE_NONE,			// ä¹—ç®—
+		MAX_TYPE,			// ç¨®åˆ¥ã®æœ€å¤§æ•°
 	};
 
 	//-------------------------------------------------
-	//ƒGƒtƒFƒNƒg‚Ì\‘¢‘Ì‚Ì’è‹`
+	//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æ§‹é€ ä½“ã®å®šç¾©
 	// Author : Tanaka Kouta
 	// Author : Yuda Kaito
 	// Author : Hamada Ryuga
-	// Author : “‚ú±Œ‹“l
+	// Author : å”ï¨‘çµæ–—
 	//-------------------------------------------------
 	struct Particle
 	{
-		D3DXVECTOR3 pos;			// ˆÊ’u
-		D3DXVECTOR3 maxPopPos;		// ”­¶ˆÊ’u(Å‘å)			¦V‹K’Ç‰Á•Ï”(ƒtƒ@ƒCƒ‹‚É’Ç‰ÁŒãÁ‚µ‚Ä‚­‚¾‚³‚¢)
-		D3DXVECTOR3 minPopPos;		// ”­¶ˆÊ’u(Å¬)			¦V‹K’Ç‰Á•Ï”(ƒtƒ@ƒCƒ‹‚É’Ç‰ÁŒãÁ‚µ‚Ä‚­‚¾‚³‚¢)
-		D3DXVECTOR3 move;			// ˆÚ“®—Ê
-		D3DXVECTOR3 moveTransition;	// ˆÚ“®—Ê‚Ì„ˆÚ—Ê
-		D3DXVECTOR3 rot;			// Œü‚«
-		PARTICLETYPE type;			// ƒGƒtƒFƒNƒg‚ÌŽí—Þ
-		Color color;				// ƒJƒ‰[					¦V‹K’Ç‰Á•Ï”(ƒtƒ@ƒCƒ‹‚É’Ç‰ÁŒãÁ‚µ‚Ä‚­‚¾‚³‚¢)
-		ALPHABLENDTYPE alphaBlend;	// ƒ¿ƒuƒŒƒ“ƒfƒBƒ“ƒO‚ÌŽí•Ê
-		float fWidth;				// •
-		float fHeight;				// ‚‚³
-		float fAngle;				// Šp“x
-		float fAttenuation;			// Œ¸Š’l
-		float fRadius;				// ”¼Œa
-		float fWeight;				// d‚³
-		float fWeightTransition;	// d‚³‚Ì„ˆÚ—Ê
-		float fScale;				// ‘S‘Ì“I‚È‘å‚«‚³
-		int nLife;					// Žõ–½
-		bool bUseWeight;			// d‚³‚ðŽg—p‚·‚é‚©‚Ç‚¤‚©
-		bool bBackrot;				// ‹t‰ñ“]‚³‚¹‚é‚©‚Ç‚¤‚©
-		bool bTexturerot;			// ƒeƒNƒXƒ`ƒƒ‰ñ“]‚³‚¹‚é‚©‚Ç‚¤‚©
-		bool bUse;					// Žg—p‚µ‚Ä‚¢‚é‚©
+		D3DXVECTOR3 pos;			// ä½ç½®
+		D3DXVECTOR3 maxPopPos;		// ç™ºç”Ÿä½ç½®(æœ€å¤§)			â€»æ–°è¦è¿½åŠ å¤‰æ•°(ãƒ•ã‚¡ã‚¤ãƒ«ã«è¿½åŠ å¾Œæ¶ˆã—ã¦ãã ã•ã„)
+		D3DXVECTOR3 minPopPos;		// ç™ºç”Ÿä½ç½®(æœ€å°)			â€»æ–°è¦è¿½åŠ å¤‰æ•°(ãƒ•ã‚¡ã‚¤ãƒ«ã«è¿½åŠ å¾Œæ¶ˆã—ã¦ãã ã•ã„)
+		D3DXVECTOR3 move;			// ç§»å‹•é‡
+		D3DXVECTOR3 moveTransition;	// ç§»å‹•é‡ã®æŽ¨ç§»é‡
+		D3DXVECTOR3 rot;			// å‘ã
+		PARTICLETYPE type;			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ç¨®é¡ž
+		Color color;				// ã‚«ãƒ©ãƒ¼					â€»æ–°è¦è¿½åŠ å¤‰æ•°(ãƒ•ã‚¡ã‚¤ãƒ«ã«è¿½åŠ å¾Œæ¶ˆã—ã¦ãã ã•ã„)
+		ALPHABLENDTYPE alphaBlend;	// Î±ãƒ–ãƒ¬ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã®ç¨®åˆ¥
+		float fWidth;				// å¹…
+		float fHeight;				// é«˜ã•
+		float fAngle;				// è§’åº¦
+		float fAttenuation;			// æ¸›è¡°å€¤
+		float fRadius;				// åŠå¾„
+		float fWeight;				// é‡ã•
+		float fWeightTransition;	// é‡ã•ã®æŽ¨ç§»é‡
+		float fScale;				// å…¨ä½“çš„ãªå¤§ãã•
+		int nLife;					// å¯¿å‘½
+		int nMaxLife;
+    bool bUseWeight;			// é‡ã•ã‚’ä½¿ç”¨ã™ã‚‹ã‹ã©ã†ã‹
+		bool bBackrot;				// é€†å›žè»¢ã•ã›ã‚‹ã‹ã©ã†ã‹
+		bool bTexturerot;			// ãƒ†ã‚¯ã‚¹ãƒãƒ£å›žè»¢ã•ã›ã‚‹ã‹ã©ã†ã‹
+		bool bUse;					// ä½¿ç”¨ã—ã¦ã„ã‚‹ã‹
 	};
 
 public:
@@ -130,9 +131,9 @@ public:
 	void RemoveAngle(void);
 	DWORD FloattoDword(float fVal);
 
-private:	// ƒƒ“ƒo[•Ï”
-	LPDIRECT3DTEXTURE9 m_pTexture[numType] = {};	// ƒeƒNƒXƒ`ƒƒ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	LPDIRECT3DVERTEXBUFFER9	m_pVtxBuff = NULL;	// ’¸“_ƒoƒbƒtƒ@‚Ö‚Ìƒ|ƒCƒ“ƒ^
+private:	// ãƒ¡ãƒ³ãƒãƒ¼å¤‰æ•°
+	LPDIRECT3DTEXTURE9 m_pTexture[numType] = {};	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	LPDIRECT3DVERTEXBUFFER9	m_pVtxBuff = NULL;	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã¸ã®ãƒã‚¤ãƒ³ã‚¿
 	Particle m_data;
 	int m_idx;
 };
