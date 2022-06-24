@@ -10,12 +10,11 @@
 // include
 //=================================================
 #include <stdio.h>
-#include <d3d9.h>
-#include <tchar.h>
 #include "main.h"
 #include "input.h"
 #include "game.h"
 #include "file.h"
+#include "renderer.h"
 // imgui系統
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
@@ -23,27 +22,24 @@
 #include <imgui_internal.h>
 #include "resource1.h"
 #include "imgui_property.h"
-// imguiに描画する情報
-#include "particle.h"
-#include "effect.h"
+
+// ライブラリの読込み
+#pragma comment(lib,"winmm.lib")	//システム時刻取得に必要
 
 //マクロ定義
-#define MAX_NAME (7)
 #define CLASS_NAME	"WindowClass"
 #define WINDOW_NAME	"effect"
 
 //=================================================
 // 静的変数
 //=================================================
-static LPDIRECT3D9 s_pD3D = NULL;				// Direct3dオブジェクトへのポインタ
-static LPDIRECT3DDEVICE9 s_pD3DDevice = NULL;	// Direct3dデバイスへのぽいんた
 static int s_nCountFPS;							// FPSのカウンター
 static bool bPress = false;						// リボンバーのトリガー処理のために必要な変数
 static D3DPRESENT_PARAMETERS s_d3dpp = {};
 
 //プロトタイプ宣言
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow);
+HRESULT Init(HINSTANCE hInstance, HWND hWnd, bool bWindow);
 void Uninit(void);
 void Update(void);
 void Draw(void);
@@ -56,6 +52,8 @@ static float s_fAngle = 20.0f;
 static char FileString[MAX_PATH * 256];
 static bool bTexUse = false;
 inline unsigned long FloattoDword(float fVal) { return *((unsigned long*)&fVal); }
+
+CRenderer* renderer;
 
 //===================
 //メイン関数
@@ -108,7 +106,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 	DWORD dwFrameCount;		// フレームカウント
 	DWORD dwFPSLastTime;	// 最後のFPS
 
-	if (FAILED(Init(hInstance, hWnd, TRUE)))	// ここをfalseにすると大画面になる
+	if (FAILED(Init(hInstance, hWnd, true)))	// ここをfalseにすると大画面になる
 	{// 初期化が失敗した場合
 		return -1;
 	}
@@ -133,7 +131,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 	//ImGui::StyleColorsClassic();
 
 	// Setup Platform/Renderer backends
-	InitImguiProperty(hWnd, s_pD3DDevice);
+	InitImguiProperty(hWnd, renderer->GetDevice());
 	//ImGui_ImplWin32_Init(hWnd);
 	//ImGui_ImplDX9_Init(s_pD3DDevice);
 
@@ -337,80 +335,17 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 //---------------------------------------
 LPDIRECT3DDEVICE9 GetDevice(void)
 {
-	return s_pD3DDevice;
+	return renderer->GetDevice();
 }
 
 //---------------------------------------
 // 初期化
 //---------------------------------------
-HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)//TRUE：ウインドウ/FALSE:フルスクリーン
+HRESULT Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)//TRUE：ウインドウ/FALSE:フルスクリーン
 {
-	// ローカル変数宣言
-	D3DDISPLAYMODE d3ddm;			// ディスプレイモード
-	D3DPRESENT_PARAMETERS d3dpp;	// プレゼンテーションパラメータ
+	renderer = new CRenderer;
 
-	// Direct3dオブジェクトの生成
-	s_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
-	if (s_pD3D == NULL)
-	{
-		return E_FAIL;
-	}
-
-	// 現在のディスプレイモードを取得
-	if (FAILED(s_pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &d3ddm)))
-	{
-		return E_FAIL;
-	}
-
-	// ポリゴンの初期化処理
-	ZeroMemory(&d3dpp, sizeof(d3dpp));	// パラメータのゼロクリア
-
-	d3dpp.BackBufferWidth = SCREEN_WIDTH;						// ゲーム画面サイズ
-	d3dpp.BackBufferHeight = SCREEN_HEIGHT;						// ゲーム画面サイズ
-	d3dpp.BackBufferFormat = d3ddm.Format;						// バックバッファの形式数
-	d3dpp.BackBufferCount = 1;									// バックバッファの数
-	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;					// ダブルバッファの切り替え（映像信号の同期）
-	d3dpp.EnableAutoDepthStencil = TRUE;
-	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;					// デプスバッファとして１６ｂitを使う
-	d3dpp.Windowed = bWindow;									// ウインドウモード
-	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;	// リフレッシュレート
-	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;	// インターバル
-
-	//Direct3Dデバイスの生成
-	if ((FAILED(s_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp, &s_pD3DDevice))) &&
-		(FAILED(s_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &s_pD3DDevice))) &&
-		(FAILED(s_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &s_pD3DDevice))))
-	{
-		return E_FAIL;
-	}
-
-	//レジダーステートの設定
-	s_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);				// カリングの設定
-	s_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);				// アルファブレンド設定
-	s_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// アルファブレンド設定
-	s_pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// アルファブレンド設定
-
-	// サンプラーステ―トの設定
-	s_pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	//テクスチャをリニア補完する
-	s_pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	//テクスチャをリニア補完する
-	s_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	s_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-
-	// サンプラーステ―トの設定
-	s_pD3DDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	//テクスチャをリニア補完する
-	s_pD3DDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	//テクスチャをリニア補完する
-	s_pD3DDevice->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	s_pD3DDevice->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-
-	// 1枚目のテクスチャのテクスチャステージステートの設定
-	s_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-	s_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	s_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
-
-	// 二枚目のテクスチャのテクスチャステージ設定
-	s_pD3DDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-	s_pD3DDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-	s_pD3DDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	renderer->Init(hWnd, bWindow);
 
 	//入力処理の初期化処理
 	if (FAILED(InitInput(hInstance, hWnd)))
@@ -441,16 +376,7 @@ void Uninit(void)
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-	if (s_pD3D != NULL)
-	{
-		s_pD3D->Release();
-		s_pD3D = NULL;
-	}
-	if (s_pD3DDevice != NULL)
-	{
-		s_pD3DDevice->Release();
-		s_pD3DDevice = NULL;
-	}
+	renderer->Uninit();
 }
 
 //---------------------------------------
@@ -468,27 +394,7 @@ void Update(void)
 //---------------------------------------
 void Draw(void)
 {
-	//画面クリア
-	s_pD3DDevice->Clear(0, NULL,
-		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-		D3DCOLOR_RGBA(0, 0, 0, 0),
-		1.0f,
-		0);
-
-	if (SUCCEEDED(s_pD3DDevice->BeginScene()))
-	{//成功したとき
-
-		DrawGame();
-
-		DrawImguiProperty();
-
-		//ImGui::Render();
-		//ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-
-		s_pD3DDevice->EndScene();	//描画終了
-	}
-	//バックバッファとフロントバッファの入れ替え
-	s_pD3DDevice->Present(NULL, NULL, NULL, NULL);
+	renderer->Draw();
 }
 
 //---------------------------------------

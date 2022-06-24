@@ -131,9 +131,9 @@ public:
 	DWORD FloattoDword(float fVal);
 
 private:	// メンバー変数
-	LPDIRECT3DTEXTURE9 pTexture[numType] = {};	// テクスチャへのポインタ
-	LPDIRECT3DVERTEXBUFFER9	pVtxBuff = NULL;	// 頂点バッファへのポインタ
-	Particle data;
-	int idx;
+	LPDIRECT3DTEXTURE9 m_pTexture[numType] = {};	// テクスチャへのポインタ
+	LPDIRECT3DVERTEXBUFFER9	m_pVtxBuff = NULL;	// 頂点バッファへのポインタ
+	Particle m_data;
+	int m_idx;
 };
 #endif
