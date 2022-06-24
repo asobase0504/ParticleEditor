@@ -84,7 +84,7 @@ HRESULT CParticle::Init()
 	// 頂点バッファをアンロックする
 	pVtxBuff->Unlock();
 
-
+	
 
 	return S_OK;
 }
@@ -144,8 +144,9 @@ void CParticle::Update()
 			data.color.col += data.color.colTransition;
 		}
 	}
-	pParticle->color.col.a -= 1.0f / pParticle->nMaxLife;
-  
+
+	data.color.col.a -= 1.0f / data.nMaxLife;
+
 	VERTEX_2D *pVtx = nullptr;		// 頂点情報へのポインタ
 
 	// 頂点バッファをロック
@@ -285,6 +286,7 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 {
 	data = inParticle;
 
+	data.nMaxLife = data.nLife;
 	data.fWidth = data.fScale;
 	data.fHeight = data.fScale;
 	data.pos = inPos;
