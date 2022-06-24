@@ -1,6 +1,6 @@
 //=================================================
 //
-// ƒp[ƒeƒBƒNƒ‹ƒGƒfƒBƒ^
+// ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚¨ãƒ‡ã‚£ã‚¿
 // Auther : Hamada Ryuuga
 // Auther ; Tanaka Kouta
 // Auther : Yuda Kaito
@@ -15,7 +15,7 @@
 #include "game.h"
 #include "file.h"
 #include "renderer.h"
-// imguiŒn“
+// imguiç³»çµ±
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
 #include "imgui_impl_win32.h"
@@ -23,21 +23,21 @@
 #include "resource1.h"
 #include "imgui_property.h"
 
-// ƒ‰ƒCƒuƒ‰ƒŠ‚Ì“Ç‚İ
-#pragma comment(lib,"winmm.lib")	//ƒVƒXƒeƒ€æ“¾‚É•K—v
+// ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®èª­è¾¼ã¿
+#pragma comment(lib,"winmm.lib")	//ã‚·ã‚¹ãƒ†ãƒ æ™‚åˆ»å–å¾—ã«å¿…è¦
 
-//ƒ}ƒNƒ’è‹`
+//ãƒã‚¯ãƒ­å®šç¾©
 #define CLASS_NAME	"WindowClass"
 #define WINDOW_NAME	"effect"
 
 //=================================================
-// Ã“I•Ï”
+// é™çš„å¤‰æ•°
 //=================================================
-static int s_nCountFPS;							// FPS‚ÌƒJƒEƒ“ƒ^[
-static bool bPress = false;						// ƒŠƒ{ƒ“ƒo[‚ÌƒgƒŠƒK[ˆ—‚Ì‚½‚ß‚É•K—v‚È•Ï”
+static int s_nCountFPS;							// FPSã®ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼
+static bool bPress = false;						// ãƒªãƒœãƒ³ãƒãƒ¼ã®ãƒˆãƒªã‚¬ãƒ¼å‡¦ç†ã®ãŸã‚ã«å¿…è¦ãªå¤‰æ•°
 static D3DPRESENT_PARAMETERS s_d3dpp = {};
 
-//ƒvƒƒgƒ^ƒCƒvéŒ¾
+//ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 HRESULT Init(HINSTANCE hInstance, HWND hWnd, bool bWindow);
 void Uninit(void);
@@ -53,61 +53,62 @@ static char FileString[MAX_PATH * 256];
 static bool bTexUse = false;
 inline unsigned long FloattoDword(float fVal) { return *((unsigned long*)&fVal); }
 
+char buffer1[MAX_PATH];
 CRenderer* renderer;
 
 //===================
-//ƒƒCƒ“ŠÖ”
+//ãƒ¡ã‚¤ãƒ³é–¢æ•°
 //===================
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine, int nCmdShow)
 {
-	HWND hWnd;	//Windowƒnƒ“ƒhƒ‹¯•Êq
-	MSG msg;	//ƒƒbƒZ[ƒW‚ğŠi”[‚·‚é•Ï”
+	HWND hWnd;	//Windowãƒãƒ³ãƒ‰ãƒ«è­˜åˆ¥å­
+	MSG msg;	//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ ¼ç´ã™ã‚‹å¤‰æ•°
 	RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
 
 	WNDCLASSEX wcex =
 	{
-		sizeof(WNDCLASSEX),											// WNDCLASSEX‚Ìƒƒ‚ƒŠƒTƒCƒY
-		CS_HREDRAW | CS_VREDRAW,									// ƒEƒCƒ“ƒhƒE‚ÌƒXƒ^ƒCƒ‹
-		WindowProc,													// WindowƒvƒƒV[ƒWƒƒ  
-		0,															// ƒ[ƒ‚É‚·‚é
-		0,															// ƒ[ƒ‚É‚·‚é
-		hInstance,													// ƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹
-		LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION)),		// ƒ^ƒXƒNƒo[‚ÌƒAƒCƒRƒ“
-		LoadCursor(NULL, IDC_ARROW),								// ƒ}ƒEƒXƒJ[ƒ\ƒ‹
-		(HBRUSH)(COLOR_WINDOW + 1),									// ƒNƒ‰ƒCƒAƒ“ƒg‚Ì—Ìˆæ”wŒiF
-		MAKEINTRESOURCE(IDR_MENU1) ,								// ƒƒjƒ…[ƒo[
-		CLASS_NAME,													// WindowƒNƒ‰ƒX‚Ì–¼‘O
-		LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_APPLICATION))	// ƒtƒ@ƒCƒ‹ƒAƒCƒRƒ“
+		sizeof(WNDCLASSEX),											// WNDCLASSEXã®ãƒ¡ãƒ¢ãƒªã‚µã‚¤ã‚º
+		CS_HREDRAW | CS_VREDRAW,									// ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã®ã‚¹ã‚¿ã‚¤ãƒ«
+		WindowProc,													// Windowãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£  
+		0,															// ã‚¼ãƒ­ã«ã™ã‚‹
+		0,															// ã‚¼ãƒ­ã«ã™ã‚‹
+		hInstance,													// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒ³ãƒ‰ãƒ«
+		LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION)),		// ã‚¿ã‚¹ã‚¯ãƒãƒ¼ã®ã‚¢ã‚¤ã‚³ãƒ³
+		LoadCursor(NULL, IDC_ARROW),								// ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«
+		(HBRUSH)(COLOR_WINDOW + 1),									// ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã®é ˜åŸŸèƒŒæ™¯è‰²
+		MAKEINTRESOURCE(IDR_MENU1) ,								// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼
+		CLASS_NAME,													// Windowã‚¯ãƒ©ã‚¹ã®åå‰
+		LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_APPLICATION))	// ãƒ•ã‚¡ã‚¤ãƒ«ã‚¢ã‚¤ã‚³ãƒ³
 	};
 
-	//ƒEƒCƒ“ƒhƒEƒNƒ‰ƒX‚Ì“o˜^
+	//ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ã®ç™»éŒ²
 	RegisterClassEx(&wcex);
 
-	//ƒNƒ‰ƒCƒAƒ“ƒg—Ìˆæ‚ğw’è‚ÌƒTƒCƒY‚É’²®
+	//ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆé ˜åŸŸã‚’æŒ‡å®šã®ã‚µã‚¤ã‚ºã«èª¿æ•´
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
-	//ƒEƒCƒ“ƒhƒE‚ğ¶¬
+	//ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚’ç”Ÿæˆ
 	hWnd = CreateWindowEx(
-		0,							// Šg’£WindowsƒXƒ^ƒCƒ‹
-		CLASS_NAME,					// WindowƒNƒ‰ƒX‚Ì–¼‘O
-		WINDOW_NAME,				// Window‚Ì–¼‘O
-		WS_OVERLAPPEDWINDOW,		// WindowƒXƒ^ƒCƒ‹
-		CW_USEDEFAULT,				// Window‚Ì¶ãXÀ•W
-		CW_USEDEFAULT,				// Window¶ãYÀ•W
-		(rect.right - rect.left),	// Window•
-		(rect.bottom - rect.top),	// Window‚‚³
-		NULL,						// eWindow‚Ìƒnƒ“ƒhƒ‹
-		NULL,						// ƒƒjƒ…[ƒnƒ“ƒhƒ‹‚Ü‚½‚ÍŒÂqWindowID
-		hInstance,					// ƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹
-		IDI_APPLICATION);			// Windowì¬ƒf[ƒ^
+		0,							// æ‹¡å¼µWindowsã‚¹ã‚¿ã‚¤ãƒ«
+		CLASS_NAME,					// Windowã‚¯ãƒ©ã‚¹ã®åå‰
+		WINDOW_NAME,				// Windowã®åå‰
+		WS_OVERLAPPEDWINDOW,		// Windowã‚¹ã‚¿ã‚¤ãƒ«
+		CW_USEDEFAULT,				// Windowã®å·¦ä¸ŠXåº§æ¨™
+		CW_USEDEFAULT,				// Windowå·¦ä¸ŠYåº§æ¨™
+		(rect.right - rect.left),	// Windowå¹…
+		(rect.bottom - rect.top),	// Windowé«˜ã•
+		NULL,						// è¦ªWindowã®ãƒãƒ³ãƒ‰ãƒ«
+		NULL,						// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ³ãƒ‰ãƒ«ã¾ãŸã¯å€‹å­WindowID
+		hInstance,					// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒ³ãƒ‰ãƒ«
+		IDI_APPLICATION);			// Windowä½œæˆãƒ‡ãƒ¼ã‚¿
 
-	DWORD dwCurrentTime;	// Œ»İ
-	DWORD dwExedastTime;	// ÅŒãXV
-	DWORD dwFrameCount;		// ƒtƒŒ[ƒ€ƒJƒEƒ“ƒg
-	DWORD dwFPSLastTime;	// ÅŒã‚ÌFPS
+	DWORD dwCurrentTime;	// ç¾åœ¨æ™‚åˆ»
+	DWORD dwExedastTime;	// æœ€å¾Œæ›´æ–°æ™‚åˆ»
+	DWORD dwFrameCount;		// ãƒ•ãƒ¬ãƒ¼ãƒ ã‚«ã‚¦ãƒ³ãƒˆ
+	DWORD dwFPSLastTime;	// æœ€å¾Œã®FPS
 
-	if (FAILED(Init(hInstance, hWnd, true)))	// ‚±‚±‚ğfalse‚É‚·‚é‚Æ‘å‰æ–Ê‚É‚È‚é
-	{// ‰Šú‰»‚ª¸”s‚µ‚½ê‡
+	if (FAILED(Init(hInstance, hWnd, true)))	// ã“ã“ã‚’falseã«ã™ã‚‹ã¨å¤§ç”»é¢ã«ãªã‚‹
+	{// åˆæœŸåŒ–ãŒå¤±æ•—ã—ãŸå ´åˆ
 		return -1;
 	}
 
@@ -122,7 +123,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 	ImFontConfig config;
 	config.MergeMode = true;
 
-	// imgui‚ÉƒtƒHƒ“ƒg‚ğ’Ç‰Á
+	// imguiã«ãƒ•ã‚©ãƒ³ãƒˆã‚’è¿½åŠ 
 	io.Fonts->AddFontDefault();
 	io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\meiryo.ttc", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 
@@ -135,7 +136,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 	//ImGui_ImplWin32_Init(hWnd);
 	//ImGui_ImplDX9_Init(s_pD3DDevice);
 
-	//•ª‰ğ”\‚Ìİ’è
+	//åˆ†è§£èƒ½ã®è¨­å®š
 	timeBeginPeriod(1);
 
 	dwCurrentTime = 0;
@@ -144,13 +145,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 	dwFrameCount = 0;
 	dwFPSLastTime = timeGetTime();
 
-	// ƒƒbƒZ[ƒWƒ‹[ƒv
+	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ«ãƒ¼ãƒ—
 	while (1)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
-		{// windows‚Ìˆ—
+		{// windowsã®å‡¦ç†
 			if (msg.message == WM_QUIT)
-			{// WM_QUITƒƒbƒZ[ƒW‚ğó‚¯‚Æ‚Á‚½‚çƒƒbƒZ[ƒWƒ‹[ƒv‚ğ”²‚¯‚é
+			{// WM_QUITãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å—ã‘ã¨ã£ãŸã‚‰ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ«ãƒ¼ãƒ—ã‚’æŠœã‘ã‚‹
 				break;
 			}
 			else
@@ -160,11 +161,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 			}
 		}
 		else
-		{//DirectX‚Ìˆ—
-			dwCurrentTime = timeGetTime();//Œ»İ‚ğæ“¾
+		{//DirectXã®å‡¦ç†
+			dwCurrentTime = timeGetTime();//ç¾åœ¨æ™‚åˆ»ã‚’å–å¾—
 			if ((dwCurrentTime - dwFPSLastTime) >= 500)
-			{ // 0.5•bŒo‰ß
-			  // FPSŒv‘ª
+			{ // 0.5ç§’çµŒé
+			  // FPSè¨ˆæ¸¬
 				s_nCountFPS = (dwFrameCount * 1000) / (dwCurrentTime - dwFPSLastTime);
 				dwFPSLastTime = dwCurrentTime;
 				dwFrameCount = 0;
@@ -172,15 +173,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 		
 
 			if ((dwCurrentTime - dwExedastTime) >= (1000 / 60))
-			{//60•ª‚Ì1•bŒo‰ß
-				dwExedastTime = dwCurrentTime;	// ˆ—ŠJn‚Ì[Œ»İ]‚ğ•Û‘¶
+			{//60åˆ†ã®1ç§’çµŒé
+				dwExedastTime = dwCurrentTime;	// å‡¦ç†é–‹å§‹ã®æ™‚åˆ»[ç¾åœ¨æ™‚åˆ»]ã‚’ä¿å­˜
 
-				// imgui‚ÌXV
+				// imguiã®æ›´æ–°
 				UpdateImguiProperty();
-				// XV
+				// æ›´æ–°
 				Update();
 
-				// •`‰æˆ—
+				// æç”»å‡¦ç†
 				Draw();
 
 				dwFrameCount++;
@@ -188,23 +189,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 		}
 	}
 
-	//I—¹ˆ—
+	//çµ‚äº†å‡¦ç†
 	Uninit();
 
 	::DestroyWindow(hWnd);
 	::UnregisterClass(wcex.lpszClassName, wcex.hInstance);
 
-	//•ª‹@”\‚ğ–ß‚·
+	//åˆ†æ©Ÿèƒ½ã‚’æˆ»ã™
 	timeEndPeriod(1);
 
-	// WindowƒNƒ‰ƒX‚Ì“o˜^‚ğ‰ğœ
+	// Windowã‚¯ãƒ©ã‚¹ã®ç™»éŒ²ã‚’è§£é™¤
 	UnregisterClass(CLASS_NAME, wcex.hInstance);
 
 	return(int)msg.wParam;
 }
 
 //========================
-//ƒEƒBƒ“ƒhƒE‚¾‚µ‚Ä‚â‚é‚â‚Â
+//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã ã—ã¦ã‚„ã‚‹ã‚„ã¤
 //========================
 static void funcFileSave(HWND hWnd, bool nMap)
 {
@@ -218,38 +219,37 @@ static void funcFileSave(HWND hWnd, bool nMap)
 	if (ofn.lStructSize == 0) {
 		ofn.lStructSize = sizeof(OPENFILENAME);
 		ofn.hwndOwner = hWnd;
-		ofn.lpstrInitialDir = szPath;	// ‰ŠúƒtƒHƒ‹ƒ_ˆÊ’u
-		ofn.lpstrFile = szFile;			// ‘I‘ğƒtƒ@ƒCƒ‹Ši”[
+		ofn.lpstrInitialDir = szPath;	// åˆæœŸãƒ•ã‚©ãƒ«ãƒ€ä½ç½®
+		ofn.lpstrFile = szFile;			// é¸æŠãƒ•ã‚¡ã‚¤ãƒ«æ ¼ç´
 		ofn.nMaxFile = MAX_PATH;
-		ofn.lpstrDefExt = TEXT(".txt");
-		ofn.lpstrFilter = TEXT("txtƒtƒ@ƒCƒ‹(*.txt)\0*.txt\0");
-		ofn.lpstrTitle = TEXT("ƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚ğ•Û‘¶‚µ‚Ü‚·B");
+		ofn.lpstrDefExt = TEXT(".png");
+		ofn.lpstrFilter = TEXT("pngãƒ•ã‚¡ã‚¤ãƒ«(*.png)\0*.png\0");
+		ofn.lpstrTitle = TEXT("ç”»åƒãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ã—ã¾ã™ã€‚");
 		ofn.Flags = OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 	}
 	if (GetSaveFileName(&ofn)) {
-		MessageBox(hWnd, szFile, TEXT("ƒtƒ@ƒCƒ‹–¼‚ğ•t‚¯‚Ä•Û‘¶"), MB_OK);
+		MessageBox(hWnd, szFile, TEXT("ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ä»˜ã‘ã¦ä¿å­˜"), MB_OK);
 	}
 
 	if (szFile[0] != '\0')
 	{
-		if (nMap)
-		{
-			//OutputMap(szFile);
-		}
-		if (!nMap)
-		{
-			//OutputEnemy(szFile);
-		}
+		/*std::string Data = ;
+			*/
+		
+		 CopyFile((LPCTSTR)buffer1, // æ—¢å­˜ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®åå‰
+			szFile, // æ–°ã—ã„ãƒ•ã‚¡ã‚¤ãƒ«ã®åå‰
+			false // ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã™ã‚‹å ´åˆã®å‹•ä½œ
+		);
 	}
 	bPress = true;
 }
 
 //---------------------------------------
-//ƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
+//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
 //---------------------------------------
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	//ƒ|ƒCƒ“ƒg\‘¢‘Ì
+	//ãƒã‚¤ãƒ³ãƒˆæ§‹é€ ä½“
 	//	POINT    pt;
 
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
@@ -257,51 +257,55 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return true;
 	}
 
-	int nID;//•Ô‚è’l‚ğŠi”[
-	static HWND hWndEditlnput1;		//“ü—ÍƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹(¯•Êq)
+	int nID;//è¿”ã‚Šå€¤ã‚’æ ¼ç´
+	static HWND hWndEditlnput1;		//å…¥åŠ›ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«(è­˜åˆ¥å­)
 
-	char buffer1[MAX_PATH];
+	//char buffer1[MAX_PATH];
 	int i, _size;
 
 	switch (uMsg)
 	{
 
 	case WM_CREATE:
-		//ƒtƒ@ƒCƒ‹ƒhƒƒbƒv‚ğó‚¯æ‚ê‚é‚æ‚¤‚Éİ’è‚·‚é
+		//ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‰ãƒ­ãƒƒãƒ—ã‚’å—ã‘å–ã‚Œã‚‹ã‚ˆã†ã«è¨­å®šã™ã‚‹
 		DragAcceptFiles(hWnd, true);
 		break;
 
 	case WM_DROPFILES:
-		//ƒhƒƒbƒv‚³‚ê‚½ƒtƒ@ƒCƒ‹”‚ğæ“¾‚·‚é
+		//ãƒ‰ãƒ­ãƒƒãƒ—ã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«æ•°ã‚’å–å¾—ã™ã‚‹
 		_size = DragQueryFile((HDROP)wParam, -1, buffer1, MAX_PATH);
 		for (i = 0; i<_size; i++)
 		{
-			//ƒhƒƒbƒv‚³‚ê‚½ƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é
+			//ãƒ‰ãƒ­ãƒƒãƒ—ã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—ã™ã‚‹
 			DragQueryFile((HDROP)wParam, i, buffer1, MAX_PATH);
-
+			funcFileSave(hWnd, false);
 		}
-		MessageBox(hWnd, buffer1, "î•ñ", MB_OK);
-		//ƒtƒ@ƒCƒ‹î•ñ‚Ì“à•”ƒf[ƒ^‚ğ‰ğ•ú‚·‚é
+	
+		MessageBox(hWnd, buffer1, "æƒ…å ±", MB_OK);
+		//ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±ã®å†…éƒ¨ãƒ‡ãƒ¼ã‚¿ã‚’è§£æ”¾ã™ã‚‹
 		DragFinish((HDROP)wParam);
+
+		
+
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
 
-	case WM_KEYDOWN: //	ƒL[‚ÌƒƒbƒZ[ƒW
+	case WM_KEYDOWN: //	ã‚­ãƒ¼ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 
 		switch (wParam)
 		{
-		case VK_ESCAPE: //ƒGƒXƒP[ƒv‚ª‰Ÿ‚³‚ê‚½
+		case VK_ESCAPE: //ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ãŒæŠ¼ã•ã‚ŒãŸ
 
-			nID = MessageBox(hWnd, "I—¹‚µ‚Ü‚·‚©H","I‚í‚è‚ÌƒRƒ}ƒ“ƒh", MB_YESNO | MB_TOPMOST);
-			// ‘æˆêˆø”‚ğNULL‚É‚·‚é‚ÆƒƒbƒZ[ƒWBOXƒAƒNƒeƒBƒuƒEƒBƒ“ƒhƒE‚É‚È‚ç‚È‚¢
-			// ‘æˆêˆø”‚ğhWnd‚É‚·‚é‚Æ‚±‚ÌƒEƒBƒ“ƒhƒE‚ªe(ƒI[ƒi[)‚É‚È‚èA
-			// ‚±‚ÌƒƒbƒZ[ƒWBOX‚ğˆ—‚µ‚È‚¢ŒÀ‚è‚Ù‚©‚Ìˆ—‚ª‚Å‚«‚È‚¢
-			// “ü—ÍƒEƒBƒ“ƒhƒE‚Ì¶¬
+			nID = MessageBox(hWnd, "çµ‚äº†ã—ã¾ã™ã‹ï¼Ÿ","çµ‚ã‚ã‚Šã®ã‚³ãƒãƒ³ãƒ‰", MB_YESNO | MB_TOPMOST);
+			// ç¬¬ä¸€å¼•æ•°ã‚’NULLã«ã™ã‚‹ã¨ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸BOXã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«ãªã‚‰ãªã„
+			// ç¬¬ä¸€å¼•æ•°ã‚’hWndã«ã™ã‚‹ã¨ã“ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒè¦ª(ã‚ªãƒ¼ãƒŠãƒ¼)ã«ãªã‚Šã€
+			// ã“ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸BOXã‚’å‡¦ç†ã—ãªã„é™ã‚Šã»ã‹ã®å‡¦ç†ãŒã§ããªã„
+			// å…¥åŠ›ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç”Ÿæˆ
 
 			if (nID == IDYES)
-			{// Window‚ğ”j‰ó‚·‚é(WM_DESTROYƒƒbƒZ[ƒW‚ğ‘—‚é)
+			{// Windowã‚’ç ´å£Šã™ã‚‹(WM_DESTROYãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’é€ã‚‹)
 				DestroyWindow(hWnd);
 				break;
 			}
@@ -312,9 +316,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// case WM_RBUTTONDOWN:
 		// pt.x = LOWORD(lParam);
 		// pt.y = HIWORD(lParam);
-		// //ƒNƒ‰ƒCƒAƒ“ƒgÀ•W‚ğƒXƒNƒŠ[ƒ“À•W‚Ö•ÏŠ·
+		// //ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆåº§æ¨™ã‚’ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã¸å¤‰æ›
 		// ClientToScreen(hWnd, &pt);
-		// //ƒ|ƒbƒvƒAƒbƒvƒƒjƒ…[‚ğ•\¦
+		// //ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’è¡¨ç¤º
 		// TrackPopupMenu(GetSubMenu(GetMenu(hWnd), 0), TPM_LEFTALIGN, pt.x, pt.y, 0, hWnd, NULL);
 		// break;
 	case WM_COMMAND:
@@ -331,7 +335,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 //---------------------------------------
-//ƒfƒoƒCƒXæ“¾
+//ãƒ‡ãƒã‚¤ã‚¹å–å¾—
 //---------------------------------------
 LPDIRECT3DDEVICE9 GetDevice(void)
 {
@@ -339,24 +343,24 @@ LPDIRECT3DDEVICE9 GetDevice(void)
 }
 
 //---------------------------------------
-// ‰Šú‰»
+// åˆæœŸåŒ–
 //---------------------------------------
-HRESULT Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)//TRUEFƒEƒCƒ“ƒhƒE/FALSE:ƒtƒ‹ƒXƒNƒŠ[ƒ“
+HRESULT Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)//TRUEï¼šã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦/FALSE:ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³
 {
 	renderer = new CRenderer;
 
 	renderer->Init(hWnd, bWindow);
 
-	//“ü—Íˆ—‚Ì‰Šú‰»ˆ—
+	//å…¥åŠ›å‡¦ç†ã®åˆæœŸåŒ–å‡¦ç†
 	if (FAILED(InitInput(hInstance, hWnd)))
 	{
 		return E_FAIL;
 	}
 
-	//—”‚Ì‰Šú‰»
+	//ä¹±æ•°ã®åˆæœŸåŒ–
 	srand((unsigned int)time(0));
 
-	InitGame();	// ƒQ[ƒ€ƒ‚[ƒh‚Ì‰Šú‰»
+	InitGame();	// ã‚²ãƒ¼ãƒ ãƒ¢ãƒ¼ãƒ‰ã®åˆæœŸåŒ–
 
 	LoodJson(L"data/FILE/Effect.json");
 
@@ -364,13 +368,13 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)//TRUEFƒEƒCƒ“ƒhƒE/FAL
 }
 
 //---------------------------------------
-// I—¹
+// çµ‚äº†
 //---------------------------------------
 void Uninit(void)
 {
-	//I—¹ˆ—
-	UninitInput();	// “ü—Í
-	UninitGame();	// ƒQ[ƒ€ƒ‚[ƒh
+	//çµ‚äº†å‡¦ç†
+	UninitInput();	// å…¥åŠ›
+	UninitGame();	// ã‚²ãƒ¼ãƒ ãƒ¢ãƒ¼ãƒ‰
 
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
@@ -380,17 +384,17 @@ void Uninit(void)
 }
 
 //---------------------------------------
-// XV
+// æ›´æ–°
 //---------------------------------------
 void Update(void)
 {
-	//XVˆ—
+	//æ›´æ–°å‡¦ç†
 	UpdateInput();
 	UpdateGame();
 }
 
 //---------------------------------------
-// •`‰æ
+// æç”»
 //---------------------------------------
 void Draw(void)
 {
@@ -398,7 +402,7 @@ void Draw(void)
 }
 
 //---------------------------------------
-//ƒfƒBƒŒƒNƒgƒŠ•\¦—p
+//ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªè¡¨ç¤ºç”¨
 //---------------------------------------
 BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
 {
@@ -409,12 +413,12 @@ BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hWnd;
-	ofn.lpstrFilter = TEXT("‘S‚Ä‚Ìƒtƒ@ƒCƒ‹(*.*)\0*.*\0");
+	ofn.lpstrFilter = TEXT("å…¨ã¦ã®ãƒ•ã‚¡ã‚¤ãƒ«(*.*)\0*.*\0");
 	ofn.nFilterIndex = 0;
 	ofn.lpstrFile = fname;
 	ofn.nMaxFile = nsize;
 	ofn.lpstrInitialDir = initDir;
-	ofn.lpstrTitle = TEXT("ƒtƒ@ƒCƒ‹w’è");
+	ofn.lpstrTitle = TEXT("ãƒ•ã‚¡ã‚¤ãƒ«æŒ‡å®š");
 	ofn.Flags = OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 
 	bTexUse = true;
@@ -423,18 +427,22 @@ BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
 }
 
 //---------------------------------------
-// FPS‚Ìæ“¾
+// FPSã®å–å¾—
 //---------------------------------------
 int GetFPS()
 {
 	return s_nCountFPS;
 }
 
+
 float GetAngle(void)
 {
 	return s_fAngle;
 }
 
+//---------------------------------------
+// ãƒ•ã‚¡ã‚¤ãƒ«ã­ãƒ¼ã‚€
+//---------------------------------------
 char GetFileName(int nNum)
 {
 	return FileString[nNum];
@@ -444,3 +452,4 @@ bool TexUse(void)
 {
 	return bTexUse;
 }
+
