@@ -343,11 +343,11 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
 
     ///////////////////////////
-    // JSON value data types //
+    // JSON value m_data types //
     ///////////////////////////
 
-    /// @name JSON value data types
-    /// The data types to store a JSON value. These types are derived from
+    /// @name JSON value m_data types
+    /// The m_data types to store a JSON value. These types are derived from
     /// the template arguments passed to class @ref basic_json.
     /// @{
 
