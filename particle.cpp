@@ -285,6 +285,7 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 {
 	m_data = inParticle;
 
+	m_data.nMaxLife = m_data.nLife;
 	m_data.fWidth = m_data.fScale;
 	m_data.fHeight = m_data.fScale;
 	m_data.pos = inPos;
