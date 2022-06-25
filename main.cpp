@@ -56,7 +56,7 @@ static float s_fAngle = 20.0f;
 static char FileString[MAX_PATH * 256];
 static bool bTexUse = false;
 inline unsigned long FloattoDword(float fVal) { return *((unsigned long*)&fVal); }
-
+char buffer1[MAX_PATH];
 //===================
 //メイン関数
 //===================
@@ -223,9 +223,9 @@ static void funcFileSave(HWND hWnd, bool nMap)
 		ofn.lpstrInitialDir = szPath;	// 初期フォルダ位置
 		ofn.lpstrFile = szFile;			// 選択ファイル格納
 		ofn.nMaxFile = MAX_PATH;
-		ofn.lpstrDefExt = TEXT(".txt");
-		ofn.lpstrFilter = TEXT("txtファイル(*.txt)\0*.txt\0");
-		ofn.lpstrTitle = TEXT("テキストファイルを保存します。");
+		ofn.lpstrDefExt = TEXT(".png");
+		ofn.lpstrFilter = TEXT("pngファイル(*.png)\0*.png\0");
+		ofn.lpstrTitle = TEXT("画像ファイルを保存します。");
 		ofn.Flags = OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 	}
 	if (GetSaveFileName(&ofn)) {
@@ -234,14 +234,16 @@ static void funcFileSave(HWND hWnd, bool nMap)
 
 	if (szFile[0] != '\0')
 	{
-		if (nMap)
-		{
-			//OutputMap(szFile);
-		}
-		if (!nMap)
-		{
-			//OutputEnemy(szFile);
-		}
+		//std::string File = szFile;
+		strcpy(FileString, szFile);
+		
+	
+		 CopyFile((LPCTSTR)buffer1, // 既存のファイルの名前
+			szFile, // 新しいファイルの名前
+			false // ファイルが存在する場合の動作
+		);
+		 bTexUse = true;
+
 	}
 	bPress = true;
 }
@@ -262,7 +264,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	int nID;//返り値を格納
 	static HWND hWndEditlnput1;		//入力ウィンドウハンドル(識別子)
 
-	char buffer1[MAX_PATH];
+	//char buffer1[MAX_PATH];
 	int i, _size;
 
 	switch (uMsg)
@@ -280,11 +282,15 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			//ドロップされたファイル名を取得する
 			DragQueryFile((HDROP)wParam, i, buffer1, MAX_PATH);
-
+			funcFileSave(hWnd, false);
 		}
+	
 		MessageBox(hWnd, buffer1, "情報", MB_OK);
 		//ファイル情報の内部データを解放する
 		DragFinish((HDROP)wParam);
+
+		
+
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -513,6 +519,7 @@ BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
 
 	bTexUse = true;
 
+
 	return GetOpenFileName(&ofn);
 }
 
@@ -524,17 +531,16 @@ int GetFPS()
 	return s_nCountFPS;
 }
 
+
 float GetAngle(void)
 {
 	return s_fAngle;
 }
 
-char GetFileName(int nNum)
+
+
+bool *TexUse(void)
 {
-	return FileString[nNum];
+	return &bTexUse;
 }
 
-bool TexUse(void)
-{
-	return bTexUse;
-}

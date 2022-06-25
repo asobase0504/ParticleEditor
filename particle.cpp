@@ -1,6 +1,6 @@
-// ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼
+// 
 // effect.cpp
-// ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼
+// 
 #include "main.h"
 #include "particle.h"
 #include <time.h>
@@ -8,80 +8,80 @@
 #include "utility.h"
 
 // ==================================================
-// é™çš„ãƒ¡ãƒ³ãƒãƒ¼å¤‰æ•°
+// Ã“Iƒƒ“ƒo[•Ï”
 // ==================================================
 CParticle* CParticle::g_aParticle[] = {};
 float CParticle::g_fAngle = 0.0f;
 
 //--------------------------------------------------
-// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 //--------------------------------------------------
 CParticle::CParticle()
 {
 }
 
 //--------------------------------------------------
-// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+// ƒfƒXƒgƒ‰ƒNƒ^
 //--------------------------------------------------
 CParticle::~CParticle()
 {
 }
 
 //--------------------------------------------------
-// åˆæœŸåŒ–
+// ‰Šú‰»
 //--------------------------------------------------
 HRESULT CParticle::Init()
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();	// ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();	// ƒfƒoƒCƒX‚ÌŽæ“¾
 
-	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®èª­ã¿è¾¼ã¿
+												// ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚Ýž‚Ý
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\flare.png",
 		&pTexture[PARTICLETYPE_NORMAL]);
 
-	// ãƒ‡ãƒ¼ã‚¿ã®åˆæœŸåŒ–
+	// ƒf[ƒ^‚Ì‰Šú‰»
 	memset(&data, 0, sizeof(data));
 
-	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,	// ç¢ºä¿ã™ã‚‹ãƒãƒƒãƒ•ã‚¡ã®ã‚µã‚¤ã‚º
+	// ’¸“_ƒoƒbƒtƒ@‚Ì¶¬
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,	// Šm•Û‚·‚éƒoƒbƒtƒ@‚ÌƒTƒCƒY
 		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_2D,			// é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆ
+		FVF_VERTEX_2D,			// ’¸“_ƒtƒH[ƒ}ƒbƒg
 		D3DPOOL_MANAGED,
 		&pVtxBuff,
 		NULL);
 
-	VERTEX_2D *pVtx = NULL;		// é ‚ç‚¹æƒ…å ±ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	VERTEX_2D *pVtx = NULL;		// ’¸“_î•ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
 
-	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ã€é ‚ç‚¹æƒ…å ±ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—
+								// ’¸“_ƒoƒbƒtƒ@‚ðƒƒbƒN‚µA’¸“_î•ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ðŽæ“¾
 	pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	// é ‚ç‚¹åº§æ¨™ã®è¨­å®š
+	// ’¸“_À•W‚ÌÝ’è
 	pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	// rhwã®è¨­å®š
+	// rhw‚ÌÝ’è
 	pVtx[0].rhw = 1.0f;
 	pVtx[1].rhw = 1.0f;
 	pVtx[2].rhw = 1.0f;
 	pVtx[3].rhw = 1.0f;
 
-	// é ‚ç‚¹ã‚«ãƒ©ãƒ¼ã®è¨­å®š
+	// ’¸“_ƒJƒ‰[‚ÌÝ’è
 	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
-	// ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
+	// ƒeƒNƒXƒ`ƒƒÀ•W‚ÌÝ’è
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-	pVtx += 4;		// é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ã®ãƒã‚¤ãƒ³ã‚¿ã‚’4ã¤åˆ†é›†ã‚ã‚‹
+	pVtx += 4;		// ’¸“_ƒf[ƒ^‚Ìƒ|ƒCƒ“ƒ^‚ð4‚Â•ªW‚ß‚é
 
-	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¢ãƒ³ãƒ­ãƒƒã‚¯ã™ã‚‹
+					// ’¸“_ƒoƒbƒtƒ@‚ðƒAƒ“ƒƒbƒN‚·‚é
 	pVtxBuff->Unlock();
 
 
@@ -90,13 +90,13 @@ HRESULT CParticle::Init()
 }
 
 //--------------------------------------------------
-// çµ‚äº†
+// I—¹
 //--------------------------------------------------
 void CParticle::Uninit()
 {
 	for (int i = 0; i < numType; i++)
 	{
-		// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ç ´æ£„
+		// ƒeƒNƒXƒ`ƒƒ‚Ì”jŠü
 		if (pTexture[i] != NULL)
 		{
 			pTexture[i]->Release();
@@ -104,7 +104,7 @@ void CParticle::Uninit()
 		}
 	}
 
-	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç ´å£Š
+	// ’¸“_ƒoƒbƒtƒ@‚Ì”j‰ó
 	if (pVtxBuff != NULL)
 	{
 		pVtxBuff->Release();
@@ -113,63 +113,63 @@ void CParticle::Uninit()
 }
 
 //--------------------------------------------------
-// æ›´æ–°
+// XV
 //--------------------------------------------------
 void CParticle::Update()
 {
 	// (ImGui)
-	bool bTex = TexUse();
+	bool *bTex = TexUse();
 
 	if (bTex)
 	{
 		LoadTex();
 	}
 
-	/* â†“ä½¿ç”¨ã—ã¦ã„ã‚‹ãªã‚‰â†“ */
+	/* «Žg—p‚µ‚Ä‚¢‚é‚È‚ç« */
 
-	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ç§»å‹•
+	// ƒGƒtƒFƒNƒg‚ÌˆÚ“®
 	data.pos += data.move;
 
-	// æŽ¨ç§»
-	data.nLife--;							// ä½“åŠ›ã®æ¸›å°‘
-	data.move.y += data.fWeight;			// é‡åŠ›
-	data.move *= data.fAttenuation;			// ç§»å‹•é‡ã®æŽ¨ç§»
-	data.fWeight += data.fWeightTransition;	// é‡ã•ã®æŽ¨ç§»
+	// „ˆÚ
+	data.nLife--;							// ‘Ì—Í‚ÌŒ¸­
+	data.move.y += data.fWeight;			// d—Í
+	data.move *= data.fAttenuation;			// ˆÚ“®—Ê‚Ì„ˆÚ
+	data.fWeight += data.fWeightTransition;	// d‚³‚Ì„ˆÚ
 
 	if (data.color.bColTransition)
-	{// è‰²ã®æŽ¨ç§»
+	{// F‚Ì„ˆÚ
 		if (data.color.nEndTime >= data.color.nCntTransitionTime)
 		{
 			data.color.nCntTransitionTime++;
 			data.color.col += data.color.colTransition;
 		}
 	}
-	pParticle->color.col.a -= 1.0f / pParticle->nMaxLife;
-  
-	VERTEX_2D *pVtx = nullptr;		// é ‚ç‚¹æƒ…å ±ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	//pParticle->color.col.a -= 1.0f / pParticle->nMaxLife;
 
-	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯
+	VERTEX_2D *pVtx = nullptr;		// ’¸“_î•ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
+
+									// ’¸“_ƒoƒbƒtƒ@‚ðƒƒbƒN
 	pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	// é ‚ç‚¹åº§æ¨™ã®è¨­å®š
+	// ’¸“_À•W‚ÌÝ’è
 	pVtx[0].pos = data.pos + D3DXVECTOR3(-data.fWidth, -data.fHeight, 0.0f);
 	pVtx[1].pos = data.pos + D3DXVECTOR3(data.fWidth, -data.fHeight, 0.0f);
 	pVtx[2].pos = data.pos + D3DXVECTOR3(-data.fWidth, data.fHeight, 0.0f);
 	pVtx[3].pos = data.pos + D3DXVECTOR3(data.fWidth, data.fHeight, 0.0f);
 
-	// é ‚ç‚¹ã‚«ãƒ©ãƒ¼ã®è¨­å®š
+	// ’¸“_ƒJƒ‰[‚ÌÝ’è
 	pVtx[0].col = data.color.col;
 	pVtx[1].col = data.color.col;
 	pVtx[2].col = data.color.col;
 	pVtx[3].col = data.color.col;
 
-	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¢ãƒ³ãƒ­ãƒƒã‚¯ã™ã‚‹
+	// ’¸“_ƒoƒbƒtƒ@‚ðƒAƒ“ƒƒbƒN‚·‚é
 	pVtxBuff->Unlock();
 
 }
 
 //--------------------------------------------------
-// å…¨ã¦ã‚’æ›´æ–°
+// ‘S‚Ä‚ðXV
 //--------------------------------------------------
 void CParticle::AllUpdate()
 {
@@ -183,7 +183,7 @@ void CParticle::AllUpdate()
 		g_aParticle[i]->Update();
 
 		if (g_aParticle[i]->data.nLife <= 0)
-		{// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®å¯¿å‘½
+		{// ƒGƒtƒFƒNƒg‚ÌŽõ–½
 			g_aParticle[i]->Uninit();
 			delete g_aParticle[i];
 			g_aParticle[i] = nullptr;
@@ -192,26 +192,26 @@ void CParticle::AllUpdate()
 }
 
 //--------------------------------------------------
-// æç”»
+// •`‰æ
 //--------------------------------------------------
 void CParticle::Draw()
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();	// ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();	// ƒfƒoƒCƒX‚ÌŽæ“¾
 
 	switch (data.alphaBlend)
 	{
-	case TYPE_NONE:	// ä¹—ç®—
+	case TYPE_NONE:	// æŽZ
 		break;
 
-	case TYPE_ADD:	// åŠ ç®—
-		// ã‚¢ãƒ«ãƒ•ã‚¡ãƒ–ãƒ¬ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã‚’åŠ ç®—åˆæˆã«è¨­å®š
+	case TYPE_ADD:	// ‰ÁŽZ
+					// ƒAƒ‹ƒtƒ@ƒuƒŒƒ“ƒfƒBƒ“ƒO‚ð‰ÁŽZ‡¬‚ÉÝ’è
 		pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 		pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 		break;
 
-	case TYPE_SUB:	// æ¸›ç®—
-		// Î±ãƒ–ãƒ¬ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã‚’æ¸›ç®—åˆæˆã«è¨­å®š
+	case TYPE_SUB:	// Œ¸ŽZ
+					// ƒ¿ƒuƒŒƒ“ƒfƒBƒ“ƒO‚ðŒ¸ŽZ‡¬‚ÉÝ’è
 		pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
 		pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
@@ -222,29 +222,29 @@ void CParticle::Draw()
 		break;
 	}
 
-	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ‡ãƒ¼ã‚¿ã‚¹ãƒˆãƒªãƒ¼ãƒ ã«è¨­å®š
+	// ’¸“_ƒoƒbƒtƒ@‚ðƒf[ƒ^ƒXƒgƒŠ[ƒ€‚ÉÝ’è
 	pDevice->SetStreamSource(0, pVtxBuff, 0, sizeof(VERTEX_2D));
 
-	// é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆã®è¨­å®š
+	// ’¸“_ƒtƒH[ƒ}ƒbƒg‚ÌÝ’è
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®è¨­å®š
+	// ƒeƒNƒXƒ`ƒƒ‚ÌÝ’è
 	pDevice->SetTexture(0, pTexture[data.type]);
 
-	// ãƒãƒªã‚´ãƒ³ã®æç”»
+	// ƒ|ƒŠƒSƒ“‚Ì•`‰æ
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 
-	// Î±ãƒ–ãƒ¬ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã‚’å…ƒã«æˆ»ã™
+	// ƒ¿ƒuƒŒƒ“ƒfƒBƒ“ƒO‚ðŒ³‚É–ß‚·
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’å¼•ãç¶™ãŒãªã„
+	// ƒeƒNƒXƒ`ƒƒ‚ðˆø‚«Œp‚ª‚È‚¢
 	pDevice->SetTexture(0, NULL);
 }
 
 //--------------------------------------------------
-// å…¨ã¦ã®æç”»
+// ‘S‚Ä‚Ì•`‰æ
 //--------------------------------------------------
 void CParticle::AllDraw()
 {
@@ -260,7 +260,7 @@ void CParticle::AllDraw()
 }
 
 //--------------------------------------------------
-// ç”Ÿæˆ
+// ¶¬
 //--------------------------------------------------
 CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPos)
 {
@@ -279,7 +279,7 @@ CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPo
 }
 
 //--------------------------------------------------
-// ãƒ‡ãƒ¼ã‚¿ã®åˆæœŸè¨­å®š
+// ƒf[ƒ^‚Ì‰ŠúÝ’è
 //--------------------------------------------------
 void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 {
@@ -295,20 +295,20 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 	data.color.nCntTransitionTime = 0;
 	data.bUse = true;
 
-	// ç”Ÿæˆä½ç½®ã®ç®—å‡º
+	// ¶¬ˆÊ’u‚ÌŽZo
 	data.pos.x += FloatRandam(data.maxPopPos.x, -data.minPopPos.x);
 	data.pos.y += FloatRandam(data.maxPopPos.y, -data.minPopPos.y);
 	data.pos.z += FloatRandam(data.maxPopPos.z, -data.minPopPos.z);
 
-	// è‰²ã®ç®—å‡º
+	// F‚ÌŽZo
 	if (data.color.bColRandom)
-	{// ãƒ©ãƒ³ãƒ€ãƒ ã‚«ãƒ©ãƒ¼ã‚’ä½¿ç”¨
+	{// ƒ‰ƒ“ƒ_ƒ€ƒJƒ‰[‚ðŽg—p
 		data.color.col.r = FloatRandam(data.color.colRandamMax.r, data.color.colRandamMin.r);
 		data.color.col.g = FloatRandam(data.color.colRandamMax.g, data.color.colRandamMin.g);
 		data.color.col.b = FloatRandam(data.color.colRandamMax.b, data.color.colRandamMin.b);
 
 		if (data.color.bColTransition)
-		{// ç›®çš„ã®è‰²ã®è¨­å®š
+		{// –Ú“I‚ÌF‚ÌÝ’è
 			if (data.color.bRandomTransitionTime)
 			{
 				data.color.nEndTime = rand() % data.nLife + 1;
@@ -321,7 +321,7 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 	}
 
 	if (data.color.bColTransition)
-	{// ãƒˆãƒ©ãƒ‡ã‚£ã‚·ã‚ªãƒ³ã‚«ãƒ©ãƒ¼ã‚’ä½¿ç”¨
+	{// ƒgƒ‰ƒfƒBƒVƒIƒ“ƒJƒ‰[‚ðŽg—p
 		if (data.color.bRandomTransitionTime)
 		{
 			data.color.nEndTime = rand() % data.nLife + 1;
@@ -332,24 +332,24 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 		data.color.colTransition.b = (data.color.destCol.b - data.color.col.b) / data.color.nEndTime;
 	}
 
-	VERTEX_2D*pVtx;	// é ‚ç‚¹æƒ…å ±ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	VERTEX_2D*pVtx;	// ’¸“_î•ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
 
-					// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ã€é ‚ç‚¹æƒ…å ±ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—
+					// ’¸“_ƒoƒbƒtƒ@‚ðƒƒbƒN‚µA’¸“_î•ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ðŽæ“¾
 	pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	// é ‚ç‚¹åº§æ¨™ã®è¨­å®š
+	// ’¸“_À•W‚ÌÝ’è
 	pVtx[0].pos = data.pos + D3DXVECTOR3(-data.fWidth, -data.fHeight, 0.0f);
 	pVtx[1].pos = data.pos + D3DXVECTOR3(data.fWidth, -data.fHeight, 0.0f);
 	pVtx[2].pos = data.pos + D3DXVECTOR3(-data.fWidth, data.fHeight, 0.0f);
 	pVtx[3].pos = data.pos + D3DXVECTOR3(data.fWidth, data.fHeight, 0.0f);
 
-	// é ‚ç‚¹ã‚«ãƒ©ãƒ¼ã®è¨­å®š
+	// ’¸“_ƒJƒ‰[‚ÌÝ’è
 	pVtx[0].col = data.color.col;
 	pVtx[1].col = data.color.col;
 	pVtx[2].col = data.color.col;
 	pVtx[3].col = data.color.col;
 
-	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¢ãƒ³ãƒ­ãƒƒã‚¯ã™ã‚‹
+	// ’¸“_ƒoƒbƒtƒ@‚ðƒAƒ“ƒƒbƒN‚·‚é
 	pVtxBuff->Unlock();
 
 	float ImAngle = GetAngle();
@@ -367,27 +367,27 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 		fGRad = (data.rot.z + g_fAngle);
 	}
 
-	// æŒ™å‹•
+	// ‹““®
 	{
 		/*
 		g_fAngle += 30.0f * i;
 		data.move.x = sinf(fGRad) * 1.3f;
 		data.move.y = cosf(fGRad) * 1.3f;
 
-		// âˆž
+		// ‡
 		g_fAngle += 0.7f;
 		data.move.x = sinf((D3DX_PI / 180) * 17 * g_fAngle) * data.fAttenuation;
 		data.move.y = sinf((D3DX_PI / 180) * 8 * g_fAngle) * data.fAttenuation;
 		*/
 
-		// èžºæ—‹ã ã£ãŸã‚Š
+		// —†ù‚¾‚Á‚½‚è
 		g_fAngle += ImAngle;
 		data.move.x += (data.fRadius * sinf(fGRad)) * data.fAttenuation;
 		data.move.y += (data.fRadius * cosf(fGRad)) * data.fAttenuation;
 	}
 
 	// ======================
-	// æ­£è¦åŒ–
+	// ³‹K‰»
 	// ======================
 	if (data.fRadius > D3DX_PI)
 	{
@@ -409,19 +409,19 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 }
 
 //--------------------------------------------------
-// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®èª­è¾¼ã¿
+// ƒeƒNƒXƒ`ƒƒ‚Ì“Çž‚Ý
 //--------------------------------------------------
 void CParticle::LoadTex()
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	char ImFile[512];
-	bool ImTex = TexUse();
+	bool *ImTex = TexUse();
 
 	memset(ImFile, 0, sizeof(ImFile));
 
 	if (ImTex)
 	{
-		// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®èª­ã¿è¾¼ã¿
+		// ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚Ýž‚Ý
 		D3DXCreateTextureFromFile(pDevice, GetFileName(), &pTexture[PARTICLETYPE_NORMAL]);
 
 		ImTex = false;
@@ -429,16 +429,16 @@ void CParticle::LoadTex()
 }
 
 //--------------------------------------------------
-// æƒ…å ±ã®å‰Šé™¤
+// î•ñ‚Ìíœ
 //--------------------------------------------------
 void CParticle::Delete(const int data)
 {
-	// ãƒ‡ãƒ¼ã‚¿ã®ãƒªã‚»ãƒƒãƒˆ
+	// ƒf[ƒ^‚ÌƒŠƒZƒbƒg
 	memset(&this->data, 0, sizeof(this->data));
 }
 
 //--------------------------------------------------
-// æƒ…å ±ã‚’å…¨ã¦å‰Šé™¤
+// î•ñ‚ð‘S‚Äíœ
 //--------------------------------------------------
 void CParticle::DeleteAll()
 {
@@ -449,7 +449,7 @@ void CParticle::DeleteAll()
 }
 
 //--------------------------------------------------
-// è§’åº¦ã®åˆæœŸåŒ–
+// Šp“x‚Ì‰Šú‰»
 //--------------------------------------------------
 void CParticle::RemoveAngle(void)
 {
@@ -457,7 +457,7 @@ void CParticle::RemoveAngle(void)
 }
 
 //--------------------------------------------------
-// float ã‚’ DWORD ã«å¤‰æ›
+// float ‚ð DWORD ‚É•ÏŠ·
 //--------------------------------------------------
 DWORD CParticle::FloattoDword(float fVal)
 {
