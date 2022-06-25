@@ -53,7 +53,6 @@ static char FileString[MAX_PATH * 256];
 static bool bTexUse = false;
 inline unsigned long FloattoDword(float fVal) { return *((unsigned long*)&fVal); }
 char buffer1[MAX_PATH];
-char buffer1[MAX_PATH];
 CRenderer* renderer;
 
 //===================
