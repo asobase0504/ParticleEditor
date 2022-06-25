@@ -27,7 +27,6 @@
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
 #pragma comment(lib,"dxguid.lib")
-#pragma comment(lib,"winmm.lib")	//システム時刻取得に必要
 #pragma comment(lib,"dinput8.lib")
 
 //--------------------------------------------------
