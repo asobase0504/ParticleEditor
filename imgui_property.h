@@ -159,4 +159,5 @@ static const std::array<const char*, Profiler::_StageCount> stageNames = {
 	"Rendering",
 };
 
+
 #endif // !_IMGUI_PROPERTY_H_
