@@ -181,6 +181,7 @@
     <ClCompile Include="letter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="particle.cpp" />
+    <ClCompile Include="renderer.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -204,11 +205,16 @@
     <ClInclude Include="letter.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="particle.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="renderer.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

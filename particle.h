@@ -25,7 +25,7 @@ public:	// 静的変数
 	static CParticle* g_aParticle[maxNumber];
 	static float g_fAngle;	// 発射角度
 public:	// 列挙型
-	//エフェクトの種別
+		//エフェクトの種別
 	enum PARTICLETYPE
 	{
 		PARTICLETYPE_NONE = 0,
@@ -35,11 +35,11 @@ public:	// 列挙型
 	};
 public: // 構造体
 
-	//-------------------------------------------------
-	// テクスチャ情報
-	// Author : 
-	// 概要 : テクスチャに関するデータ構造体
-	//-------------------------------------------------
+		//-------------------------------------------------
+		// テクスチャ情報
+		// Author : 
+		// 概要 : テクスチャに関するデータ構造体
+		//-------------------------------------------------
 	struct ParticleTex
 	{
 		D3DXVECTOR3 pos;
@@ -106,6 +106,7 @@ public: // 構造体
 		float fWeightTransition;	// 重さの推移量
 		float fScale;				// 全体的な大きさ
 		int nLife;					// 寿命
+		int nMaxLife;
 		bool bUseWeight;			// 重さを使用するかどうか
 		bool bBackrot;				// 逆回転させるかどうか
 		bool bTexturerot;			// テクスチャ回転させるかどうか
@@ -131,9 +132,9 @@ public:
 	DWORD FloattoDword(float fVal);
 
 private:	// メンバー変数
-	LPDIRECT3DTEXTURE9 pTexture[numType] = {};	// テクスチャへのポインタ
-	LPDIRECT3DVERTEXBUFFER9	pVtxBuff = NULL;	// 頂点バッファへのポインタ
-	Particle data;
-	int idx;
+	LPDIRECT3DTEXTURE9 m_pTexture[numType] = {};	// テクスチャへのポインタ
+	LPDIRECT3DVERTEXBUFFER9	m_pVtxBuff = NULL;	// 頂点バッファへのポインタ
+	Particle m_data;
+	int m_idx;
 };
 #endif
