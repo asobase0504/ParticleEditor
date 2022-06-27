@@ -967,7 +967,7 @@ void ShowDemo_Querying()
 	/*data[i].x(y)で数値がとれます。double型なので、floatでやるとバグる可能性あります*/
 	ImGui::Text("Ctrl + Left Click : Set point");
 	ImGui::Text("Del + Left Click : Delete point");
-	ImGui::Text("Double Left Click : Fit");
+	ImGui::Text("Double Left Click : Auto Fit");
 
 	//グラフを再生させる
 	if (ImGui::Checkbox("Play", &s_bPlay))
