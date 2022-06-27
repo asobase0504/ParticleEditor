@@ -232,14 +232,16 @@ static void funcFileSave(HWND hWnd, bool nMap)
 
 	if (szFile[0] != '\0')
 	{
-		//std::string File = szFile;
-		strcpy(FileString, szFile);
+		std::string File = szFile;
 		
 	
+		SetFileName(szFile);
+		
 		 CopyFile((LPCTSTR)buffer1, // 既存のファイルの名前
 			szFile, // 新しいファイルの名前
 			false // ファイルが存在する場合の動作
 		);
+
 		 bTexUse = true;
 
 	}
@@ -365,7 +367,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)//TRUE：ウインドウ/FAL
 
 	InitGame();	// ゲームモードの初期化
 
-	LoodJson(L"data/FILE/Effect.json");
+	LoadJson(L"data/FILE/Effect.json");
 
 	return S_OK;
 }

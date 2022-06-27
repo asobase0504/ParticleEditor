@@ -70,7 +70,7 @@ void OutputStatus()
 	writing_file.close();
 }
 
-void LoodJson(const wchar_t* cUrl)
+void LoadJson(const wchar_t* cUrl)
 {
 	std::ifstream ifs(cUrl);
 

@@ -11,11 +11,13 @@
 #include "imgui_property.h"
 #include "main.h"
 #include "file.h"
+#include "letter.h"
 #include "utility.h"
 #include <imgui_internal.h>
 #include <assert.h>
 #include <implot.h>
 #include <imgui_widget_flamegraph.h>
+
 
 //------------------------------
 //CPU
@@ -797,6 +799,14 @@ CParticle::Particle& GetImguiParticle(void)
 char* GetFileName(void)
 {
 	return FileString;
+}
+
+//--------------------------------------------------
+// ƒtƒ@ƒCƒ‹–¼‚ÌŽæ“¾
+//--------------------------------------------------
+void SetFileName(char*FileStringData)
+{
+	strcpy(FileString, FileStringData);
 }
 
 //--------------------------------------------------

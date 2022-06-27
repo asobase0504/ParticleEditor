@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 #ifdef _MSC_VER
 #define sprintf sprintf_s
 #endif
@@ -941,7 +942,11 @@ void ShowDemo_Querying()
         }
         init = false;
     }
+	//データ出力
+	if (ImGui::Button("DataOutPut"))
+	{
 
+	}
     if (ImGui::Button("Clear Queries"))
         rects.shrink(0);
 
@@ -1018,6 +1023,7 @@ void ShowDemo_Querying()
 			s_nIndex++;
         }
 
+		
 		//点の位置のソート
 		for (int i = 0; i < s_nIndex; i++)
 		{

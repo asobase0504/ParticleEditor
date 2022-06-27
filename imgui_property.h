@@ -64,6 +64,7 @@ char* GetFileName(void);
 //--------------------------------------------------
 bool bSetImguiParticle(void);
 
+void SetFileName(char*FileStringData);
 
 class Profiler
 {

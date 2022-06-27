@@ -174,9 +174,9 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="imgui\imgui_widget_flamegraph.cpp" />
     <ClCompile Include="imgui\implot.cpp" />
-    <ClCompile Include="imgui\implot_demo.cpp" />
     <ClCompile Include="imgui\implot_items.cpp" />
     <ClCompile Include="imgui_property.cpp" />
+    <ClCompile Include="implot_demo.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="letter.cpp" />
     <ClCompile Include="main.cpp" />
