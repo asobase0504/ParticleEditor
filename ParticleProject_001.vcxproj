@@ -163,9 +163,7 @@
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="BG.cpp" />
-    <ClCompile Include="effect.cpp" />
     <ClCompile Include="file.cpp" />
-    <ClCompile Include="game.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -191,9 +189,7 @@
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="BG.h" />
-    <ClInclude Include="effect.h" />
     <ClInclude Include="file.h" />
-    <ClInclude Include="game.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_dx9.h" />

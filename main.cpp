@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include "main.h"
 #include "input.h"
-#include "game.h"
 #include "file.h"
 #include "renderer.h"
 #include "application.h"
