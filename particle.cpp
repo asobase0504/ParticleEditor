@@ -53,7 +53,7 @@ void CParticle::Uninit()
 void CParticle::Update()
 {
 	// (ImGui)
-	bool bTex = TexUse();
+	bool *bTex = TexUse();
 
 	if (bTex)
 	{
@@ -271,7 +271,7 @@ void CParticle::LoadTex()
 {
 	//LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	char ImFile[512];
-	bool ImTex = TexUse();
+	bool *ImTex = TexUse();
 
 	memset(ImFile, 0, sizeof(ImFile));
 

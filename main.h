@@ -44,6 +44,6 @@ LPDIRECT3DDEVICE9 GetDevice(void);
 BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir);
 float GetAngle(void);
 char GetFileName(int nNum);
-bool TexUse(void);
+bool *TexUse(void);
 
 #endif

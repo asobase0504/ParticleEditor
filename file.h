@@ -35,6 +35,6 @@
 
 FileParticleData GetStatus(void);//ƒQƒbƒg
 void OutputStatus();
-void LoodJson(const wchar_t* cUrl);
+void LoadJson(const wchar_t* cUrl);
 
 #endif

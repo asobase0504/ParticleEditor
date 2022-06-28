@@ -49,7 +49,6 @@ static float s_fAngle = 20.0f;
 static char FileString[MAX_PATH * 256];
 static bool bTexUse = false;
 inline unsigned long FloattoDword(float fVal) { return *((unsigned long*)&fVal); }
-
 char buffer1[MAX_PATH];
 CRenderer* renderer;
 
@@ -232,13 +231,18 @@ static void funcFileSave(HWND hWnd, bool nMap)
 
 	if (szFile[0] != '\0')
 	{
+		std::string File = szFile;
 		/*std::string Data = ;
-		*/
-
-		CopyFile((LPCTSTR)buffer1, // 既存のファイルの名前
+	
+		SetFileName(szFile);
+		
+		 CopyFile((LPCTSTR)buffer1, // 既存のファイルの名前
 			szFile, // 新しいファイルの名前
 			false // ファイルが存在する場合の動作
 		);
+
+		 bTexUse = true;
+
 	}
 	bPress = true;
 }
@@ -259,7 +263,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	int nID;//返り値を格納
 	static HWND hWndEditlnput1;		//入力ウィンドウハンドル(識別子)
 
-									//char buffer1[MAX_PATH];
+	//char buffer1[MAX_PATH];
 	int i, _size;
 
 	switch (uMsg)
@@ -280,6 +284,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			funcFileSave(hWnd, false);
 		}
 
+	
 		MessageBox(hWnd, buffer1, "情報", MB_OK);
 		//ファイル情報の内部データを解放する
 		DragFinish((HDROP)wParam);
@@ -355,6 +360,7 @@ BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
 
 	bTexUse = true;
 
+
 	return GetOpenFileName(&ofn);
 }
 
@@ -374,13 +380,7 @@ float GetAngle(void)
 
 //---------------------------------------
 // ファイルねーむ
-//---------------------------------------
-char GetFileName(int nNum)
-{
-	return FileString[nNum];
+bool *TexUse(void){
+	return &bTexUse;
 }
 
-bool TexUse(void)
-{
-	return bTexUse;
-}
