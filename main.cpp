@@ -232,7 +232,7 @@ static void funcFileSave(HWND hWnd, bool nMap)
 	if (szFile[0] != '\0')
 	{
 		std::string File = szFile;
-		/*std::string Data = ;
+		//std::string Data = ;
 	
 		SetFileName(szFile);
 		
@@ -383,4 +383,3 @@ float GetAngle(void)
 bool *TexUse(void){
 	return &bTexUse;
 }
-

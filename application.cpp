@@ -77,7 +77,7 @@ HRESULT CApplication::Init(HWND hWnd, HINSTANCE hInstance)
 	texture = new CTexture;
 
 	// パーティクル
-	LoodJson(L"data/FILE/Effect.json");
+	LoadJson(L"data/FILE/Effect.json");
 
 	// 背景
 	bg = new CBg;
