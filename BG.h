@@ -6,11 +6,19 @@
 #define _BG_H_
 
 #include "main.h"
+#include "object2d.h"
 
-//プロトタイプ宣言
-void InitBg(void);
-void UninitBg(void);
-void UpdateBg(void);
-void DrawBg(void);
+class CBg : public CObject2D
+{
+public:
+	CBg();
+	~CBg();
 
+	HRESULT Init() override;
+	void Uninit() override;
+	void Update() override;
+	void Draw() override;
+private:
+
+};
 #endif
