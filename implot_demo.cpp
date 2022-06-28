@@ -959,15 +959,19 @@ void ShowDemo_Querying()
 	ImVec2 mouse = ImGui::GetMousePos();
 	ImVec2 ptPos[512] = {};
 	static bool s_bPlay = false;
+	static bool s_bTag = false;
 	static bool s_bLoop = false;
 	static int s_nIndex = 0;
+	static int s_nSaveIdx = 0;
+	static int s_nSelectPt = 0;
 	static float flt = 0.0f;
 	static float s_fStartTimeA = rdata1.Span;
 	static float s_fStartTimeB = rdata2.Span;
 	static float s_fStopTime = 0.0f;
 	static float s_History = 0.0f;
 	static float t = 0;
-
+	static double s_dMin = 0.0f;
+	static double s_dMax = 10.0f;
 
 	//データ出力
 	if (ImGui::Button("DataOutPut"))
@@ -990,6 +994,13 @@ void ShowDemo_Querying()
 	}
 	if (ImGui::Button("DataLoad"))
 	{
+		//ロードする前にロードする前の点を全て消す
+		for (int i = 0; i < s_nSaveIdx; i++)
+		{
+			s_nIndex--;
+			data.pop_back();
+		}
+
 		const std::string pathToJSON = "data/FILE/Animetest.json";
 		std::ifstream ifs(pathToJSON);
 
@@ -1018,6 +1029,7 @@ void ShowDemo_Querying()
 
 	ImGui::Text("Ctrl + Left Click : Set point");
 	ImGui::Text("Del + Left Click : Delete point");
+	ImGui::Text("Double Left Click : Fit");
 
 	//グラフを再生させる
 	if (ImGui::Checkbox("Play", &s_bPlay))
@@ -1032,11 +1044,35 @@ void ShowDemo_Querying()
 	{
 		t = 0;
 		s_fStopTime = 0.0f;
+		s_dMin = 0.0f;
+		s_dMax = 10.0f;
 		rdata1.Span = s_fStartTimeA;
 		rdata2.Span = s_fStartTimeB;
 	}
 
 	ImGui::Checkbox("Loop", &s_bLoop);
+
+	ImGui::SameLine();
+	ImGui::Checkbox("Tag", &s_bTag);
+
+	ImGui::Text("Selected Point : %d", s_nSelectPt);
+	ImGui::InputDouble("Select Key", &data[s_nSelectPt].x);
+	ImGui::InputDouble("Select Value", &data[s_nSelectPt].y);
+
+	if (s_bTag)
+	{//タグが表示された場合
+		ImGui::InputDouble("TagMin", &s_dMin, 0.1f);
+		ImGui::InputDouble("TagMax", &s_dMax, 0.1f);
+	}
+
+	if (ImGui::Button("Remove"))
+	{
+		for (int i = 0; i < s_nSaveIdx; i++)
+		{
+			s_nIndex--;
+			data.pop_back();
+		}
+	}
 
     if (ImPlot::BeginPlot("Timeline")) 
 	{
@@ -1069,11 +1105,30 @@ void ShowDemo_Querying()
         if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(0) && ImGui::GetIO().KeyCtrl)
 		{
 			pt = ImPlot::GetPlotMousePos();
-			data.push_back(pt);
-			s_nIndex++;
+
+			//タグの数値以下（以上）には点を設置できない
+			if (s_bTag)
+			{
+				if (pt.x < s_dMin || pt.x > s_dMax)
+				{
+				}
+
+				else
+				{
+					data.push_back(pt);
+					s_nIndex++;
+				}
+			}
+
+			else
+			{
+				data.push_back(pt);
+				s_nIndex++;
+			}
+
+			s_nSaveIdx = s_nIndex;
         }
 
-		
 		//点の位置のソート
 		for (int i = 0; i < s_nIndex; i++)
 		{
@@ -1100,6 +1155,16 @@ void ShowDemo_Querying()
 		//線引く用
         ImPlot::PlotScatter("Points", &data[0].x, &data[0].y, data.size(), s_nIndex, 2 * sizeof(double));
 		ImPlot::PlotLine("##Line", &data[0].x, &data[0].y, data.size(), s_nIndex + 1, 2 * sizeof(double));
+
+		//タグの表示
+		if (s_bTag)
+		{
+			ImPlot::TagX(s_dMin, ImVec4(1, 1, 0, 1));
+			ImPlot::DragLineX(0, &s_dMin, ImVec4(1, 0, 0, 1), 1, ImPlotDragToolFlags_NoFit);
+
+			ImPlot::TagX(s_dMax, ImVec4(1, 0, 1, 1));
+			ImPlot::DragLineX(1, &s_dMax, ImVec4(1, 0, 0, 1), 1, ImPlotDragToolFlags_NoFit);
+		}
 
 		//右クリックの範囲選択
         if (ImPlot::IsPlotSelected())
@@ -1132,6 +1197,7 @@ void ShowDemo_Querying()
 					}
 
 					ptNum++;
+					s_nSelectPt = i;
 				}
 			}
 
