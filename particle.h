@@ -120,8 +120,8 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	static CParticle* Create(const Particle& inParticle, const D3DXVECTOR3& inPos);
-	void Set(const Particle& inParticle, const D3DXVECTOR3& inPos);
+	static CParticle* Create(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color);
+	void Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color);
 	void LoadTex();
 	void Delete(const int data);
 	void DeleteAll();

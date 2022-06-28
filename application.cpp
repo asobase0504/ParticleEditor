@@ -129,7 +129,7 @@ void CApplication::Update()
 
 	if (bSetImguiParticle())
 	{
-		CParticle::Create(GetImguiParticle().particle, GetImguiParticle().pos);
+		CParticle::Create(GetImguiParticle().particle, GetImguiParticle().pos, GetImguiParticle().color);
 	}
 }
 
