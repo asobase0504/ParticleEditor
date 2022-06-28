@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 #ifdef _MSC_VER
 #define sprintf sprintf_s
 #endif
@@ -941,7 +942,11 @@ void ShowDemo_Querying()
         }
         init = false;
     }
+	//データ出力
+	if (ImGui::Button("DataOutPut"))
+	{
 
+	}
     if (ImGui::Button("Clear Queries"))
         rects.shrink(0);
 
@@ -950,19 +955,24 @@ void ShowDemo_Querying()
 	static ImPlotDragToolFlags flags = ImPlotDragToolFlags_None;
 	ImPlotPoint pt;
 	ImVec2 mouse = ImGui::GetMousePos();
-	ImVec2 ptPos[512] = {};
 	static bool s_bPlay = false;
 	static bool s_bLoop = false;
+	static bool s_bTag = false;
 	static int s_nIndex = 0;
+	static int s_nSelectPt = 0;
 	static float flt = 0.0f;
 	static float s_fStartTimeA = rdata1.Span;
 	static float s_fStartTimeB = rdata2.Span;
 	static float s_fStopTime = 0.0f;
-	static float s_History = 0.0f;
+	static float s_History = 5.0f;
 	static float t = 0;
+	static double s_dMin = 0.0f;
+	static double s_dMax = 10.0f;
 
+	/*data[i].x(y)で数値がとれます。double型なので、floatでやるとバグる可能性あります*/
 	ImGui::Text("Ctrl + Left Click : Set point");
 	ImGui::Text("Del + Left Click : Delete point");
+	ImGui::Text("Double Left Click : Auto Fit");
 
 	//グラフを再生させる
 	if (ImGui::Checkbox("Play", &s_bPlay))
@@ -976,19 +986,35 @@ void ShowDemo_Querying()
 	if (ImGui::Button("Init Val"))
 	{
 		t = 0;
+		s_dMin = 0.0f;
 		s_fStopTime = 0.0f;
+		s_dMin = 0.0f;
+		s_dMax = 10.0f;
 		rdata1.Span = s_fStartTimeA;
 		rdata2.Span = s_fStartTimeB;
 	}
 
 	ImGui::Checkbox("Loop", &s_bLoop);
 
+	ImGui::SameLine();
+	ImGui::Checkbox("Tag", &s_bTag);
+
+	ImGui::Text("Selected Point : %d", s_nSelectPt);
+	ImGui::InputDouble("Select Key", &data[s_nSelectPt].x);
+	ImGui::InputDouble("Select Value", &data[s_nSelectPt].y);
+
+	if (s_bTag)
+	{//タグが表示された場合
+		ImGui::InputDouble("TagMin", &s_dMin, 0.1f);
+		ImGui::InputDouble("TagMax", &s_dMax, 0.1f);
+	}
+
     if (ImPlot::BeginPlot("Timeline")) 
 	{
-		static ImPlotPoint point[] = {ImPlotPoint(0.2f,0.4f), ImPlotPoint(0.95f,0.95f) };
 		ImPlot::SetupAxes(0, 0, flags, flags);
         ImPlot::SetupAxesLimits(0,1,0,1);
 
+		//グラフの再生
 		if (s_bPlay)
 		{
 			t += ImGui::GetIO().DeltaTime;
@@ -1014,10 +1040,29 @@ void ShowDemo_Querying()
         if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(0) && ImGui::GetIO().KeyCtrl)
 		{
 			pt = ImPlot::GetPlotMousePos();
-			data.push_back(pt);
-			s_nIndex++;
+
+			//タグの数値以下（以上）には点を設置できない
+			if (s_bTag)
+			{
+				if (pt.x < s_dMin || pt.x > s_dMax)
+				{
+				}
+
+				else
+				{
+					data.push_back(pt);
+					s_nIndex++;
+				}
+			}
+
+			else
+			{
+				data.push_back(pt);
+				s_nIndex++;
+			}
         }
 
+		
 		//点の位置のソート
 		for (int i = 0; i < s_nIndex; i++)
 		{
@@ -1028,9 +1073,6 @@ void ShowDemo_Querying()
 					ImPlotPoint Sort = data[i];
 					data[i] = data[j];
 					data[j] = Sort;
-
-					//点の位置の数値を保存
-					ptPos[i] = ImVec2((float)data[i].x, (float)data[i].y);
 				}
 			}
 		}
@@ -1044,6 +1086,16 @@ void ShowDemo_Querying()
 		//線引く用
         ImPlot::PlotScatter("Points", &data[0].x, &data[0].y, data.size(), s_nIndex, 2 * sizeof(double));
 		ImPlot::PlotLine("##Line", &data[0].x, &data[0].y, data.size(), s_nIndex + 1, 2 * sizeof(double));
+
+		//タグの表示
+		if (s_bTag)
+		{
+			ImPlot::TagX(s_dMin, ImVec4(1, 1, 0, 1));
+			ImPlot::DragLineX(0, &s_dMin, ImVec4(1, 0, 0, 1), 1, ImPlotDragToolFlags_NoFit);
+
+			ImPlot::TagX(s_dMax, ImVec4(1, 0, 1, 1));
+			ImPlot::DragLineX(1, &s_dMax, ImVec4(1, 0, 0, 1), 1, ImPlotDragToolFlags_NoFit);
+		}
 
 		//右クリックの範囲選択
         if (ImPlot::IsPlotSelected())
@@ -1075,6 +1127,7 @@ void ShowDemo_Querying()
 						}
 					}
 
+					s_nSelectPt = i;
 					ptNum++;
 				}
 			}
@@ -1108,26 +1161,6 @@ void ShowDemo_Querying()
         }
 
         limits  = ImPlot::GetPlotLimits();
-        ImPlot::EndPlot();
-    }
-}
-
-void ShowDemo_Tags() {
-    static bool show = true;
-    ImGui::Checkbox("Show Tags",&show);
-    if (ImPlot::BeginPlot("##Tags")) {
-        ImPlot::SetupAxis(ImAxis_X2);
-        ImPlot::SetupAxis(ImAxis_Y2);
-        if (show) {
-            ImPlot::TagX(0.25, ImVec4(1,1,0,1));
-            ImPlot::TagY(0.75, ImVec4(1,1,0,1));
-            static double drag_tag = 0.25;
-            ImPlot::DragLineY(0,&drag_tag,ImVec4(1,0,0,1),1,ImPlotDragToolFlags_NoFit);
-            ImPlot::TagY(drag_tag, ImVec4(1,0,0,1), "Drag");
-            SetAxes(ImAxis_X2, ImAxis_Y2);
-            ImPlot::TagX(0.5, ImVec4(0,1,1,1), "%s", "MyTag");
-            ImPlot::TagY(0.5, ImVec4(0,1,1,1), "Tag: %d", 42);
-        }
         ImPlot::EndPlot();
     }
 }
@@ -1367,9 +1400,6 @@ void ShowDemoWindow(bool* p_open)
 
             if (ImGui::CollapsingHeader("Querying"))
                 ShowDemo_Querying();
-
-            //if (ImGui::CollapsingHeader("Tags"))
-            //    ShowDemo_Tags();
             ImGui::EndTabItem();
         }
 

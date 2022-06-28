@@ -52,7 +52,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 //--------------------------------------------------
 // パーティクルデータの取得
 //--------------------------------------------------
-CParticle::Particle& GetImguiParticle(void);
+FileParticleData& GetImguiParticle(void);
 
 //--------------------------------------------------
 // ファイル名の取得
@@ -64,6 +64,7 @@ char* GetFileName(void);
 //--------------------------------------------------
 bool bSetImguiParticle(void);
 
+void SetFileName(char*FileStringData);
 
 class Profiler
 {
@@ -157,5 +158,6 @@ static const std::array<const char*, Profiler::_StageCount> stageNames = {
 	"SDL_GL_SwapWindow",
 	"Rendering",
 };
+
 
 #endif // !_IMGUI_PROPERTY_H_

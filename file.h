@@ -33,8 +33,8 @@
 //=====================================
 // 制御関数
 
-CParticle::Particle GetStatus(void);//ゲット
+FileParticleData GetStatus(void);//ゲット
 void OutputStatus();
-void LoodJson(const wchar_t* cUrl);
+void LoadJson(const wchar_t* cUrl);
 
 #endif

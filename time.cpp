@@ -1,6 +1,7 @@
 //＝＝＝＝＝＝＝＝＝＝＝＝＝
 //time.cpp
 //＝＝＝＝＝＝＝＝＝＝＝＝＝
+#include "main.h"
 #include"time.h"
 
 static LPDIRECT3DTEXTURE9 s_pTextureTime = NULL; //テクスチャのポインタ
@@ -24,7 +25,7 @@ void InitTime(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		L"data/TEXTURE/number000.png",
+		"data/TEXTURE/number000.png",
 		&s_pTextureTime);
 
 	//頂点バッファ

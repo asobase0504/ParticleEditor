@@ -27,7 +27,6 @@
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
 #pragma comment(lib,"dxguid.lib")
-#pragma comment(lib,"winmm.lib")	//システム時刻取得に必要
 #pragma comment(lib,"dinput8.lib")
 
 //--------------------------------------------------
@@ -35,20 +34,8 @@
 //--------------------------------------------------
 #define SCREEN_WIDTH	(1280)
 #define SCREEN_HEIGHT	(720)
-#define FVF_VERTEX_2D			(D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
-#define FVF_VERTEX_2D_TEX2		(D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1|D3DFVF_TEX2)					// マルチテクスチャ用の頂点フォーマット[2D]
-
-//--------------------------------------------------
-//頂点情報[2D]の構造体を定義
-//--------------------------------------------------
-struct VERTEX_2D
-{
-	D3DXVECTOR3 pos;
-	float rhw;
-	D3DCOLOR col;
-	D3DXVECTOR2 tex;	// テクスチャ座標(レベル1)
-	D3DXVECTOR2 tex2;	// テクスチャ座標(レベル2)
-};
+//#define FVF_VERTEX_2D			(D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
+//#define FVF_VERTEX_2D_TEX2		(D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1|D3DFVF_TEX2)					// マルチテクスチャ用の頂点フォーマット[2D]
 
 //--------------------------------------------------
 //プロトタイプ宣言
@@ -57,6 +44,6 @@ LPDIRECT3DDEVICE9 GetDevice(void);
 BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir);
 float GetAngle(void);
 char GetFileName(int nNum);
-bool TexUse(void);
+bool *TexUse(void);
 
 #endif
