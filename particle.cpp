@@ -86,6 +86,11 @@ void CParticle::Update()
 	SetPos(myPos);
 	SetColor(myColor);
 	SetSize(D3DXVECTOR2(m_data.fWidth, m_data.fHeight));
+
+	if (m_data.nLife <= 0)
+	{// エフェクトの寿命
+		Release();
+	}
 }
 
 //--------------------------------------------------
