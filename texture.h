@@ -11,37 +11,41 @@
 // インクルード
 //==================================================
 #include <d3dx9.h>
+#include <string>
 
 //==================================================
 // 定義
 //==================================================
 class CTexture
 {
-public: /* 定義 */
-	enum TEXTURE
-	{
-		TEXTURE_icon_122380_256 = 0,	// 仮画像1
-		TEXTURE_icon_122540_256,		// 仮画像2
-		TEXTURE_MAX,
-		TEXTURE_NONE,	// 使用しない
-	};
+	/* 定義 */
+public:
+	static const int NONE_TEXTURE = -1;	// テクスチャを使用しない
 
-	static const char* s_FileName[];	// ファイルパス
+private:
+	static const int MAX_TEXTURE = 256;	// テクスチャの最大数
 
+	/* メンバ関数 */
 public:
 	CTexture();		// デフォルトコンストラクタ
 	~CTexture();	// デストラクタ
 
-public: /* メンバ関数 */
-	void LoadAll();					// 全ての読み込み
-	void UnloadAll();				// 全ての破棄
-	void Load(TEXTURE inTexture);	// 指定の読み込み
-	void Unload(TEXTURE inTexture);	// 指定の破棄
-	TEXTURE GetFileName(char* inFileName);				// 列挙の取得
-	LPDIRECT3DTEXTURE9 GetTexture(TEXTURE inTexture);	// 情報の取得
+public:
+	void LoadAll();			// 全ての読み込み
+	void UnloadAll();		// 全ての破棄
+	void Load(int index);	// 指定の読み込み
+	void Unload(int index);	// 指定の破棄
+	void SetPath(std::string str);	// パスの設定
+	void SavePath();				// パスの保存
+	std::string GetPath(int index);	// パスの取得
+	int GetNumAll();				// 総数の取得
+	LPDIRECT3DTEXTURE9 GetTexture(int index);	// 情報の取得
 
-private: /* メンバ変数 */
-	LPDIRECT3DTEXTURE9 s_pTexture[TEXTURE_MAX];	// テクスチャの情報
+	/* メンバ変数 */
+private:
+	LPDIRECT3DTEXTURE9 m_pTexture[MAX_TEXTURE];	// テクスチャの情報
+	std::string m_fileName[MAX_TEXTURE];		// ファイルパス
+	int m_numAll;								// 総数
 };
 
 #endif // !_TEXTURE_H_

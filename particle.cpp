@@ -14,6 +14,7 @@
 // 静的メンバー変数
 //==================================================
 float CParticle::g_fAngle = 0.0f;
+int CParticle::m_nIdxTex = 0;
 
 //--------------------------------------------------
 // コンストラクタ
@@ -138,15 +139,14 @@ void CParticle::Draw()
 //--------------------------------------------------
 // 生成
 //--------------------------------------------------
-CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPos)
+CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color)
 {
 	CParticle* particle = nullptr;
 	if (particle == nullptr)
 	{
 		particle = new CParticle;
 		particle->Init();
-		particle->Set(inParticle, inPos);
-
+		particle->Set(inParticle, inPos, color);
 		return particle;
 	}
 	return nullptr;
@@ -155,7 +155,7 @@ CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPo
 //--------------------------------------------------
 // データの初期設定
 //--------------------------------------------------
-void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
+void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color)
 {
 	m_data = inParticle;
 
@@ -176,7 +176,7 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 	myPos.z += FloatRandam(m_data.maxPopPos.z, -m_data.minPopPos.z);
 
 	// 色の算出
-	D3DXCOLOR myColor = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+	D3DXCOLOR myColor = color;
 	if (m_data.color.bColRandom)
 	{// ランダムカラーを使用
 		myColor.r = FloatRandam(m_data.color.colRandamMax.r, m_data.color.colRandamMin.r);
@@ -210,7 +210,7 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 
 	SetPos(myPos);
 	SetSize(D3DXVECTOR2(m_data.fWidth, m_data.fHeight));
-	SetTexture(CTexture::TEXTURE_icon_122380_256);
+	SetTexture(m_nIdxTex);
 	SetColor(myColor);
 
 	float ImAngle = GetAngle();
@@ -323,4 +323,20 @@ void CParticle::RemoveAngle(void)
 DWORD CParticle::FloattoDword(float fVal)
 {
 	return *((DWORD*)&fVal);
+}
+
+//--------------------------------------------------
+// テクスチャの設定
+//--------------------------------------------------
+void CParticle::SetIdxTex(int idxTex)
+{
+	m_nIdxTex = idxTex;
+}
+
+//--------------------------------------------------
+// テクスチャの設定
+//--------------------------------------------------
+int CParticle::GetIdxTex()
+{
+	return m_nIdxTex;
 }

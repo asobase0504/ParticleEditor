@@ -45,10 +45,10 @@ public:
 	void SetSize(const D3DXVECTOR2& inSize);
 	void SetColor(const D3DXCOLOR& inColor);
 	D3DXCOLOR GetColor() { return m_col; }
-	void SetTexture(CTexture::TEXTURE inTex) { m_texture = inTex; }
+	void SetTexture(int inTex) { m_nTexture = inTex; }
 private:
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;	// VtxBuff
-	CTexture::TEXTURE m_texture;
+	int m_nTexture;
 	float m_rotY;	// ‰ñ“]
 	float m_fLength;	// ’·‚³
 	float fAngle;	// Šp“x
