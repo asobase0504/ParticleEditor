@@ -1159,9 +1159,6 @@ void UpdateImguiProperty(void)
 	{
 		float value_you_care_about = ImGui::CurveValue(0.7f, 10, foo); // calculate value at position 0.7
 	}
-	
-	
-	
 
 	//ImGui::Text("CPU1  : %d", MemoryUsageMegaBytes());
 	//void* const p = malloc(512 * 1024 * 1024);
