@@ -231,7 +231,7 @@ static void funcFileSave(HWND hWnd, bool nMap)
 	if (szFile[0] != '\0')
 	{
 		std::string File = szFile;
-		//std::string Data = ;
+		
 	
 		SetFileName(szFile);
 		
