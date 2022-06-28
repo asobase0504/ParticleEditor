@@ -138,15 +138,14 @@ void CParticle::Draw()
 //--------------------------------------------------
 // 生成
 //--------------------------------------------------
-CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPos)
+CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color)
 {
 	CParticle* particle = nullptr;
 	if (particle == nullptr)
 	{
 		particle = new CParticle;
 		particle->Init();
-		particle->Set(inParticle, inPos);
-
+		particle->Set(inParticle, inPos, color);
 		return particle;
 	}
 	return nullptr;
@@ -155,7 +154,7 @@ CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPo
 //--------------------------------------------------
 // データの初期設定
 //--------------------------------------------------
-void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
+void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color)
 {
 	m_data = inParticle;
 
@@ -176,7 +175,7 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 	myPos.z += FloatRandam(m_data.maxPopPos.z, -m_data.minPopPos.z);
 
 	// 色の算出
-	D3DXCOLOR myColor = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+	D3DXCOLOR myColor = color;
 	if (m_data.color.bColRandom)
 	{// ランダムカラーを使用
 		myColor.r = FloatRandam(m_data.color.colRandamMax.r, m_data.color.colRandamMin.r);
