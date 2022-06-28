@@ -968,7 +968,7 @@ void ShowDemo_Querying()
 	static float s_fStartTimeA = rdata1.Span;
 	static float s_fStartTimeB = rdata2.Span;
 	static float s_fStopTime = 0.0f;
-	static float s_History = 0.0f;
+	static float s_History = 5.0f;
 	static float t = 0;
 	static double s_dMin = 0.0f;
 	static double s_dMax = 10.0f;
