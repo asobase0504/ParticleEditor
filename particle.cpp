@@ -4,13 +4,15 @@
 #include "main.h"
 #include "particle.h"
 #include <time.h>
+#include "application.h"
 #include "imgui_property.h"
 #include "utility.h"
+#include "application.h"
+#include "renderer.h"
 
-// ==================================================
+//==================================================
 // 静的メンバー変数
-// ==================================================
-CParticle* CParticle::g_aParticle[] = {};
+//==================================================
 float CParticle::g_fAngle = 0.0f;
 
 //--------------------------------------------------
@@ -32,59 +34,7 @@ CParticle::~CParticle()
 //--------------------------------------------------
 HRESULT CParticle::Init()
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();	// デバイスの取得
-
-												// テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\flare.png",
-		&m_pTexture[PARTICLETYPE_NORMAL]);
-
-	// データの初期化
-	memset(&m_data, 0, sizeof(m_data));
-
-	// 頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,	// 確保するバッファのサイズ
-		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_2D,			// 頂点フォーマット
-		D3DPOOL_MANAGED,
-		&m_pVtxBuff,
-		NULL);
-
-	VERTEX_2D *pVtx = NULL;		// 頂点情報へのポインタ
-
-								// 頂点バッファをロックし、頂点情報へのポインタを取得
-	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
-	// 頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
-	// rhwの設定
-	pVtx[0].rhw = 1.0f;
-	pVtx[1].rhw = 1.0f;
-	pVtx[2].rhw = 1.0f;
-	pVtx[3].rhw = 1.0f;
-
-	// 頂点カラーの設定
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-	// テクスチャ座標の設定
-	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-
-	pVtx += 4;		// 頂点データのポインタを4つ分集める
-
-					// 頂点バッファをアンロックする
-	m_pVtxBuff->Unlock();
-
-
+	CObject2D::Init();
 
 	return S_OK;
 }
@@ -94,22 +44,7 @@ HRESULT CParticle::Init()
 //--------------------------------------------------
 void CParticle::Uninit()
 {
-	for (int i = 0; i < numType; i++)
-	{
-		// テクスチャの破棄
-		if (m_pTexture[i] != NULL)
-		{
-			m_pTexture[i]->Release();
-			m_pTexture[i] = NULL;
-		}
-	}
-
-	// 頂点バッファの破壊
-	if (m_pVtxBuff != NULL)
-	{
-		m_pVtxBuff->Release();
-		m_pVtxBuff = NULL;
-	}
+	CObject2D::Uninit();
 }
 
 //--------------------------------------------------
@@ -128,7 +63,8 @@ void CParticle::Update()
 	/* ↓使用しているなら↓ */
 
 	// エフェクトの移動
-	m_data.pos += m_data.move;
+	D3DXVECTOR3 myPos = GetPos();
+	myPos += m_data.move;
 
 	// 推移
 	m_data.nLife--;							// 体力の減少
@@ -136,58 +72,24 @@ void CParticle::Update()
 	m_data.move *= m_data.fAttenuation;			// 移動量の推移
 	m_data.fWeight += m_data.fWeightTransition;	// 重さの推移
 
+	D3DXCOLOR myColor = GetColor();
 	if (m_data.color.bColTransition)
 	{// 色の推移
 		if (m_data.color.nEndTime >= m_data.color.nCntTransitionTime)
 		{
 			m_data.color.nCntTransitionTime++;
-			m_data.color.col += m_data.color.colTransition;
+			myColor += m_data.color.colTransition;
 		}
 	}
-	m_data.color.col.a -= 1.0f / m_data.nMaxLife;
+	myColor.a -= 1.0f / m_data.nMaxLife;
 
-	VERTEX_2D *pVtx = nullptr;		// 頂点情報へのポインタ
+	SetPos(myPos);
+	SetColor(myColor);
+	SetSize(D3DXVECTOR2(m_data.fWidth, m_data.fHeight));
 
-									// 頂点バッファをロック
-	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
-	// 頂点座標の設定
-	pVtx[0].pos = m_data.pos + D3DXVECTOR3(-m_data.fWidth, -m_data.fHeight, 0.0f);
-	pVtx[1].pos = m_data.pos + D3DXVECTOR3(m_data.fWidth, -m_data.fHeight, 0.0f);
-	pVtx[2].pos = m_data.pos + D3DXVECTOR3(-m_data.fWidth, m_data.fHeight, 0.0f);
-	pVtx[3].pos = m_data.pos + D3DXVECTOR3(m_data.fWidth, m_data.fHeight, 0.0f);
-
-	// 頂点カラーの設定
-	pVtx[0].col = m_data.color.col;
-	pVtx[1].col = m_data.color.col;
-	pVtx[2].col = m_data.color.col;
-	pVtx[3].col = m_data.color.col;
-
-	// 頂点バッファをアンロックする
-	m_pVtxBuff->Unlock();
-
-}
-
-//--------------------------------------------------
-// 全てを更新
-//--------------------------------------------------
-void CParticle::AllUpdate()
-{
-	for (int i = 0; i < maxNumber; i++)
-	{
-		if (g_aParticle[i] == nullptr)
-		{
-			continue;
-		}
-
-		g_aParticle[i]->Update();
-
-		if (g_aParticle[i]->m_data.nLife <= 0)
-		{// エフェクトの寿命
-			g_aParticle[i]->Uninit();
-			delete g_aParticle[i];
-			g_aParticle[i] = nullptr;
-		}
+	if (m_data.nLife <= 0)
+	{// エフェクトの寿命
+		Release();
 	}
 }
 
@@ -196,7 +98,7 @@ void CParticle::AllUpdate()
 //--------------------------------------------------
 void CParticle::Draw()
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CApplication::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 
 	switch (m_data.alphaBlend)
 	{
@@ -222,17 +124,7 @@ void CParticle::Draw()
 		break;
 	}
 
-	// 頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_2D));
-
-	// 頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_2D);
-
-	// テクスチャの設定
-	pDevice->SetTexture(0, m_pTexture[m_data.type]);
-
-	// ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+	CObject2D::Draw();
 
 	// αブレンディングを元に戻す
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
@@ -244,38 +136,20 @@ void CParticle::Draw()
 }
 
 //--------------------------------------------------
-// 全ての描画
-//--------------------------------------------------
-void CParticle::AllDraw()
-{
-	for (int i = 0; i < maxNumber; i++)
-	{
-		if (g_aParticle[i] == nullptr)
-		{
-			continue;
-		}
-
-		g_aParticle[i]->Draw();
-	}
-}
-
-//--------------------------------------------------
 // 生成
 //--------------------------------------------------
 CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPos)
 {
-	for (int i = 0; i < maxNumber; i++)
+	CParticle* particle = nullptr;
+	if (particle == nullptr)
 	{
-		if (g_aParticle[i] == nullptr)
-		{
-			g_aParticle[i] = new CParticle;
-			g_aParticle[i]->Init();
-			g_aParticle[i]->Set(inParticle, inPos);
+		particle = new CParticle;
+		particle->Init();
+		particle->Set(inParticle, inPos);
 
-			g_aParticle[i]->m_idx = i;
-			return g_aParticle[i];
-		}
+		return particle;
 	}
+	return nullptr;
 }
 
 //--------------------------------------------------
@@ -288,7 +162,6 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 	m_data.nMaxLife = m_data.nLife;
 	m_data.fWidth = m_data.fScale;
 	m_data.fHeight = m_data.fScale;
-	m_data.pos = inPos;
 	m_data.type = PARTICLETYPE_NORMAL;
 
 	//m_data.fWidth = g_aParticle[]->m_data->fScale;
@@ -296,17 +169,19 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 	m_data.color.nCntTransitionTime = 0;
 	m_data.bUse = true;
 
+	D3DXVECTOR3 myPos = inPos;
 	// 生成位置の算出
-	m_data.pos.x += FloatRandam(m_data.maxPopPos.x, -m_data.minPopPos.x);
-	m_data.pos.y += FloatRandam(m_data.maxPopPos.y, -m_data.minPopPos.y);
-	m_data.pos.z += FloatRandam(m_data.maxPopPos.z, -m_data.minPopPos.z);
+	myPos.x += FloatRandam(m_data.maxPopPos.x, -m_data.minPopPos.x);
+	myPos.y += FloatRandam(m_data.maxPopPos.y, -m_data.minPopPos.y);
+	myPos.z += FloatRandam(m_data.maxPopPos.z, -m_data.minPopPos.z);
 
 	// 色の算出
+	D3DXCOLOR myColor = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 	if (m_data.color.bColRandom)
 	{// ランダムカラーを使用
-		m_data.color.col.r = FloatRandam(m_data.color.colRandamMax.r, m_data.color.colRandamMin.r);
-		m_data.color.col.g = FloatRandam(m_data.color.colRandamMax.g, m_data.color.colRandamMin.g);
-		m_data.color.col.b = FloatRandam(m_data.color.colRandamMax.b, m_data.color.colRandamMin.b);
+		myColor.r = FloatRandam(m_data.color.colRandamMax.r, m_data.color.colRandamMin.r);
+		myColor.g = FloatRandam(m_data.color.colRandamMax.g, m_data.color.colRandamMin.g);
+		myColor.b = FloatRandam(m_data.color.colRandamMax.b, m_data.color.colRandamMin.b);
 
 		if (m_data.color.bColTransition)
 		{// 目的の色の設定
@@ -328,30 +203,15 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 			m_data.color.nEndTime = rand() % m_data.nLife + 1;
 		}
 
-		m_data.color.colTransition.r = (m_data.color.destCol.r - m_data.color.col.r) / m_data.color.nEndTime;
-		m_data.color.colTransition.g = (m_data.color.destCol.g - m_data.color.col.g) / m_data.color.nEndTime;
-		m_data.color.colTransition.b = (m_data.color.destCol.b - m_data.color.col.b) / m_data.color.nEndTime;
+		m_data.color.colTransition.r = (m_data.color.destCol.r - myColor.r) / m_data.color.nEndTime;
+		m_data.color.colTransition.g = (m_data.color.destCol.g - myColor.g) / m_data.color.nEndTime;
+		m_data.color.colTransition.b = (m_data.color.destCol.b - myColor.b) / m_data.color.nEndTime;
 	}
 
-	VERTEX_2D*pVtx;	// 頂点情報へのポインタ
-
-					// 頂点バッファをロックし、頂点情報へのポインタを取得
-	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
-	// 頂点座標の設定
-	pVtx[0].pos = m_data.pos + D3DXVECTOR3(-m_data.fWidth, -m_data.fHeight, 0.0f);
-	pVtx[1].pos = m_data.pos + D3DXVECTOR3(m_data.fWidth, -m_data.fHeight, 0.0f);
-	pVtx[2].pos = m_data.pos + D3DXVECTOR3(-m_data.fWidth, m_data.fHeight, 0.0f);
-	pVtx[3].pos = m_data.pos + D3DXVECTOR3(m_data.fWidth, m_data.fHeight, 0.0f);
-
-	// 頂点カラーの設定
-	pVtx[0].col = m_data.color.col;
-	pVtx[1].col = m_data.color.col;
-	pVtx[2].col = m_data.color.col;
-	pVtx[3].col = m_data.color.col;
-
-	// 頂点バッファをアンロックする
-	m_pVtxBuff->Unlock();
+	SetPos(myPos);
+	SetSize(D3DXVECTOR2(m_data.fWidth, m_data.fHeight));
+	SetTexture(CTexture::TEXTURE_icon_122380_256);
+	SetColor(myColor);
 
 	float ImAngle = GetAngle();
 	float fRad = 0.0f;
@@ -414,7 +274,7 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 //--------------------------------------------------
 void CParticle::LoadTex()
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	//LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	char ImFile[512];
 	bool *ImTex = TexUse();
 
@@ -423,7 +283,7 @@ void CParticle::LoadTex()
 	if (ImTex)
 	{
 		// テクスチャの読み込み
-		D3DXCreateTextureFromFile(pDevice, GetFileName(), &m_pTexture[PARTICLETYPE_NORMAL]);
+		//D3DXCreateTextureFromFile(pDevice, , &m_pTexture[PARTICLETYPE_NORMAL]);
 
 		ImTex = false;
 	}

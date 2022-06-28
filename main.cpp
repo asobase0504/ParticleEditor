@@ -12,9 +12,9 @@
 #include <stdio.h>
 #include "main.h"
 #include "input.h"
-#include "game.h"
 #include "file.h"
 #include "renderer.h"
+#include "application.h"
 // imgui系統
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
@@ -39,10 +39,6 @@ static D3DPRESENT_PARAMETERS s_d3dpp = {};
 
 //プロトタイプ宣言
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-HRESULT Init(HINSTANCE hInstance, HWND hWnd, bool bWindow);
-void Uninit(void);
-void Update(void);
-void Draw(void);
 
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -106,7 +102,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 	DWORD dwFrameCount;		// フレームカウント
 	DWORD dwFPSLastTime;	// 最後のFPS
 
-	if (FAILED(Init(hInstance, hWnd, true)))	// ここをfalseにすると大画面になる
+	CApplication* application = CApplication::GetInstance();
+
+	if (FAILED(application->Init(hWnd, hInstance)))	// ここをfalseにすると大画面になる
 	{// 初期化が失敗した場合
 		return -1;
 	}
@@ -131,7 +129,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 	//ImGui::StyleColorsClassic();
 
 	// Setup Platform/Renderer backends
-	InitImguiProperty(hWnd, renderer->GetDevice());
+	InitImguiProperty(hWnd, application->GetRenderer()->GetDevice());
 	//ImGui_ImplWin32_Init(hWnd);
 	//ImGui_ImplDX9_Init(s_pD3DDevice);
 
@@ -175,13 +173,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 			{//60分の1秒経過
 				dwExedastTime = dwCurrentTime;	// 処理開始の時刻[現在時刻]を保存
 
-												// imguiの更新
+				// imguiの更新
 				UpdateImguiProperty();
 				// 更新
-				Update();
+				application->Update();
 
 				// 描画処理
-				Draw();
+				application->Draw();
 
 				dwFrameCount++;
 			}
@@ -189,7 +187,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 	}
 
 	//終了処理
-	Uninit();
+	application->Uninit();
 
 	::DestroyWindow(hWnd);
 	::UnregisterClass(wcex.lpszClassName, wcex.hInstance);
@@ -340,73 +338,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 //---------------------------------------
-//デバイス取得
-//---------------------------------------
-LPDIRECT3DDEVICE9 GetDevice(void)
-{
-	return renderer->GetDevice();
-}
-
-//---------------------------------------
-// 初期化
-//---------------------------------------
-HRESULT Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)//TRUE：ウインドウ/FALSE:フルスクリーン
-{
-	renderer = new CRenderer;
-
-	renderer->Init(hWnd, bWindow);
-
-	//入力処理の初期化処理
-	if (FAILED(InitInput(hInstance, hWnd)))
-	{
-		return E_FAIL;
-	}
-
-	//乱数の初期化
-	srand((unsigned int)time(0));
-
-	InitGame();	// ゲームモードの初期化
-
-	LoadJson(L"data/FILE/Effect.json");
-
-	return S_OK;
-}
-
-//---------------------------------------
-// 終了
-//---------------------------------------
-void Uninit(void)
-{
-	//終了処理
-	UninitInput();	// 入力
-	UninitGame();	// ゲームモード
-
-	ImGui_ImplDX9_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-
-	renderer->Uninit();
-}
-
-//---------------------------------------
-// 更新
-//---------------------------------------
-void Update(void)
-{
-	//更新処理
-	UpdateInput();
-	UpdateGame();
-}
-
-//---------------------------------------
-// 描画
-//---------------------------------------
-void Draw(void)
-{
-	renderer->Draw();
-}
-
-//---------------------------------------
 //ディレクトリ表示用
 //---------------------------------------
 BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
@@ -445,9 +376,8 @@ float GetAngle(void)
 	return s_fAngle;
 }
 
-
-
+//---------------------------------------
+// ファイルねーむ
 bool *TexUse(void){
 	return &bTexUse;
 }
-

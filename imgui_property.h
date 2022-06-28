@@ -52,7 +52,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 //--------------------------------------------------
 // パーティクルデータの取得
 //--------------------------------------------------
-CParticle::Particle& GetImguiParticle(void);
+FileParticleData& GetImguiParticle(void);
 
 //--------------------------------------------------
 // ファイル名の取得

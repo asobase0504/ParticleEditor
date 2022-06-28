@@ -8,7 +8,6 @@
 #include <tchar.h>
 
 // 後変更
-#include "game.h"
 #include "imgui_property.h"
 
 //=============================================================================
@@ -145,6 +144,7 @@ void CRenderer::Uninit()
 //=============================================================================
 void CRenderer::Update()
 {
+	CObject::UpdateAll();	// オブジェクト
 }
 
 //=============================================================================
@@ -158,9 +158,9 @@ void CRenderer::Draw()
 	// Direct3Dによる描画の開始
 	if (SUCCEEDED(pD3DDevice->BeginScene()))
 	{
-		DrawGame();
+		CObject::DrawAll();	// オブジェクト
 
-		DrawImguiProperty();
+		DrawImguiProperty();	// imgui
 
 		// Direct3Dによる描画の終了
 		pD3DDevice->EndScene();
