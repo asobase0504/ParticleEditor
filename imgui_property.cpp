@@ -61,6 +61,9 @@ static const unsigned int gpu_id = 0;
 static nvmlDevice_t device;
 static ImVec2 foo[10];
 
+namespace nl = nlohmann;
+
+nl::json Sin;//リストの生成
  // init data so editor knows to take it from here
 //unsigned MemoryUsageMegaBytes(void)
 //{
@@ -687,6 +690,7 @@ namespace ImGui
 		// lines
 		for (i = 1; i < max; i++)
 		{
+			//直線
 			ImVec2 a = points[i - 1];
 			ImVec2 b = points[i];
 			a.y = 1 - a.y;
@@ -698,6 +702,7 @@ namespace ImGui
 
 		if (hovered)
 		{
+			//曲線
 			// control points
 			for (i = 0; i < max; i++)
 			{
@@ -1099,6 +1104,7 @@ void UpdateImguiProperty(void)
 
 		ImGui::EndMenuBar();
 	}
+	//パーティクルのデータ出力＆読み込み
 	if (ImGui::Button("DATA"))
 	{
 		imguiParticle = GetStatus();
@@ -1108,9 +1114,46 @@ void UpdateImguiProperty(void)
 		OutputStatus();
 	}
 
-	
+	//SINカーブのデータ出力＆読み込み
+	if (ImGui::Button("SINDATA"))
+	{
+		const std::string pathToJSON = "data/FILE/Sintest.json";
+		std::ifstream ifs(pathToJSON);
 
-	
+		if (ifs)
+		{
+			//StringToWString(UTF8toSjis(j["name"]));
+			//DataSet.unionsname = StringToWString(UTF8toSjis(j["unions"] ["name"]));
+			ifs >> Sin;
+			
+			for (int nCnt = 0; nCnt < 10; nCnt++)
+			{
+				std::string name = "Sin";
+				std::string Number = std::to_string(nCnt);
+				name += Number;
+
+				foo[nCnt] = ImVec2(Sin[name]["X"], Sin[name]["Y"]);	
+			}
+		}
+	}
+	if (ImGui::Button("SINOUT"))
+	{
+		for (int nCnt = 0; nCnt < 10; nCnt++)
+		{
+			
+			std::string name = "Sin";
+			std::string Number = std::to_string(nCnt);
+			name += Number;
+			Sin[name] = { { "X", foo[nCnt].x } ,{ "Y", foo[nCnt].y } };
+
+		}
+		auto jobj = Sin.dump();
+		std::ofstream writing_file;
+		const std::string pathToJSON = "data/FILE/Sintest.json";
+		writing_file.open(pathToJSON, std::ios::out);
+		writing_file << jobj << std::endl;
+		writing_file.close();
+	}
 	
 	if (ImGui::Curve("Das editor", ImVec2(600, 200), 10, foo))
 	{

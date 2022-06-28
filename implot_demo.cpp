@@ -1009,11 +1009,8 @@ void ShowDemo_Querying()
 				ImVec2 Pos = ImVec2(Imgui[name]["X"], Imgui[name]["Y"]);
 
 				data.push_back(Pos);
-				
-
 			}
-		}
-		
+		}	
 	}
 
 	ImGui::Text("Ctrl + Left Click : Set point");
