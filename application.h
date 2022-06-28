@@ -39,6 +39,7 @@ public:
 	CRenderer* GetRenderer();
 	CObject** GetMyObject();
 	CTexture* GetTextureClass();
+	CParticle* GetParticle();
 private:
 	static CApplication* application;
 	CObject* object;

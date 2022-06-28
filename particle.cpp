@@ -14,6 +14,7 @@
 // 静的メンバー変数
 //==================================================
 float CParticle::g_fAngle = 0.0f;
+int CParticle::m_nIdxTex = 0;
 
 //--------------------------------------------------
 // コンストラクタ
@@ -209,7 +210,7 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const 
 
 	SetPos(myPos);
 	SetSize(D3DXVECTOR2(m_data.fWidth, m_data.fHeight));
-	SetTexture(1);
+	SetTexture(m_nIdxTex);
 	SetColor(myColor);
 
 	float ImAngle = GetAngle();
@@ -322,4 +323,20 @@ void CParticle::RemoveAngle(void)
 DWORD CParticle::FloattoDword(float fVal)
 {
 	return *((DWORD*)&fVal);
+}
+
+//--------------------------------------------------
+// テクスチャの設定
+//--------------------------------------------------
+void CParticle::SetIdxTex(int idxTex)
+{
+	m_nIdxTex = idxTex;
+}
+
+//--------------------------------------------------
+// テクスチャの設定
+//--------------------------------------------------
+int CParticle::GetIdxTex()
+{
+	return m_nIdxTex;
 }

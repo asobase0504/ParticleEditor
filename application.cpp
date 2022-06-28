@@ -167,3 +167,11 @@ CTexture * CApplication::GetTextureClass()
 {
 	return texture;
 }
+
+//=============================================================================
+// パーティクルの取得
+//=============================================================================
+CParticle * CApplication::GetParticle()
+{
+	return particle;
+}

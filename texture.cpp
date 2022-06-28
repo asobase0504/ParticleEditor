@@ -49,7 +49,7 @@ void CTexture::LoadAll()
 //--------------------------------------------------
 void CTexture::Load(int index)
 {
-	assert(index >= 0 && index < MAX_TEXTURE);
+	assert(index > NONE_TEXTURE && index < MAX_TEXTURE);
 
 	if (m_pTexture[index] != nullptr)
 	{// テクスチャの読み込みがされている
@@ -82,7 +82,7 @@ void CTexture::UnloadAll()
 //--------------------------------------------------
 void CTexture::Unload(int index)
 {
-	assert(index >= 0 && index < MAX_TEXTURE);
+	assert(index > NONE_TEXTURE && index < MAX_TEXTURE);
 
 	if (m_pTexture[index] != nullptr)
 	{// テクスチャの解放
@@ -113,12 +113,31 @@ void CTexture::SavePath()
 	OutputStatusTex();
 }
 
+
+//--------------------------------------------------
+// パスの取得
+//--------------------------------------------------
+std::string CTexture::GetPath(int index)
+{
+	assert(index > NONE_TEXTURE && index < MAX_TEXTURE);
+
+	return m_fileName[index];
+}
+
+//--------------------------------------------------
+// 総数の取得
+//--------------------------------------------------
+int CTexture::GetNumAll()
+{
+	return m_numAll;
+}
+
 //--------------------------------------------------
 // 取得
 //--------------------------------------------------
 LPDIRECT3DTEXTURE9 CTexture::GetTexture(int index)
 {
-	if (index == -1)
+	if (index == NONE_TEXTURE)
 	{// テクスチャを使用しない
 		return nullptr;
 	}

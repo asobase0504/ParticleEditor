@@ -19,6 +19,9 @@
 class CTexture
 {
 	/* 定義 */
+public:
+	static const int NONE_TEXTURE = -1;	// テクスチャを使用しない
+
 private:
 	static const int MAX_TEXTURE = 256;	// テクスチャの最大数
 
@@ -34,6 +37,8 @@ public:
 	void Unload(int index);	// 指定の破棄
 	void SetPath(std::string str);	// パスの設定
 	void SavePath();				// パスの保存
+	std::string GetPath(int index);	// パスの取得
+	int GetNumAll();				// 総数の取得
 	LPDIRECT3DTEXTURE9 GetTexture(int index);	// 情報の取得
 
 	/* メンバ変数 */
