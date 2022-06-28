@@ -8,11 +8,18 @@
 #include "letter.h"
 #include "particle.h"
 #include "imgui_property.h"
+#include "texture.h"
+#include "application.h"
 
 FileParticleData dataAll;
 namespace nl = nlohmann;
 
 nl::json j;//リストの生成
+
+nl::json TEX;//リストの生成
+
+std::string Lync[256];
+int index = 0;
 
 //============================
 //ゲット関数
@@ -115,4 +122,54 @@ void LoadJson(const wchar_t* cUrl)
 
 	}
 
+}
+
+void LoadJsonTex(const char* cUrl)
+{
+	std::string name = "LINK";
+	std::string Number = std::to_string(index);
+	name += Number;
+	TEX[name] = { { "LINK", cUrl } };
+	
+	index++;
+}
+
+void OutputStatusTex()
+{
+	TEX["Index"] = index;
+	auto jobj = TEX.dump();
+	std::ofstream writing_file;
+	const std::string pathToJSON = "data/FILE/Textest.json";
+	writing_file.open(pathToJSON, std::ios::out);
+	writing_file << jobj << std::endl;
+	writing_file.close();
+}
+
+void SetTex()
+{
+	const std::string pathToJSON = "data/FILE/Textest.json";
+	std::ifstream ifs(pathToJSON);
+
+	if (ifs)
+	{
+		//StringToWString(UTF8toSjis(j["name"]));
+		//DataSet.unionsname = StringToWString(UTF8toSjis(j["unions"] ["name"]));
+		ifs >> TEX;
+		index = TEX["Index"];
+		for (int nCnt = 0; nCnt < index; nCnt++)
+		{
+			
+			std::string name = "LINK";
+			std::string Number = std::to_string(nCnt);
+			name += Number;
+
+			Lync[nCnt] = TEX[name]["LINK"];
+
+			CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
+
+			pTexture->SetPath(Lync[nCnt]);
+		}
+	}
+
+	index = 0;
 }
