@@ -210,7 +210,7 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3 & inPos)
 
 	SetPos(myPos);
 	SetSize(D3DXVECTOR2(m_data.fWidth, m_data.fHeight));
-	SetTexture(CTexture::TEXTURE_icon_122380_256);
+	SetTexture(1);
 	SetColor(myColor);
 
 	float ImAngle = GetAngle();

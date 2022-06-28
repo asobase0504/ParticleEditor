@@ -1081,7 +1081,7 @@ void UpdateImguiProperty(void)
 
 	// ウインドウの起動時の場所
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(350, 400), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_Once);
 
 	// ウインドウの命名
 	ImGui::Begin(WINDOW_NAME, nullptr, ImGuiWindowFlags_MenuBar);

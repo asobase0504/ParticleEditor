@@ -79,6 +79,8 @@ HRESULT CApplication::Init(HWND hWnd, HINSTANCE hInstance)
 	// パーティクル
 	LoadJson(L"data/FILE/Effect.json");
 
+	SetTex();
+
 	// 背景
 	bg = new CBg;
 	if (FAILED(bg->Init()))
@@ -99,6 +101,7 @@ void CApplication::Uninit()
 
 	if (texture != nullptr)
 	{
+		texture->SavePath();
 		delete texture;
 		texture = nullptr;
 	}
