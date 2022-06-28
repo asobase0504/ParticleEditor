@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include "main.h"
 #include "input.h"
-#include "game.h"
 #include "file.h"
 #include "renderer.h"
 #include "application.h"
@@ -232,6 +231,7 @@ static void funcFileSave(HWND hWnd, bool nMap)
 	if (szFile[0] != '\0')
 	{
 		std::string File = szFile;
+		
 	
 		SetFileName(szFile);
 		
@@ -382,4 +382,3 @@ float GetAngle(void)
 bool *TexUse(void){
 	return &bTexUse;
 }
-
