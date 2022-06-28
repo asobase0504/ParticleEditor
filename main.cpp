@@ -428,7 +428,6 @@ BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
 
 	bTexUse = true;
 
-
 	return GetOpenFileName(&ofn);
 }
 
