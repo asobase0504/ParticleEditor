@@ -7,9 +7,8 @@
 #ifndef _OBJECT2D_H_
 #define _OBJECT2D_H_
 
-#include "main.h"
+#include "d3dx9.h"
 #include "object.h"
-#include "texture.h"
 
 class CObject2D : public CObject
 {

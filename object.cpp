@@ -5,8 +5,6 @@
 // 
 //=========================================
 #include "object.h"
-#include "renderer.h"
-#include "object2d.h"
 
 const int CObject::NUM_MAX;
 CObject* CObject::object[NUM_MAX] = {};

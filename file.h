@@ -10,23 +10,8 @@
 //=====================================
 // インクルード
 //=====================================
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <windows.h>
-#include "nlohmann/json.hpp"
-
-#include <stdio.h>
-#include <tchar.h>
-#include <locale.h>
-#include <string>
-#include <iostream>
-#include <windows.h>
-#include <sstream>
-
-#include "main.h"
+#include <d3dx9.h>
 #include "particle.h"
-
 
 //=====================================
 // プロトタイプ宣言

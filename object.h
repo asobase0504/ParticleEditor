@@ -7,7 +7,7 @@
 #ifndef _OBJECT_H_
 #define _OBJECT_H_
 
-#include "main.h"
+#include "d3dx9.h"
 
 class CObject
 {

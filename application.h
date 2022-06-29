@@ -7,7 +7,7 @@
 #ifndef _APPLICATION_H_
 #define _APPLICATION_H_
 
-#include "main.h"
+#include <d3dx9.h>
 
 //-----------------------------------------
 // ‘O•ûéŒ¾

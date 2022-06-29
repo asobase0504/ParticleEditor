@@ -5,6 +5,8 @@
 //
 //============================
 #include "letter.h"
+#include <windows.h>
+#include "nlohmann/json.hpp"
 
 //============================
 // wstringをstringへ変換

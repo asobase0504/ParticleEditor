@@ -1,14 +1,13 @@
 // 
 // effect.cpp
 // 
-#include "main.h"
 #include "particle.h"
-#include <time.h>
+#include "main.h"
 #include "application.h"
-#include "imgui_property.h"
 #include "utility.h"
-#include "application.h"
 #include "renderer.h"
+
+#include <assert.h>
 
 //==================================================
 // Ã“Iƒƒ“ƒo[•Ï”

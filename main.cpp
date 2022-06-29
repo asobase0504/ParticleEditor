@@ -10,20 +10,21 @@
 // include
 //=================================================
 #include "main.h"
-#include "input.h"
-#include "file.h"
 #include "renderer.h"
 #include "application.h"
 #include "texture.h"
+#include "resource1.h"
+
 // imgui系統
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
 #include "imgui_impl_win32.h"
 #include <imgui_internal.h>
-#include "resource1.h"
 #include "imgui_property.h"
 
-#include <stdio.h>
+#include <windows.h>
+#include <d3dx9.h>		//描画処理
+#include <time.h>
 
 // ライブラリの読込み
 #pragma comment(lib,"winmm.lib")	//システム時刻取得に必要

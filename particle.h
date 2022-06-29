@@ -5,7 +5,7 @@
 #ifndef _PARTICLE_H_		//このマクロが定義されてなかったら
 #define _PARTICLE_H_		//2重インクルード防止のマクロ定義
 
-#include "main.h"
+#include <d3dx9.h>
 #include "object2d.h"
 
 //マクロ定義

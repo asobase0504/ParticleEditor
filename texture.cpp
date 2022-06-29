@@ -8,9 +8,9 @@
 //==================================================
 // インクルード
 //==================================================
+#include "texture.h"
 #include "application.h"
 #include "renderer.h"
-#include "texture.h"
 #include "file.h"
 
 #include <assert.h>
@@ -112,6 +112,14 @@ void CTexture::SetPath(std::string str)
 {
 	size_t pos = -1;
 
+	for (int i = 0; i < m_numAll; i++)
+	{
+		if (m_fileName[i] == str)
+		{// 同じパス
+			return;
+		}
+	}
+
 	pos = str.find(REL_PATH.c_str());
 
 	if (pos == -1)
@@ -126,12 +134,23 @@ void CTexture::SetPath(std::string str)
 
 		pos += ABS_PATH.length();
 
-		m_fileName[m_numAll] = REL_PATH;
+		std::string copy;
+		copy = REL_PATH;
 
 		for (int i = (int)pos; i < str.length(); i++)
 		{
-			m_fileName[m_numAll] += str[i];
+			copy += str[i];
 		}
+
+		for (int i = 0; i < m_numAll; i++)
+		{
+			if (m_fileName[i] == copy)
+			{// 同じパス
+				return;
+			}
+		}
+
+		m_fileName[m_numAll] = copy;
 
 		CParticle::SetIdxTex(m_numAll);
 

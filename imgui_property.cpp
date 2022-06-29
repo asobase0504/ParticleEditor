@@ -8,19 +8,30 @@
 //==================================================
 // インクルード
 //==================================================
+//------------------------------
+//imgui
+//------------------------------
+#include "imgui_impl_dx9.h"
+#include "imgui_impl_win32.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include <imgui_internal.h>
+#include <imgui_widget_flamegraph.h>
 #include "imgui_property.h"
 #include "main.h"
 #include "file.h"
 #include "letter.h"
-#include "utility.h"
 #include "application.h"
 #include "texture.h"
-#include "particle.h"
-#include <imgui_internal.h>
-#include <assert.h>
+
+#include <iostream>
+#include <fstream>
+#include <windows.h>
+#include <tchar.h>
+#include <locale.h>
+#include <sstream>
+#include "nlohmann/json.hpp"
+
 #include <implot.h>
-#include <string>
-#include <imgui_widget_flamegraph.h>
 
 //------------------------------
 //CPU
@@ -28,9 +39,9 @@
 #include <stdio.h>
 #include <Windows.h>
 
-//------------------------
+//------------------------------
 //GPU
-//------------------------
+//------------------------------
 #include <nvml.h>
 
 #if _DEBUG
@@ -1408,6 +1419,47 @@ void UpdateImguiProperty(void)
 				{
 					ImGui::SliderInt("EndTime", &imguiParticle.particle.color.nEndTime, 0, imguiParticle.particle.nLife);
 				}
+			}
+
+			const ImVec4* s_Colors[9] =
+			{// 色の配列
+				&ImVec4(1.0f, 0.0f, 0.0f, 1.0f),	// 赤
+				&ImVec4(0.0f, 1.0f, 0.0f, 1.0f),	// 緑
+				&ImVec4(0.0f, 0.0f, 1.0f, 1.0f),	// 青
+				&ImVec4(1.0f, 1.0f, 0.0f, 1.0f),	// 黄色
+				&ImVec4(1.0f, 0.0f, 1.0f, 1.0f),	// 紫
+				&ImVec4(0.0f, 1.0f, 1.0f, 1.0f),	// 水色
+				&ImVec4(1.0f, 1.0f, 1.0f, 1.0f),	// 白
+				&ImVec4(0.5f, 0.5f, 0.5f, 1.0f),	// 灰色
+				&ImVec4(0.0f, 0.0f, 0.0f, 1.0f)		// 黒
+			};
+
+			const std::string s_ColorsName[9] =
+			{// 色の配列
+				"RED",			// 赤
+				"GREEN",		// 緑
+				"BLUE",			// 青
+				"YELLOW",		// 黄色
+				"PURPLE",		// 紫
+				"LIGHTBLUE",	// 水色
+				"WHITE",		// 白
+				"GRAY",			// 灰色
+				"BLACK"			// 黒
+			};
+
+			for (int i = 0; i < 9; i++)
+			{
+				if (i > 0)
+				{
+					ImGui::SameLine();
+				}
+				ImGui::PushID(i);
+				ImGui::PushStyleColor(ImGuiCol_Button, *s_Colors[i]);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, *s_Colors[i]);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, *s_Colors[i]);
+				ImGui::Button(s_ColorsName[i].c_str());
+				ImGui::PopStyleColor(3);
+				ImGui::PopID();
 			}
 
 			//ツリーを閉じる

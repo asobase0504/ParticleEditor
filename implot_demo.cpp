@@ -7,12 +7,8 @@
 
 #include "implot.h"
 #include "imgui.h"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include "file.h"
-#include "letter.h"
+#include <fstream>
+#include "nlohmann/json.hpp"
 
 namespace nl = nlohmann;
 

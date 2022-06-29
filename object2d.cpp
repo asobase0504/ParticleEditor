@@ -8,6 +8,7 @@
 #include "application.h"
 #include "renderer.h"
 #include "texture.h"
+#include "main.h"
 #include <assert.h>
 
 //=============================================================================
