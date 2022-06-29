@@ -28,9 +28,6 @@
 
 #include <stdio.h>
 
-
-
-
 // ライブラリの読込み
 #pragma comment(lib,"winmm.lib")	//システム時刻取得に必要
 
