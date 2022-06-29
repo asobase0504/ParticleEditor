@@ -19,6 +19,7 @@
 #include <imgui_internal.h>
 #include <assert.h>
 #include <implot.h>
+#include <string>
 #include <imgui_widget_flamegraph.h>
 
 //------------------------------
@@ -1254,6 +1255,34 @@ void UpdateImguiProperty(void)
 			funcFileSave(hWnd);
 		}
 
+		{
+			// テクスチャ
+			CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
+			CParticle* pParticle = CApplication::GetInstance()->GetParticle();
+			int index = pParticle->GetIdxTex();
+
+			if (ImGui::BeginCombo("combo 1", pTexture->GetPath(index, false).c_str(), 0))
+			{// コンボボタン
+				for (int i = 0; i < pTexture->GetNumAll(); i++)
+				{
+					const bool is_selected = (index == i);
+
+					if (ImGui::Selectable(pTexture->GetPath(i, false).c_str(), is_selected))
+					{// 選ばれた選択肢に変更
+						index = i;
+					}
+
+					if (is_selected)
+					{// 選択肢の項目を開く
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			pParticle->SetIdxTex(index);
+		}
+
 		if (ImGui::Checkbox("EffectEnable", &useEffect))
 		{
 			if (!s_bEffectEnable)
@@ -1280,7 +1309,7 @@ void UpdateImguiProperty(void)
 			imguiParticle.particle.minPopPos.y = 0.0f;
 			imguiParticle.particle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			imguiParticle.particle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-			imguiParticle.color = D3DXCOLOR(1.0f,0.0f,0.0f,1.0f);
+			imguiParticle.color = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
 			imguiParticle.particle.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
 			imguiParticle.particle.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			imguiParticle.particle.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1325,7 +1354,7 @@ void UpdateImguiProperty(void)
 			float rotY = imguiParticle.pos.y * sinf(s_fDeg) - imguiParticle.pos.y * cosf(s_fDeg);
 			float fAngle = atan2f(rotX, rotY);
 			imguiParticle.particle.rot = D3DXVECTOR3(rotX, rotY, fAngle);
-			
+
 			if (imguiParticle.particle.rot.z > D3DX_PI)
 			{
 				imguiParticle.particle.rot.z -= D3DX_PI * 2;
@@ -1351,7 +1380,7 @@ void UpdateImguiProperty(void)
 			//ツリーを閉じる
 			ImGui::TreePop();
 		}
-		
+
 		if (ImGui::TreeNode("Effecttree3", "Color"))
 		{
 			//カラーパレット
@@ -1400,7 +1429,7 @@ void UpdateImguiProperty(void)
 			{
 				static int s_nSetTime = 0;
 				static int nTypeNum = 0;
-				const char *Items[] = { "Red", "Green", "Blue"};
+				const char *Items[] = { "Red", "Green", "Blue" };
 				ImGui::Combo("ColorType", &nTypeNum, Items, IM_ARRAYSIZE(Items));
 
 				//赤
@@ -1490,7 +1519,7 @@ void UpdateImguiProperty(void)
 				break;
 
 			case 2:
-				
+
 				break;
 			case 0:
 				break;
@@ -1514,28 +1543,6 @@ void UpdateImguiProperty(void)
 			ImGui::RadioButton("BlendNone", &nBlendingType, 2);
 
 			imguiParticle.particle.alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
-
-			//ツリーを閉じる
-			ImGui::TreePop();
-		}
-
-		// テクスチャ
-		if (ImGui::TreeNode("Effecttree6", "Texture"))
-		{
-			CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
-			CParticle* pParticle = CApplication::GetInstance()->GetParticle();
-			int index = pParticle->GetIdxTex();
-
-			// ラジオボタン
-			ImGui::RadioButton("NONE", &index, CTexture::NONE_TEXTURE);
-
-			for (int i = 0; i < pTexture->GetNumAll(); i++)
-			{
-				// ラジオボタン
-				ImGui::RadioButton(pTexture->GetPath(i).c_str(), &index, i);
-			}
-
-			pParticle->SetIdxTex(index);
 
 			//ツリーを閉じる
 			ImGui::TreePop();

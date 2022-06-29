@@ -39,10 +39,9 @@ public:
 	void Unload(int index);	// 指定の破棄
 	void SetPath(std::string str);	// パスの設定
 	void SavePath();				// パスの保存
-	std::string GetPath(int index);	// パスの取得
+	std::string GetPath(int index, bool path = true);	// パスの取得
 	int GetNumAll();				// 総数の取得
 	LPDIRECT3DTEXTURE9 GetTexture(int index);	// 情報の取得
-	std::string GetPath();
 
 	/* メンバ変数 */
 private:
