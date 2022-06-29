@@ -25,7 +25,7 @@
 #include "imgui_property.h"
 
 #include <windows.h>
-
+// ライブラリの読込み
 #include <stdio.h>
 
 
@@ -59,9 +59,9 @@ CRenderer* renderer;
 
 HWND hWnd;	//Windowハンドル識別子
 static TCHAR		szPathdefault[MAX_PATH];
-
 //===================
 //メイン関数
+//===================
 //===================
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine, int nCmdShow)
 {
@@ -230,6 +230,7 @@ void funcFileSave(HWND hWnd)
 
 		GetCurrentDirectory(MAX_PATH, szPath);
 	}
+
 	if (ofn.lStructSize == 0) {
 		ofn.lStructSize = sizeof(OPENFILENAME);
 		ofn.hwndOwner = hWnd;
@@ -241,6 +242,7 @@ void funcFileSave(HWND hWnd)
 		ofn.lpstrTitle = TEXT("画像ファイルを保存します。");
 		ofn.Flags = OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 	}
+
 	if (GetSaveFileName(&ofn)) {
 		MessageBox(hWnd, szFile, TEXT("ファイル名を付けて保存"), MB_OK);
 	}
@@ -248,7 +250,7 @@ void funcFileSave(HWND hWnd)
 	if (szFile[0] != '\0')
 	{
 
-		//fileの名前を入れます
+		
 		SetFileName(szFile);
 	
 		CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
@@ -390,7 +392,6 @@ int GetFPS()
 {
 	return s_nCountFPS;
 }
-
 
 float GetAngle(void)
 {

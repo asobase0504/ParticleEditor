@@ -56,6 +56,7 @@ static const char*	WINDOW_NAME = "test";	// ウインドウの名前 (キャプションに表示
 //==================================================
 static char FileString[MAX_PATH * 256];	// ファイル名
 static bool	s_window = false;	// ウインドウを使用するかどうか
+static CParticle* dataParticle;
 static FileParticleData imguiParticle;	// ImGuiに保存されてるパーティクル情報
 static bool s_bEffectEnable = false;
 static float s_fScale = 50.0f;

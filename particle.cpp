@@ -64,8 +64,7 @@ void CParticle::Update()
 	/* ↓使用しているなら↓ */
 
 	// エフェクトの移動
-	D3DXVECTOR3 myPos = GetPos();
-	myPos += m_data.move;
+	pos += m_data.move;
 
 	// 推移
 	m_data.nLife--;							// 体力の減少
@@ -84,7 +83,7 @@ void CParticle::Update()
 	}
 	myColor.a -= 1.0f / m_data.nMaxLife;
 
-	SetPos(myPos);
+	SetPos(pos);
 	SetColor(myColor);
 	SetSize(D3DXVECTOR2(m_data.fWidth, m_data.fHeight));
 
