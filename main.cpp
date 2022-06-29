@@ -15,6 +15,7 @@
 #include "file.h"
 #include "renderer.h"
 #include "application.h"
+#include "texture.h"
 // imgui系統
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
@@ -235,12 +236,15 @@ static void funcFileSave(HWND hWnd, bool nMap)
 	
 		SetFileName(szFile);
 		
-		 CopyFile((LPCTSTR)buffer1, // 既存のファイルの名前
+		CopyFile((LPCTSTR)buffer1, // 既存のファイルの名前
 			szFile, // 新しいファイルの名前
 			false // ファイルが存在する場合の動作
 		);
 
-		 bTexUse = true;
+		CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
+		pTexture->SetPath(szFile);
+
+		bTexUse = true;
 
 	}
 	bPress = true;
@@ -359,6 +363,24 @@ BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
 
 	bTexUse = true;
 
+	if (fname[0] != '\0')
+	{
+		std::string File = fname;
+
+
+		SetFileName(fname);
+		
+		CopyFile((LPCTSTR)fname, // 既存のファイルの名前
+			File.c_str(), // 新しいファイルの名前
+			false // ファイルが存在する場合の動作
+		);
+
+		CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
+		pTexture->SetPath(fname);
+
+		bTexUse = true;
+
+	}
 	return GetOpenFileName(&ofn);
 }
 
