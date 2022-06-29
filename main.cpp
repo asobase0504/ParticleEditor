@@ -210,9 +210,11 @@ static void funcFileSave(HWND hWnd, bool nMap)
 	static TCHAR		szPath[MAX_PATH];
 	static TCHAR		szFile[MAX_PATH];
 
-	if (szPath[0] == TEXT('\0')) {
+	if (szPath[0] == TEXT('\0')) 
+	{
 		GetCurrentDirectory(MAX_PATH, szPath);
 	}
+
 	if (ofn.lStructSize == 0) {
 		ofn.lStructSize = sizeof(OPENFILENAME);
 		ofn.hwndOwner = hWnd;
@@ -224,6 +226,7 @@ static void funcFileSave(HWND hWnd, bool nMap)
 		ofn.lpstrTitle = TEXT("画像ファイルを保存します。");
 		ofn.Flags = OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 	}
+
 	if (GetSaveFileName(&ofn)) {
 		MessageBox(hWnd, szFile, TEXT("ファイル名を付けて保存"), MB_OK);
 	}
@@ -369,7 +372,6 @@ int GetFPS()
 {
 	return s_nCountFPS;
 }
-
 
 float GetAngle(void)
 {

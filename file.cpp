@@ -9,7 +9,7 @@
 #include "particle.h"
 #include "imgui_property.h"
 
-FileParticleData dataAll;
+static FileParticleData dataAll;
 namespace nl = nlohmann;
 
 nl::json j;//リストの生成
