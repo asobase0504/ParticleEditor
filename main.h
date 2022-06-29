@@ -34,16 +34,12 @@
 //--------------------------------------------------
 #define SCREEN_WIDTH	(1280)
 #define SCREEN_HEIGHT	(720)
-//#define FVF_VERTEX_2D			(D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
-//#define FVF_VERTEX_2D_TEX2		(D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1|D3DFVF_TEX2)					// マルチテクスチャ用の頂点フォーマット[2D]
 
 //--------------------------------------------------
 //プロトタイプ宣言
 //--------------------------------------------------
-LPDIRECT3DDEVICE9 GetDevice(void);
 BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir);
 float GetAngle(void);
-char GetFileName(int nNum);
 bool *TexUse(void);
 char *GetBuffer(void);
 HWND GetWnd(void);

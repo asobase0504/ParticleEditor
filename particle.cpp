@@ -213,7 +213,7 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const 
 	SetTexture(m_nIdxTex);
 	SetColor(myColor);
 
-	float ImAngle = GetAngle();
+	static float ImAngle = 20.0f;
 	float fRad = 0.0f;
 	float fGRad = 0.0f;
 

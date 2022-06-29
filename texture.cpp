@@ -66,12 +66,12 @@ void CTexture::Load(int index)
 		return;
 	}
 
-	// デバイスへのポインタの取得
-	LPDIRECT3DDEVICE9 pDevice = CApplication::GetInstance()->GetRenderer()->GetDevice();
-
 	//クエリーの変更
 	CreateDirectory(m_defaulttCurrent, NULL);
 	SetCurrentDirectory(m_defaulttCurrent);
+
+	// デバイスへのポインタの取得
+	LPDIRECT3DDEVICE9 pDevice = CApplication::GetInstance()->GetRenderer()->GetDevice();
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
@@ -117,6 +117,13 @@ void CTexture::SetPath(std::string str)
 	if (pos == -1)
 	{// 相対パス用の文字列がない
 		pos = str.find(ABS_PATH.c_str());
+
+		if (pos == -1)
+		{// 想定の場所にファイルがない
+			assert(false);
+			return;
+		}
+
 		pos += ABS_PATH.length();
 
 		m_fileName[m_numAll] = REL_PATH;
@@ -125,6 +132,8 @@ void CTexture::SetPath(std::string str)
 		{
 			m_fileName[m_numAll] += str[i];
 		}
+
+		CParticle::SetIdxTex(m_numAll);
 
 		m_numAll++;
 		m_fileSave = true;
@@ -145,23 +154,45 @@ void CTexture::SetPath(std::string str)
 //--------------------------------------------------
 void CTexture::SavePath()
 {
-	/*for (int i = 0; i < m_numAll; i++)
+	for (int i = 0; i < m_numAll; i++)
 	{
 		LoadJsonTex(m_fileName[i].c_str());
 	}
 
-	OutputStatusTex();*/
+	OutputStatusTex();
 }
 
 
 //--------------------------------------------------
 // パスの取得
 //--------------------------------------------------
-std::string CTexture::GetPath(int index)
+std::string CTexture::GetPath(int index, bool path)
 {
 	assert(index > NONE_TEXTURE && index < MAX_TEXTURE);
 
-	return m_fileName[index];
+	if (path)
+	{// パスあり
+		return m_fileName[index];
+	}
+
+	std::string str;
+	size_t pos = -1;
+	pos = m_fileName[index].find(REL_PATH.c_str());
+
+	if (pos == -1)
+	{// 想定の場所にファイルがない
+		assert(false);
+		return m_fileName[index];
+	}
+
+	pos += REL_PATH.length();
+
+	for (int i = (int)pos; i < m_fileName[index].length(); i++)
+	{
+		str += m_fileName[index][i];
+	}
+
+	return str;
 }
 
 //--------------------------------------------------

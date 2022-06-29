@@ -9,7 +9,6 @@
 //=================================================
 // include
 //=================================================
-#include <stdio.h>
 #include "main.h"
 #include "input.h"
 #include "file.h"
@@ -24,10 +23,7 @@
 #include "resource1.h"
 #include "imgui_property.h"
 
-#include <windows.h>
-
 #include <stdio.h>
-
 
 // ライブラリの読込み
 #pragma comment(lib,"winmm.lib")	//システム時刻取得に必要
@@ -48,9 +44,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-//ImGui
-static float s_fAngle = 20.0f;
 
 static bool bTexUse = false;
 
@@ -73,18 +66,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 
 	WNDCLASSEX wcex =
 	{
-		sizeof(WNDCLASSEX),											// WNDCLASSEXのメモリサイズ
-		CS_HREDRAW | CS_VREDRAW,									// ウインドウのスタイル
-		WindowProc,													// Windowプロシージャ  
-		0,															// ゼロにする
-		0,															// ゼロにする
-		hInstance,													// インスタンスハンドル
-		LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION)),		// タスクバーのアイコン
-		LoadCursor(NULL, IDC_ARROW),								// マウスカーソル
-		(HBRUSH)(COLOR_WINDOW + 1),									// クライアントの領域背景色
-		MAKEINTRESOURCE(IDR_MENU1) ,								// メニューバー
-		CLASS_NAME,													// Windowクラスの名前
-		LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_APPLICATION))	// ファイルアイコン
+		sizeof(WNDCLASSEX),							// WNDCLASSEXのメモリサイズ
+		CS_HREDRAW | CS_VREDRAW,					// ウインドウのスタイル
+		WindowProc,									// Windowプロシージャ  
+		0,											// ゼロにする
+		0,											// ゼロにする
+		hInstance,									// インスタンスハンドル
+		LoadIcon(hInstance, IDI_APPLICATION),		// タスクバーのアイコン
+		LoadCursor(NULL, IDC_ARROW),				// マウスカーソル
+		(HBRUSH)(COLOR_WINDOW + 1),					// クライアントの領域背景色
+		MAKEINTRESOURCE(IDR_MENU1) ,				// メニューバー
+		CLASS_NAME,									// Windowクラスの名前
+		LoadIcon(wcex.hInstance, IDI_APPLICATION)	// ファイルアイコン
 	};
 
 	//ウインドウクラスの登録
@@ -345,15 +338,14 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// //ポップアップメニューを表示
 		// TrackPopupMenu(GetSubMenu(GetMenu(hWnd), 0), TPM_LEFTALIGN, pt.x, pt.y, 0, hWnd, NULL);
 		// break;
-	case WM_COMMAND:
+	/*case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
-
 		default:
 			bPress = false;
 			break;
 		}
-		break;
+		break;*/
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -389,12 +381,6 @@ BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir)
 int GetFPS()
 {
 	return s_nCountFPS;
-}
-
-
-float GetAngle(void)
-{
-	return s_fAngle;
 }
 
 //---------------------------------------
