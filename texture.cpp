@@ -69,47 +69,13 @@ void CTexture::Load(int index)
 	// デバイスへのポインタの取得
 	LPDIRECT3DDEVICE9 pDevice = CApplication::GetInstance()->GetRenderer()->GetDevice();
 
-	std::string str;
-
-	if (m_fileSave)
-	{// ファイルのセーブをした
-		size_t pos = -1;
-		pos = m_fileName[index].find(REL_PATH.c_str());
-
-		if (pos == -1)
-		{// 想定の場所に画像がない
-			/*pos = m_fileName[index].rfind("\\", m_fileName[index].length());
-			pos += 1;
-
-			for (int i = (int)pos; i < m_fileName[index].length(); i++)
-			{
-				str += m_fileName[index][i];
-			}*/
-
-			assert(false);
-
-			return;
-		}
-
-		pos += REL_PATH.length();
-
-		for (int i = (int)pos; i < m_fileName[index].length(); i++)
-		{
-			str += m_fileName[index][i];
-		}
-	}
-	else
-	{// ファイルのセーブをしてない
-		str = m_fileName[index];
-	}
-
 	//クエリーの変更
 	CreateDirectory(m_defaulttCurrent, NULL);
 	SetCurrentDirectory(m_defaulttCurrent);
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		str.c_str(),
+		m_fileName[index].c_str(),
 		&m_pTexture[index]);
 }
 
@@ -151,16 +117,6 @@ void CTexture::SetPath(std::string str)
 	if (pos == -1)
 	{// 相対パス用の文字列がない
 		pos = str.find(ABS_PATH.c_str());
-
-		if (pos == -1)
-		{// 想定の場所に画像がない
-			m_fileName[m_numAll] = str;
-			m_numAll++;
-			m_fileSave = true;
-			//assert(false);
-			return;
-		}
-
 		pos += ABS_PATH.length();
 
 		m_fileName[m_numAll] = REL_PATH;
