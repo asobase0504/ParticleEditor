@@ -30,6 +30,9 @@ CTexture::CTexture() :
 {
 	memset(m_fileName, 0, sizeof(m_fileName));
 	memset(m_pTexture, 0, sizeof(m_pTexture));
+	
+	GetCurrentDirectory(sizeof(m_defaulttCurrent),m_defaulttCurrent);
+	MessageBox(NULL, m_defaulttCurrent, NULL, MB_OK);
 }
 
 //--------------------------------------------------
@@ -99,7 +102,15 @@ void CTexture::Load(int index)
 	{// ファイルのセーブをしてない
 		str = m_fileName[index];
 	}
+
 	
+
+	CreateDirectory(m_defaulttCurrent, NULL);
+
+
+	SetCurrentDirectory(m_defaulttCurrent);
+
+
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		str.c_str(),

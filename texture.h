@@ -48,6 +48,7 @@ public:
 private:
 	LPDIRECT3DTEXTURE9 m_pTexture[MAX_TEXTURE];	// テクスチャの情報
 	std::string m_fileName[MAX_TEXTURE];		// ファイルパス
+	char m_defaulttCurrent[256];
 	int m_numAll;								// 総数
 	bool m_fileSave;							// ファイルのセーブをしたかどうか
 };

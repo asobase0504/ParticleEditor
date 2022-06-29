@@ -24,6 +24,13 @@
 #include "resource1.h"
 #include "imgui_property.h"
 
+#include <windows.h>
+
+#include <stdio.h>
+
+
+
+
 // ライブラリの読込み
 #pragma comment(lib,"winmm.lib")	//システム時刻取得に必要
 
@@ -207,6 +214,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 //========================
 static void funcFileSave(HWND hWnd, bool nMap)
 {
+
+
 	static OPENFILENAME	ofn;
 	static TCHAR		szPath[MAX_PATH];
 	static TCHAR		szFile[MAX_PATH];
@@ -236,16 +245,16 @@ static void funcFileSave(HWND hWnd, bool nMap)
 	
 		SetFileName(szFile);
 		
+	
+		CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
+		pTexture->SetPath(szFile);
+	
 		CopyFile((LPCTSTR)buffer1, // 既存のファイルの名前
 			szFile, // 新しいファイルの名前
 			false // ファイルが存在する場合の動作
 		);
 
-		CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
-		pTexture->SetPath(szFile);
-
 		bTexUse = true;
-
 	}
 	bPress = true;
 }
