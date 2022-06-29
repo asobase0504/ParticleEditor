@@ -1243,6 +1243,15 @@ void UpdateImguiProperty(void)
 		if (ImGui::Button("LOAD TEXTURE"))
 		{
 			GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
+
+			std::string File = FileString;
+			char * Data = GetBuffer();
+			HWND hWnd = GetWnd();
+			strcpy(Data, File.c_str());
+
+			SetFileName(Data);
+
+			funcFileSave(hWnd);
 		}
 
 		if (ImGui::Checkbox("EffectEnable", &useEffect))
