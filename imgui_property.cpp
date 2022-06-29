@@ -21,7 +21,6 @@
 #include <implot.h>
 #include <imgui_widget_flamegraph.h>
 
-
 //------------------------------
 //CPU
 //------------------------------

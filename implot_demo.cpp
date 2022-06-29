@@ -408,10 +408,10 @@ void ShowDemo_Querying()
         }
         init = false;
     }
-
+	
     if (ImGui::Button("Clear Queries"))
         rects.shrink(0);
-
+	
 	static ScrollingBuffer sdata1, sdata2;
 	static RollingBuffer   rdata1, rdata2;
 	static ImPlotDragToolFlags flags = ImPlotDragToolFlags_None;
