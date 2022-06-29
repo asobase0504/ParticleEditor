@@ -56,7 +56,6 @@
 //==================================================
 #define IMGUI_DEFINE_MATH_OPERATORS
 
-
 //==================================================
 // 定義
 //==================================================
@@ -857,10 +856,14 @@ void InitImguiProperty(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 	// スクロールの色設定
 	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
 
+	// ヘッダーの色設定
+	ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.0f, 1.0f, 1.0f, 0.309f));
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.0f, 1.0f, 1.0f, 0.75f));
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(1.0f, 1.0f, 1.0f, 0.85f));
+
 	// プラットフォームの設定/Renderer backends
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX9_Init(pDevice);
-
 
 	//GPU
 	nvmlInit();//初期化
@@ -1242,72 +1245,17 @@ void UpdateImguiProperty(void)
 	ImGui::Text("FPS  : %.2f", ImGui::GetIO().Framerate);
 	ImGui::Separator();
 
-
 	//エフェクト関係
-	if (ImGui::TreeNode("Effecttree1", "EffectSetting"))
+	if (ImGui::CollapsingHeader("EffectSetting"))
 	{
 		imguiParticle.color.a = 1.0f;
 		imguiParticle.particle.color.destCol.a = 1.0f;
 
 		//imguiParticle.fScale = 50.0f;
 
-		//ここTEXよみこみ
-		if (ImGui::Button("LOAD TEXTURE"))
-		{
-			GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
-
-			std::string File = FileString;
-			char * Data = GetBuffer();
-			HWND hWnd = GetWnd();
-			strcpy(Data, File.c_str());
-
-			SetFileName(Data);
-
-			funcFileSave(hWnd);
-		}
-
-		{
-			// テクスチャ
-			CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
-			CParticle* pParticle = CApplication::GetInstance()->GetParticle();
-			int index = pParticle->GetIdxTex();
-
-			if (ImGui::BeginCombo("combo 1", pTexture->GetPath(index, false).c_str(), 0))
-			{// コンボボタン
-				for (int i = 0; i < pTexture->GetNumAll(); i++)
-				{
-					const bool is_selected = (index == i);
-
-					if (ImGui::Selectable(pTexture->GetPath(i, false).c_str(), is_selected))
-					{// 選ばれた選択肢に変更
-						index = i;
-					}
-
-					if (is_selected)
-					{// 選択肢の項目を開く
-						ImGui::SetItemDefaultFocus();
-					}
-				}
-				ImGui::EndCombo();
-			}
-
-			pParticle->SetIdxTex(index);
-		}
-
 		if (ImGui::Checkbox("EffectEnable", &useEffect))
 		{
-			if (!s_bEffectEnable)
-			{
-				s_bEffectEnable = true;
-			}
-			else if (s_bEffectEnable)
-			{
-				s_bEffectEnable = false;
-				imguiParticle.particle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-				imguiParticle.particle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-				imguiParticle.particle.nLife = 60;
-				imguiParticle.particle.fRadius = 0.5f;
-			}
+			s_bEffectEnable = !s_bEffectEnable;
 		}
 
 		if (ImGui::Button("default"))
@@ -1333,26 +1281,76 @@ void UpdateImguiProperty(void)
 			imguiParticle.particle.alphaBlend = (CParticle::ALPHABLENDTYPE)0;
 		}
 
-		//EffectData *Effect = GetStatus();
+		ImGui::Separator();
+		ImGui::Text("/* Texture */");
+		//ここTEXよみこみ
+		if (ImGui::Button("LOAD TEXTURE"))
+		{
+			GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
+
+			std::string File = FileString;
+			char * Data = GetBuffer();
+			HWND hWnd = GetWnd();
+			strcpy(Data, File.c_str());
+
+			SetFileName(Data);
+
+			funcFileSave(hWnd);
+		}
+
+		{
+			// テクスチャ
+			CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
+			CParticle* pParticle = CApplication::GetInstance()->GetParticle();
+			int index = pParticle->GetIdxTex();
+
+			if (ImGui::BeginCombo("Texture", pTexture->GetPath(index, false).c_str(), 0))
+			{// コンボボタン
+				for (int i = 0; i < pTexture->GetNumAll(); i++)
+				{
+					const bool is_selected = (index == i);
+
+					if (ImGui::Selectable(pTexture->GetPath(i, false).c_str(), is_selected))
+					{// 選ばれた選択肢に変更
+						index = i;
+					}
+
+					if (is_selected)
+					{// 選択肢の項目を開く
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			pParticle->SetIdxTex(index);
+		}
+
+		ImGui::Separator();
+		ImGui::Text("/* Pos */");
 		ImGui::SliderFloat("PosX", &imguiParticle.pos.x, 0, (float)SCREEN_WIDTH);
 		ImGui::SliderFloat("PosY", &imguiParticle.pos.y, 0, (float)SCREEN_HEIGHT);
+		ImGui::Separator();
 
+		ImGui::Text("/* Pop */");
 		// 生成範囲の設定
 		ImGui::SliderFloat("MaxPopPosX", &imguiParticle.particle.maxPopPos.x, 0, (float)SCREEN_WIDTH);
 		ImGui::SliderFloat("MinPopPosX", &imguiParticle.particle.minPopPos.x, 0, (float)SCREEN_WIDTH);
 		ImGui::SliderFloat("MaxPopPosY", &imguiParticle.particle.maxPopPos.y, 0, (float)SCREEN_HEIGHT);
 		ImGui::SliderFloat("MinPopPosY", &imguiParticle.particle.minPopPos.y, 0, (float)SCREEN_HEIGHT);
+		ImGui::Separator();
 
-		ImGui::InputFloat3("SettingEffectMove", imguiParticle.particle.move, "%f");
+		ImGui::Text("/* Move */");
+		ImGui::InputFloat2("SettingEffectMove", imguiParticle.particle.move, "%f");
 		ImGui::SliderFloat("MoveX", &imguiParticle.particle.move.x, -100.0f, 100.0f);
 		ImGui::SliderFloat("MoveY", &imguiParticle.particle.move.y, -100.0f, 100.0f);
 
 		//詳細
-		if (ImGui::TreeNode("Effecttree2", "Details"))
+		if (ImGui::CollapsingHeader("Details"))
 		{
 			//rot計算用
 			static float s_fDeg = 0.0f;
-
+			ImGui::Text("/* Rot */");
 			ImGui::InputFloat3("SettingEffectRot", imguiParticle.particle.rot, "%f");
 			ImGui::SliderFloat("Rot", &s_fDeg, -D3DX_PI, D3DX_PI);
 
@@ -1375,10 +1373,20 @@ void UpdateImguiProperty(void)
 				imguiParticle.particle.rot.z += D3DX_PI * 2;
 			}
 
-			ImGui::SliderFloat("TextureScale", &imguiParticle.particle.fScale, 0.0f, 100.0f);
+			ImGui::Separator();
+			ImGui::Text("/* Scale */");
+			ImGui::SliderFloat("Scale", &imguiParticle.particle.fScale, 0.0f, 100.0f);
+			ImGui::Separator();
+			ImGui::Text("/* Life */");
 			ImGui::SliderInt("Life", &imguiParticle.particle.nLife, 0, 500);
+			ImGui::Separator();
+			ImGui::Text("/* Radius */");
 			ImGui::SliderFloat("Radius", &imguiParticle.particle.fRadius, 0.0f, 100.0f);
+			ImGui::Separator();
+			ImGui::Text("/* Angle */");
 			ImGui::SliderAngle("Angle", &imguiParticle.particle.fAngle, 0.0f, 2000.0f);
+			ImGui::Separator();
+			ImGui::Text("/* Attenuation */");
 			ImGui::SliderFloat("Attenuation", &imguiParticle.particle.fAttenuation, 0.0f, 1.0f);
 
 			//挙動おかしくなっちゃった時用
@@ -1387,27 +1395,24 @@ void UpdateImguiProperty(void)
 				//DeleteParticleAll();
 				//RemoveAngle();
 			}
-
-			//ツリーを閉じる
-			ImGui::TreePop();
 		}
 
-		if (ImGui::TreeNode("Effecttree3", "Color"))
+		if (ImGui::CollapsingHeader("Color"))
 		{
 			//カラーパレット
-			ImGui::ColorEdit4("clear color", (float*)&imguiParticle.particle.color);
+			ImGui::ColorEdit4("clear", (float*)&imguiParticle.particle.color);
 
 			// ランダムカラー
-			ImGui::Checkbox("ColorRandom", &imguiParticle.particle.color.bColRandom);
+			ImGui::Checkbox("Random", &imguiParticle.particle.color.bColRandom);
 
 			if (imguiParticle.particle.color.bColRandom)
 			{
-				ImGui::ColorEdit4("clear RandamMax", (float*)&imguiParticle.particle.color.colRandamMax);
-				ImGui::ColorEdit4("clear RandamMin", (float*)&imguiParticle.particle.color.colRandamMin);
+				ImGui::ColorEdit4("RandamMax", (float*)&imguiParticle.particle.color.colRandamMax);
+				ImGui::ColorEdit4("RandamMin", (float*)&imguiParticle.particle.color.colRandamMin);
 			}
 
 			// カラートラディション
-			ImGui::Checkbox("ColorTransition", &imguiParticle.particle.color.bColTransition);
+			ImGui::Checkbox("Transition", &imguiParticle.particle.color.bColTransition);
 
 			if (imguiParticle.particle.color.bColTransition)
 			{// 目的の色
@@ -1461,13 +1466,10 @@ void UpdateImguiProperty(void)
 				ImGui::PopStyleColor(3);
 				ImGui::PopID();
 			}
-
-			//ツリーを閉じる
-			ImGui::TreePop();
 		}
 
 		//グラデーション
-		if (ImGui::TreeNode("Effecttree4", "Gradation"))
+		if (ImGui::CollapsingHeader("Gradation"))
 		{
 			static float s_fCustR[10];
 			static float s_fCustG[10];
@@ -1580,12 +1582,10 @@ void UpdateImguiProperty(void)
 			}
 
 			ImGui::SliderFloat("Alpha", &imguiParticle.particle.color.colTransition.a, -0.5f, 0.0f);
-
-			ImGui::TreePop();
 		}
 
 		// αブレンディングの種類
-		if (ImGui::TreeNode("Effecttree5", "AlphaBlending"))
+		if (ImGui::CollapsingHeader("AlphaBlending"))
 		{
 			// 変数宣言
 			int	nBlendingType = (int)imguiParticle.particle.alphaBlend;		// 種別変更用の変数
@@ -1595,13 +1595,7 @@ void UpdateImguiProperty(void)
 			ImGui::RadioButton("BlendNone", &nBlendingType, 2);
 
 			imguiParticle.particle.alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
-
-			//ツリーを閉じる
-			ImGui::TreePop();
 		}
-
-		//ツリーを閉じる
-		ImGui::TreePop();
 	}
 
 
