@@ -11,7 +11,7 @@
 #include "texture.h"
 #include "application.h"
 
-FileParticleData dataAll;
+static FileParticleData dataAll;
 namespace nl = nlohmann;
 
 nl::json j;//リストの生成
