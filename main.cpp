@@ -29,8 +29,6 @@
 #include <stdio.h>
 
 
-
-
 // ライブラリの読込み
 #pragma comment(lib,"winmm.lib")	//システム時刻取得に必要
 
@@ -217,10 +215,18 @@ static void funcFileSave(HWND hWnd, bool nMap)
 
 
 	static OPENFILENAME	ofn;
-	static TCHAR		szPath[MAX_PATH];
+	static TCHAR		szPathdefault[MAX_PATH];
 	static TCHAR		szFile[MAX_PATH];
-
+	static TCHAR	    szPath[MAX_PATH];
 	if (szPath[0] == TEXT('\0')) {
+		GetCurrentDirectory(MAX_PATH, szPathdefault);
+
+		//SetCurrentDirectory(szPathdefault+"data\TEXTURE");
+
+		CreateDirectory("data\\TEXTURE", NULL);
+		SetCurrentDirectory("data\\TEXTURE");
+
+
 		GetCurrentDirectory(MAX_PATH, szPath);
 	}
 	if (ofn.lStructSize == 0) {
@@ -251,9 +257,10 @@ static void funcFileSave(HWND hWnd, bool nMap)
 	
 		CopyFile((LPCTSTR)buffer1, // 既存のファイルの名前
 			szFile, // 新しいファイルの名前
-			false // ファイルが存在する場合の動作
+			false// ファイルが存在する場合の動作
 		);
-
+		SetCurrentDirectory(szPathdefault);
+		GetCurrentDirectory(MAX_PATH, szPath);
 		bTexUse = true;
 	}
 	bPress = true;
