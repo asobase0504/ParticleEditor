@@ -15,6 +15,7 @@
 #include "file.h"
 #include "renderer.h"
 #include "application.h"
+#include "texture.h"
 // imgui系統
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
@@ -22,6 +23,11 @@
 #include <imgui_internal.h>
 #include "resource1.h"
 #include "imgui_property.h"
+
+#include <windows.h>
+// ライブラリの読込み
+#include <stdio.h>
+
 
 // ライブラリの読込み
 #pragma comment(lib,"winmm.lib")	//システム時刻取得に必要
@@ -45,20 +51,25 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 //ImGui
 static float s_fAngle = 20.0f;
-static char FileString[MAX_PATH * 256];
+
 static bool bTexUse = false;
-inline unsigned long FloattoDword(float fVal) { return *((unsigned long*)&fVal); }
+
 char buffer1[MAX_PATH];
 CRenderer* renderer;
 
+HWND hWnd;	//Windowハンドル識別子
+static TCHAR		szPathdefault[MAX_PATH];
 //===================
 //メイン関数
+//===================
 //===================
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine, int nCmdShow)
 {
 	HWND hWnd;	//Windowハンドル識別子
 	MSG msg;	//メッセージを格納する変数
 	RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
+
+	GetCurrentDirectory(MAX_PATH, szPathdefault);
 
 	WNDCLASSEX wcex =
 	{
@@ -204,14 +215,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 //========================
 //ウィンドウだしてやるやつ
 //========================
-static void funcFileSave(HWND hWnd, bool nMap)
+void funcFileSave(HWND hWnd)
 {
 	static OPENFILENAME	ofn;
-	static TCHAR		szPath[MAX_PATH];
-	static TCHAR		szFile[MAX_PATH];
 
-	if (szPath[0] == TEXT('\0')) 
-	{
+	static TCHAR		szFile[MAX_PATH];
+	static TCHAR	    szPath[MAX_PATH];
+	if (szPath[0] == TEXT('\0')) {
+
+		//Currentをテクスチャにのとこに変更します
+		SetCurrentDirectory(szPathdefault);
+		CreateDirectory("data\\TEXTURE", NULL);
+		SetCurrentDirectory("data\\TEXTURE");
+
 		GetCurrentDirectory(MAX_PATH, szPath);
 	}
 
@@ -233,18 +249,22 @@ static void funcFileSave(HWND hWnd, bool nMap)
 
 	if (szFile[0] != '\0')
 	{
-		std::string File = szFile;
+
 		
-	
 		SetFileName(szFile);
-		
-		 CopyFile((LPCTSTR)buffer1, // 既存のファイルの名前
+	
+		CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
+		pTexture->SetPath(szFile);
+	
+		CopyFile((LPCTSTR)buffer1, // 既存のファイルの名前
 			szFile, // 新しいファイルの名前
-			false // ファイルが存在する場合の動作
+			false// ファイルが存在する場合の動作
 		);
 
-		 bTexUse = true;
-
+		//Currentを戻す
+		SetCurrentDirectory(szPathdefault);
+		
+		bTexUse = true;
 	}
 	bPress = true;
 }
@@ -283,7 +303,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			//ドロップされたファイル名を取得する
 			DragQueryFile((HDROP)wParam, i, buffer1, MAX_PATH);
-			funcFileSave(hWnd, false);
+			funcFileSave(hWnd);
 		}
 
 	
@@ -380,6 +400,24 @@ float GetAngle(void)
 
 //---------------------------------------
 // ファイルねーむ
-bool *TexUse(void){
+//--------------------------------------
+bool *TexUse(void)
+{
 	return &bTexUse;
+}
+
+//---------------------------------------
+// BufferTXT取得
+//--------------------------------------
+char *GetBuffer(void)
+{
+	return &buffer1[0];
+}
+
+//---------------------------------------
+// Wnd取得
+//--------------------------------------
+HWND GetWnd(void)
+{
+	return hWnd;
 }

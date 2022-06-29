@@ -11,26 +11,28 @@
 #include "application.h"
 #include "renderer.h"
 #include "texture.h"
+#include "file.h"
 
 #include <assert.h>
 
-//==================================================
+//--------------------------------------------------
 // 定義
-//==================================================
-const char* CTexture::s_FileName[] =
-{// テクスチャのパス
-	"data/TEXTURE/bright.jpg",	// 仮画像1
-	"data/TEXTURE/test.jpg",	// 仮画像2
-};
-
-static_assert(sizeof(CTexture::s_FileName) / sizeof(CTexture::s_FileName[0]) == CTexture::TEXTURE_MAX, "aho");
+//--------------------------------------------------
+const std::string CTexture::REL_PATH = "data/TEXTURE/";
+const std::string CTexture::ABS_PATH = "data\\TEXTURE\\";
 
 //--------------------------------------------------
 // デフォルトコンストラクタ
 //--------------------------------------------------
-CTexture::CTexture()
+CTexture::CTexture() :
+	m_numAll(0),
+	m_fileSave(false)
 {
-	memset(s_pTexture, 0, sizeof(s_pTexture));
+	memset(m_fileName, 0, sizeof(m_fileName));
+	memset(m_pTexture, 0, sizeof(m_pTexture));
+	
+	GetCurrentDirectory(sizeof(m_defaulttCurrent),m_defaulttCurrent);
+	//MessageBox(NULL, m_defaulttCurrent, NULL, MB_OK);
 }
 
 //--------------------------------------------------
@@ -45,31 +47,21 @@ CTexture::~CTexture()
 //--------------------------------------------------
 void CTexture::LoadAll()
 {
-	// デバイスへのポインタの取得
-	LPDIRECT3DDEVICE9 pDevice = CApplication::GetInstance()->GetRenderer()->GetDevice();
-	
-	for (int i = 0; i < TEXTURE_MAX; ++i)
+	for (int i = 0; i < MAX_TEXTURE; ++i)
 	{
-		if (s_pTexture[i] != nullptr)
-		{// テクスチャの読み込みがされている
-			continue;
-		}
-
-		// テクスチャの読み込み
-		D3DXCreateTextureFromFile(pDevice,
-			s_FileName[i],
-			&s_pTexture[i]);
+		// 読み込み
+		Load(i);
 	}
 }
 
 //--------------------------------------------------
 // 読み込み
 //--------------------------------------------------
-void CTexture::Load(TEXTURE inTexture)
+void CTexture::Load(int index)
 {
-	assert(inTexture >= 0 && inTexture < TEXTURE_MAX);
+	assert(index > NONE_TEXTURE && index < MAX_TEXTURE);
 
-	if (s_pTexture[inTexture] != nullptr)
+	if (m_pTexture[index] != nullptr)
 	{// テクスチャの読み込みがされている
 		return;
 	}
@@ -77,77 +69,121 @@ void CTexture::Load(TEXTURE inTexture)
 	// デバイスへのポインタの取得
 	LPDIRECT3DDEVICE9 pDevice = CApplication::GetInstance()->GetRenderer()->GetDevice();
 
+	//クエリーの変更
+	CreateDirectory(m_defaulttCurrent, NULL);
+	SetCurrentDirectory(m_defaulttCurrent);
+
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		s_FileName[inTexture],
-		&s_pTexture[inTexture]);
+		m_fileName[index].c_str(),
+		&m_pTexture[index]);
 }
 
 //--------------------------------------------------
 // 全ての解放
 //--------------------------------------------------
-void CTexture::UnloadAll(void)
+void CTexture::UnloadAll()
 {
-	for (int i = 0; i < TEXTURE_MAX; ++i)
+	for (int i = 0; i < MAX_TEXTURE; ++i)
 	{
-		if (s_pTexture[i] != nullptr)
-		{// テクスチャの解放
-			s_pTexture[i]->Release();
-			s_pTexture[i] = nullptr;
-		}
+		// 解放
+		Unload(i);
 	}
 }
 
 //--------------------------------------------------
 // 解放
 //--------------------------------------------------
-void CTexture::Unload(TEXTURE inTexture)
+void CTexture::Unload(int index)
 {
-	assert(inTexture >= 0 && inTexture < TEXTURE_MAX);
+	assert(index > NONE_TEXTURE && index < MAX_TEXTURE);
 
-	if (s_pTexture[inTexture] != nullptr)
+	if (m_pTexture[index] != nullptr)
 	{// テクスチャの解放
-		s_pTexture[inTexture]->Release();
-		s_pTexture[inTexture] = nullptr;
+		m_pTexture[index]->Release();
+		m_pTexture[index] = nullptr;
 	}
 }
 
 //--------------------------------------------------
-// 取得
-// 引数  : char* inFileName / 文字列 ファイル名
-// 返値  : TEXTURE / テクスチャの種類
+// テクスチャの設定
 //--------------------------------------------------
-CTexture::TEXTURE CTexture::GetFileName(char* inFileName)
+void CTexture::SetPath(std::string str)
 {
-	for (int i = 0; i < TEXTURE_MAX; i++)
-	{
-		if (strcmp(inFileName, s_FileName[i]) == 0)
-		{// 文字列が同じ
-			// 読み込み
-			Load((TEXTURE)i);
+	size_t pos = -1;
 
-			return (TEXTURE)i;
+	pos = str.find(REL_PATH.c_str());
+
+	if (pos == -1)
+	{// 相対パス用の文字列がない
+		pos = str.find(ABS_PATH.c_str());
+		pos += ABS_PATH.length();
+
+		m_fileName[m_numAll] = REL_PATH;
+
+		for (int i = (int)pos; i < str.length(); i++)
+		{
+			m_fileName[m_numAll] += str[i];
 		}
+
+		m_numAll++;
+		m_fileSave = true;
+
+		return;
+	}
+	
+	for (int i = (int)pos; i < str.length(); i++)
+	{
+		m_fileName[m_numAll] += str[i];
 	}
 
-	assert(false);
-	return TEXTURE_NONE;
+	m_numAll++;
+}
+
+//--------------------------------------------------
+// 保存
+//--------------------------------------------------
+void CTexture::SavePath()
+{
+	/*for (int i = 0; i < m_numAll; i++)
+	{
+		LoadJsonTex(m_fileName[i].c_str());
+	}
+
+	OutputStatusTex();*/
+}
+
+
+//--------------------------------------------------
+// パスの取得
+//--------------------------------------------------
+std::string CTexture::GetPath(int index)
+{
+	assert(index > NONE_TEXTURE && index < MAX_TEXTURE);
+
+	return m_fileName[index];
+}
+
+//--------------------------------------------------
+// 総数の取得
+//--------------------------------------------------
+int CTexture::GetNumAll()
+{
+	return m_numAll;
 }
 
 //--------------------------------------------------
 // 取得
 //--------------------------------------------------
-LPDIRECT3DTEXTURE9 CTexture::GetTexture(TEXTURE inTexture)
+LPDIRECT3DTEXTURE9 CTexture::GetTexture(int index)
 {
-	if (inTexture == TEXTURE_NONE)
+	if (index == NONE_TEXTURE)
 	{// テクスチャを使用しない
 		return nullptr;
 	}
 
-	assert(inTexture >= 0 && inTexture < TEXTURE_MAX);
-
 	// 読み込み
-	Load(inTexture);
+	Load(index);
 
-	return s_pTexture[inTexture];
+	return m_pTexture[index];
 }

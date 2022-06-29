@@ -45,5 +45,7 @@ BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir);
 float GetAngle(void);
 char GetFileName(int nNum);
 bool *TexUse(void);
-
+char *GetBuffer(void);
+HWND GetWnd(void);
+void funcFileSave(HWND hWnd);
 #endif

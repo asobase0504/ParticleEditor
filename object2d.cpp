@@ -15,7 +15,7 @@
 //=============================================================================
 CObject2D::CObject2D() :
 	m_pVtxBuff(nullptr),
-	m_texture(CTexture::TEXTURE::TEXTURE_NONE),
+	m_nTexture(-1),
 	m_rotY(0.0f),
 	m_fLength(0.0f),
 	fAngle(0.0f),
@@ -130,7 +130,7 @@ void CObject2D::Draw()
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	LPDIRECT3DTEXTURE9 texture= CApplication::GetInstance()->GetTextureClass()->GetTexture(m_texture);
+	LPDIRECT3DTEXTURE9 texture = CApplication::GetInstance()->GetTextureClass()->GetTexture(m_nTexture);
 
 	// テクスチャの設定
 	pDevice->SetTexture(0, texture);

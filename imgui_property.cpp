@@ -13,11 +13,13 @@
 #include "file.h"
 #include "letter.h"
 #include "utility.h"
+#include "application.h"
+#include "texture.h"
+#include "particle.h"
 #include <imgui_internal.h>
 #include <assert.h>
 #include <implot.h>
 #include <imgui_widget_flamegraph.h>
-
 
 //------------------------------
 //CPU
@@ -1082,7 +1084,7 @@ void UpdateImguiProperty(void)
 
 	// ウインドウの起動時の場所
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(350, 400), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_Once);
 
 	// ウインドウの命名
 	ImGui::Begin(WINDOW_NAME, nullptr, ImGuiWindowFlags_MenuBar);
@@ -1241,6 +1243,15 @@ void UpdateImguiProperty(void)
 		if (ImGui::Button("LOAD TEXTURE"))
 		{
 			GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
+
+			std::string File = FileString;
+			char * Data = GetBuffer();
+			HWND hWnd = GetWnd();
+			strcpy(Data, File.c_str());
+
+			SetFileName(Data);
+
+			funcFileSave(hWnd);
 		}
 
 		if (ImGui::Checkbox("EffectEnable", &useEffect))
@@ -1503,6 +1514,28 @@ void UpdateImguiProperty(void)
 			ImGui::RadioButton("BlendNone", &nBlendingType, 2);
 
 			imguiParticle.particle.alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
+
+			//ツリーを閉じる
+			ImGui::TreePop();
+		}
+
+		// テクスチャ
+		if (ImGui::TreeNode("Effecttree6", "Texture"))
+		{
+			CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
+			CParticle* pParticle = CApplication::GetInstance()->GetParticle();
+			int index = pParticle->GetIdxTex();
+
+			// ラジオボタン
+			ImGui::RadioButton("NONE", &index, CTexture::NONE_TEXTURE);
+
+			for (int i = 0; i < pTexture->GetNumAll(); i++)
+			{
+				// ラジオボタン
+				ImGui::RadioButton(pTexture->GetPath(i).c_str(), &index, i);
+			}
+
+			pParticle->SetIdxTex(index);
 
 			//ツリーを閉じる
 			ImGui::TreePop();
