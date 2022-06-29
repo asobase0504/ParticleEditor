@@ -24,6 +24,8 @@ public:
 
 private:
 	static const int MAX_TEXTURE = 256;	// テクスチャの最大数
+	static const std::string REL_PATH;	// 相対パス
+	static const std::string ABS_PATH;	// 絶対パス
 
 	/* メンバ関数 */
 public:
@@ -40,12 +42,15 @@ public:
 	std::string GetPath(int index);	// パスの取得
 	int GetNumAll();				// 総数の取得
 	LPDIRECT3DTEXTURE9 GetTexture(int index);	// 情報の取得
+	std::string GetPath();
 
 	/* メンバ変数 */
 private:
 	LPDIRECT3DTEXTURE9 m_pTexture[MAX_TEXTURE];	// テクスチャの情報
 	std::string m_fileName[MAX_TEXTURE];		// ファイルパス
+	char m_defaulttCurrent[256];
 	int m_numAll;								// 総数
+	bool m_fileSave;							// ファイルのセーブをしたかどうか
 };
 
 #endif // !_TEXTURE_H_
