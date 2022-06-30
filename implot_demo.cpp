@@ -333,6 +333,8 @@ void ShowDemo_Querying()
 	//データ出力
 	if (ImGui::Button("DataOutPut"))
 	{
+		//s_nIndex＜-使ってる最大数
+		// data[nCnt].x,data[nCnt].yでX,Yの情報をとれる
 		for (int nCnt = 0; nCnt < s_nIndex; nCnt++)
 		{
 			Imgui["Index"] = s_nIndex;
@@ -366,6 +368,7 @@ void ShowDemo_Querying()
 		{
 			//StringToWString(UTF8toSjis(j["name"]));
 			//DataSet.unionsname = StringToWString(UTF8toSjis(j["unions"] ["name"]));
+		
 			ifs >> Imgui;
 			s_nIndex = Imgui["Index"];
 			for (int nCnt = 0; nCnt < s_nIndex; nCnt++)

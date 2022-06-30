@@ -107,6 +107,7 @@ public: // 構造体
 		float fScale;				// 全体的な大きさ
 		int nLife;					// 寿命
 		int nMaxLife;				// 最大寿命
+		int nMoveTime;				
 		bool bUseWeight;			// 重さを使用するかどうか
 		bool bBackrot;				// 逆回転させるかどうか
 		bool bTexturerot;			// テクスチャ回転させるかどうか
