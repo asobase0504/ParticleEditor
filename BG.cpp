@@ -1,6 +1,6 @@
-#include "main.h"
 #include "input.h"
 #include "BG.h"
+#include "application.h"
 
 //É}ÉNÉçíËã`
 #define NUM_BG (2)
@@ -29,8 +29,8 @@ CBg::~CBg()
 HRESULT CBg::Init()
 {
 	CObject2D::Init();
-	SetPos(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f));
-	SetSize(D3DXVECTOR2(SCREEN_WIDTH, SCREEN_HEIGHT));
+	SetPos(D3DXVECTOR3(CApplication::SCREEN_WIDTH * 0.5f, CApplication::SCREEN_HEIGHT * 0.5f, 0.0f));
+	SetSize(D3DXVECTOR2((float)CApplication::SCREEN_WIDTH, (float)CApplication::SCREEN_HEIGHT));
 	SetColor(D3DXCOLOR(0.2f, 0.2f, 0.22f, 1.0f));
 	return S_OK;
 }

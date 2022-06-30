@@ -24,8 +24,13 @@ class CBg;
 //-----------------------------------------
 class CApplication
 {
-public:
+public: // 定数
+	static const int SCREEN_WIDTH = 1280;	// スクリーンの高さ
+	static const int SCREEN_HEIGHT = 720;
+
+public: // シングルトンのインスタンス取得
 	static CApplication* GetInstance();
+
 private:
 	CApplication();
 public:

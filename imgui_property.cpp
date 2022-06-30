@@ -1262,8 +1262,8 @@ void UpdateImguiProperty(void)
 
 		if (ImGui::Button("default"))
 		{
-			popPos.x = SCREEN_WIDTH * 0.5f;
-			popPos.y = SCREEN_HEIGHT * 0.5f;
+			popPos.x = CApplication::SCREEN_WIDTH * 0.5f;
+			popPos.y = CApplication::SCREEN_HEIGHT * 0.5f;
 			imguiParticle.maxPopPos.x = 0.0f;
 			imguiParticle.maxPopPos.y = 0.0f;
 			imguiParticle.minPopPos.x = 0.0f;
@@ -1330,16 +1330,16 @@ void UpdateImguiProperty(void)
 
 		ImGui::Separator();
 		ImGui::Text("/* Pos */");
-		ImGui::SliderFloat("PosX", &popPos.x, 0.0f, (float)SCREEN_WIDTH);
-		ImGui::SliderFloat("PosY", &popPos.y, 0.0f, (float)SCREEN_HEIGHT);
+		ImGui::SliderFloat("PosX", &popPos.x, 0.0f, (float)CApplication::SCREEN_WIDTH);
+		ImGui::SliderFloat("PosY", &popPos.y, 0.0f, (float)CApplication::SCREEN_HEIGHT);
 		ImGui::Separator();
 
 		ImGui::Text("/* Pop */");
 		// ê∂ê¨îÕàÕÇÃê›íË
-		ImGui::SliderFloat("MaxPopPosX", &imguiParticle.maxPopPos.x, 0, (float)SCREEN_WIDTH);
-		ImGui::SliderFloat("MinPopPosX", &imguiParticle.minPopPos.x, 0, (float)SCREEN_WIDTH);
-		ImGui::SliderFloat("MaxPopPosY", &imguiParticle.maxPopPos.y, 0, (float)SCREEN_HEIGHT);
-		ImGui::SliderFloat("MinPopPosY", &imguiParticle.minPopPos.y, 0, (float)SCREEN_HEIGHT);
+		ImGui::SliderFloat("MaxPopPosX", &imguiParticle.maxPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
+		ImGui::SliderFloat("MinPopPosX", &imguiParticle.minPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
+		ImGui::SliderFloat("MaxPopPosY", &imguiParticle.maxPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
+		ImGui::SliderFloat("MinPopPosY", &imguiParticle.minPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
 		ImGui::Separator();
 
 		ImGui::Text("/* Move */");
