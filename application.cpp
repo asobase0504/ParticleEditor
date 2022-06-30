@@ -79,6 +79,8 @@ HRESULT CApplication::Init(HWND hWnd, HINSTANCE hInstance)
 	// パーティクル
 	LoadJson(L"data/FILE/Effect.json");
 
+	SetTex();
+
 	// 背景
 	bg = new CBg;
 	if (FAILED(bg->Init()))
@@ -99,6 +101,7 @@ void CApplication::Uninit()
 
 	if (texture != nullptr)
 	{
+		texture->SavePath();
 		delete texture;
 		texture = nullptr;
 	}
@@ -129,7 +132,7 @@ void CApplication::Update()
 
 	if (bSetImguiParticle())
 	{
-		CParticle::Create(GetImguiParticle().particle, GetImguiParticle().pos);
+		CParticle::Create(GetImguiParticle().particle, GetImguiParticle().pos, GetImguiParticle().color);
 	}
 }
 
@@ -163,4 +166,12 @@ CObject** CApplication::GetMyObject()
 CTexture * CApplication::GetTextureClass()
 {
 	return texture;
+}
+
+//=============================================================================
+// パーティクルの取得
+//=============================================================================
+CParticle * CApplication::GetParticle()
+{
+	return particle;
 }

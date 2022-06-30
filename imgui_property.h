@@ -11,15 +11,11 @@
 // インクルード
 //==================================================
 #include "imgui.h"
-#include "imgui_impl_dx9.h"
-#include "imgui_impl_win32.h"
+#include "particle.h"
+
 #include <d3d9.h>
-#include <tchar.h>
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include <imgui_internal.h>
 #include <array>
 #include <chrono>
-#include "particle.h"
 
 //==================================================
 // プロトタイプ宣言

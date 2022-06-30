@@ -5,7 +5,7 @@
 #ifndef _PARTICLE_H_		//このマクロが定義されてなかったら
 #define _PARTICLE_H_		//2重インクルード防止のマクロ定義
 
-#include "main.h"
+#include <d3dx9.h>
 #include "object2d.h"
 
 //マクロ定義
@@ -24,6 +24,7 @@ public:	// 定数
 	static const int numType = 10;
 public:	// 静的変数
 	static float g_fAngle;	// 発射角度
+	static int m_nIdxTex;	// テクスチャの番号
 public:	// 列挙型
 		//エフェクトの種別
 	enum PARTICLETYPE
@@ -121,8 +122,10 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	static CParticle* Create(const Particle& inParticle, const D3DXVECTOR3& inPos);
-	void Set(const Particle& inParticle, const D3DXVECTOR3& inPos);
+	static CParticle* Create(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color);
+	static void SetIdxTex(int idxTex);
+	static int GetIdxTex();
+	void Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color);
 	void LoadTex();
 	void Delete(const int data);
 	void DeleteAll();
