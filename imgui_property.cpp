@@ -14,21 +14,13 @@
 #include "imgui_impl_dx9.h"
 #include "imgui_impl_win32.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
-#include <imgui_internal.h>
-#include <imgui_widget_flamegraph.h>
 #include "imgui_property.h"
 #include "main.h"
 #include "file.h"
-#include "letter.h"
 #include "application.h"
 #include "texture.h"
 
-#include <iostream>
 #include <fstream>
-#include <windows.h>
-#include <tchar.h>
-#include <locale.h>
-#include <sstream>
 #include "nlohmann/json.hpp"
 
 #include <implot.h>
@@ -37,7 +29,6 @@
 //CPU
 //------------------------------
 #include <stdio.h>
-#include <Windows.h>
 
 //------------------------------
 //GPU
@@ -69,7 +60,7 @@ static char FileString[MAX_PATH * 256];	// ファイル名
 static bool	s_window = false;	// ウインドウを使用するかどうか
 static CParticle::Particle imguiParticle;	// ImGuiに保存されてるパーティクル情報
 static D3DXVECTOR3 popPos;				// パーティクルの出現位置
-static bool s_bEffectEnable = false;
+static bool s_bEffectEnable = true;
 static float s_fScale = 50.0f;
 static const unsigned int gpu_id = 0;
 static nvmlDevice_t device;
@@ -871,6 +862,9 @@ void InitImguiProperty(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 	nvmlInit();//初期化
 	nvmlDeviceGetHandleByIndex(gpu_id, &device);
 	foo[0].x = -1;
+
+	// パーティクルをテンプレート状態にする
+	ParticleTemplate();
 #endif // _DEBUG
 }
 
@@ -1094,7 +1088,7 @@ void UpdateImguiProperty(void)
 	static bool checkBox = true;
 	static char text[MAX_TEXT] = "";
 
-	static bool useEffect = false;
+	static bool useEffect = true;
 	static bool s_bRot = false;
 	static bool s_bTexRot = false;
 	static bool s_bUsesrand = false;
@@ -1260,27 +1254,10 @@ void UpdateImguiProperty(void)
 			s_bEffectEnable = !s_bEffectEnable;
 		}
 
-		if (ImGui::Button("default"))
+		if (ImGui::Button("Template"))
 		{
-			popPos.x = CApplication::SCREEN_WIDTH * 0.5f;
-			popPos.y = CApplication::SCREEN_HEIGHT * 0.5f;
-			imguiParticle.maxPopPos.x = 0.0f;
-			imguiParticle.maxPopPos.y = 0.0f;
-			imguiParticle.minPopPos.x = 0.0f;
-			imguiParticle.minPopPos.y = 0.0f;
-			imguiParticle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-			imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-			imguiParticle.color.colBigin = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-			imguiParticle.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-			imguiParticle.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			imguiParticle.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-			imguiParticle.color.colTransition = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-			imguiParticle.nLife = 60;
-			imguiParticle.fScale = 50.0f;
-			imguiParticle.fRadius = 4.5f;
-			imguiParticle.fAngle = 20.5f;
-			imguiParticle.fAttenuation = 0.98f;
-			imguiParticle.alphaBlend = (CParticle::ALPHABLENDTYPE)0;
+			// パーティクルをテンプレート状態にする
+			ParticleTemplate();
 		}
 
 		ImGui::Separator();
@@ -1329,7 +1306,7 @@ void UpdateImguiProperty(void)
 		}
 
 		ImGui::Separator();
-		ImGui::Text("/* Pos */");
+		ImGui::Text("/* Pos */");;
 		ImGui::SliderFloat("PosX", &popPos.x, 0.0f, (float)CApplication::SCREEN_WIDTH);
 		ImGui::SliderFloat("PosY", &popPos.y, 0.0f, (float)CApplication::SCREEN_HEIGHT);
 		ImGui::Separator();
@@ -1667,3 +1644,28 @@ bool bSetImguiParticle(void)
 	return s_bEffectEnable;
 }
 
+//--------------------------------------------------
+// パーティクルのテンプレート
+//--------------------------------------------------
+void ParticleTemplate(void)
+{
+	popPos.x = CApplication::SCREEN_WIDTH * 0.5f;
+	popPos.y = CApplication::SCREEN_HEIGHT * 0.5f;
+	imguiParticle.maxPopPos.x = 0.0f;
+	imguiParticle.maxPopPos.y = 0.0f;
+	imguiParticle.minPopPos.x = 0.0f;
+	imguiParticle.minPopPos.y = 0.0f;
+	imguiParticle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	imguiParticle.color.colBigin = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	imguiParticle.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	imguiParticle.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	imguiParticle.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	imguiParticle.color.colTransition = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	imguiParticle.nLife = 60;
+	imguiParticle.fScale = 50.0f;
+	imguiParticle.fRadius = 4.5f;
+	imguiParticle.fAngle = 20.5f;
+	imguiParticle.fAttenuation = 0.98f;
+	imguiParticle.alphaBlend = (CParticle::ALPHABLENDTYPE)0;
+}

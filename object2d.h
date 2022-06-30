@@ -7,7 +7,7 @@
 #ifndef _OBJECT2D_H_
 #define _OBJECT2D_H_
 
-#include "d3dx9.h"
+#include <d3dx9.h>
 #include "object.h"
 
 class CObject2D : public CObject
