@@ -41,10 +41,10 @@ public:
 	void Update();
 	void Draw();
 
-	CRenderer* GetRenderer();
-	CObject** GetMyObject();
-	CTexture* GetTextureClass();
-	CParticle* GetParticle();
+	CRenderer* GetRenderer() { return renderer; }
+	CObject** GetMyObject() { return &object; }
+	CTexture* GetTextureClass() { return texture; }
+	CParticle* GetParticle() { return particle; }
 private:
 	static CApplication* application;
 	CObject* object;

@@ -11,16 +11,9 @@
 #include "texture.h"
 #include "application.h"
 
-#include <iostream>
 #include <fstream>
-#include <string>
 #include <windows.h>
 #include "nlohmann/json.hpp"
-
-#include <stdio.h>
-#include <tchar.h>
-#include <locale.h>
-#include <sstream>
 
 static CParticle::Particle loadData;
 namespace nl = nlohmann;

@@ -2,13 +2,6 @@
 #include "BG.h"
 #include "application.h"
 
-//マクロ定義
-#define NUM_BG (2)
-
-//グローバル変数
-LPDIRECT3DTEXTURE9	g_pTextureBg = NULL;
-LPDIRECT3DVERTEXBUFFER9	g_pVtxBuffBg = NULL;
-
 //--------------------------------------------------
 // コンストラクタ
 //--------------------------------------------------
