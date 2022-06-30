@@ -12,7 +12,7 @@
 //==================================================
 // 静的メンバー変数
 //==================================================
-float CParticle::g_fAngle = 0.0f;
+float CParticle::m_fAngle = 0.0f;
 int CParticle::m_nIdxTex = 0;
 
 //--------------------------------------------------
@@ -137,14 +137,14 @@ void CParticle::Draw()
 //--------------------------------------------------
 // 生成
 //--------------------------------------------------
-CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color)
+CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPos)
 {
 	CParticle* particle = nullptr;
 	if (particle == nullptr)
 	{
 		particle = new CParticle;
 		particle->Init();
-		particle->Set(inParticle, inPos, color);
+		particle->Set(inParticle, inPos);
 		return particle;
 	}
 	return nullptr;
@@ -153,7 +153,7 @@ CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPo
 //--------------------------------------------------
 // データの初期設定
 //--------------------------------------------------
-void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color)
+void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3& inPos)
 {
 	m_data = inParticle;
 
@@ -174,12 +174,11 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const 
 	myPos.z += FloatRandam(m_data.maxPopPos.z, -m_data.minPopPos.z);
 
 	// 色の算出
-	D3DXCOLOR myColor = color;
 	if (m_data.color.bColRandom)
 	{// ランダムカラーを使用
-		myColor.r = FloatRandam(m_data.color.colRandamMax.r, m_data.color.colRandamMin.r);
-		myColor.g = FloatRandam(m_data.color.colRandamMax.g, m_data.color.colRandamMin.g);
-		myColor.b = FloatRandam(m_data.color.colRandamMax.b, m_data.color.colRandamMin.b);
+		m_data.color.colBigin.r = FloatRandam(m_data.color.colRandamMax.r, m_data.color.colRandamMin.r);
+		m_data.color.colBigin.g = FloatRandam(m_data.color.colRandamMax.g, m_data.color.colRandamMin.g);
+		m_data.color.colBigin.b = FloatRandam(m_data.color.colRandamMax.b, m_data.color.colRandamMin.b);
 
 		if (m_data.color.bColTransition)
 		{// 目的の色の設定
@@ -201,15 +200,15 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const 
 			m_data.color.nEndTime = rand() % m_data.nLife + 1;
 		}
 
-		m_data.color.colTransition.r = (m_data.color.destCol.r - myColor.r) / m_data.color.nEndTime;
-		m_data.color.colTransition.g = (m_data.color.destCol.g - myColor.g) / m_data.color.nEndTime;
-		m_data.color.colTransition.b = (m_data.color.destCol.b - myColor.b) / m_data.color.nEndTime;
+		m_data.color.colTransition.r = (m_data.color.destCol.r - m_data.color.colBigin.r) / m_data.color.nEndTime;
+		m_data.color.colTransition.g = (m_data.color.destCol.g - m_data.color.colBigin.g) / m_data.color.nEndTime;
+		m_data.color.colTransition.b = (m_data.color.destCol.b - m_data.color.colBigin.b) / m_data.color.nEndTime;
 	}
 
 	SetPos(myPos);
 	SetSize(D3DXVECTOR2(m_data.fWidth, m_data.fHeight));
 	SetTexture(m_nIdxTex);
-	SetColor(myColor);
+	SetColor(m_data.color.colBigin);
 
 	static float ImAngle = 20.0f;
 	float fRad = 0.0f;
@@ -218,29 +217,29 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const 
 	if (m_data.bBackrot)
 	{
 		// float fRad = (m_data.fAngle) * (D3DX_PI / 180);
-		fGRad = (m_data.rot.z - g_fAngle);
+		fGRad = (m_data.rot.z - m_fAngle);
 	}
 	else
 	{
 		fRad = (m_data.fAngle) * (D3DX_PI / 180);
-		fGRad = (m_data.rot.z + g_fAngle);
+		fGRad = (m_data.rot.z + m_fAngle);
 	}
 
 	// 挙動
 	{
 		/*
-		g_fAngle += 30.0f * i;
+		m_fAngle += 30.0f * i;
 		m_data.move.x = sinf(fGRad) * 1.3f;
 		m_data.move.y = cosf(fGRad) * 1.3f;
 
 		// ∞
-		g_fAngle += 0.7f;
-		m_data.move.x = sinf((D3DX_PI / 180) * 17 * g_fAngle) * m_data.fAttenuation;
-		m_data.move.y = sinf((D3DX_PI / 180) * 8 * g_fAngle) * m_data.fAttenuation;
+		m_fAngle += 0.7f;
+		m_data.move.x = sinf((D3DX_PI / 180) * 17 * m_fAngle) * m_data.fAttenuation;
+		m_data.move.y = sinf((D3DX_PI / 180) * 8 * m_fAngle) * m_data.fAttenuation;
 		*/
 
 		// 螺旋だったり
-		g_fAngle += ImAngle;
+		m_fAngle += ImAngle;
 		m_data.move.x += (m_data.fRadius * sinf(fGRad)) * m_data.fAttenuation;
 		m_data.move.y += (m_data.fRadius * cosf(fGRad)) * m_data.fAttenuation;
 	}
@@ -257,13 +256,13 @@ void CParticle::Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const 
 		m_data.fRadius += D3DX_PI * 2;
 	}
 
-	if (g_fAngle > D3DX_PI)
+	if (m_fAngle > D3DX_PI)
 	{
-		g_fAngle -= D3DX_PI * 2;
+		m_fAngle -= D3DX_PI * 2;
 	}
-	else if (g_fAngle < -D3DX_PI)
+	else if (m_fAngle < -D3DX_PI)
 	{
-		g_fAngle += D3DX_PI * 2;
+		m_fAngle += D3DX_PI * 2;
 	}
 }
 
@@ -288,31 +287,11 @@ void CParticle::LoadTex()
 }
 
 //--------------------------------------------------
-// 情報の削除
-//--------------------------------------------------
-void CParticle::Delete(const int data)
-{
-	// データのリセット
-	memset(&this->m_data, 0, sizeof(this->m_data));
-}
-
-//--------------------------------------------------
-// 情報を全て削除
-//--------------------------------------------------
-void CParticle::DeleteAll()
-{
-	for (int i = 0; i < maxNumber; i++)
-	{
-		Delete(i);
-	}
-}
-
-//--------------------------------------------------
 // 角度の初期化
 //--------------------------------------------------
 void CParticle::RemoveAngle(void)
 {
-	g_fAngle = 0;
+	m_fAngle = 0;
 }
 
 //--------------------------------------------------

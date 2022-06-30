@@ -20,10 +20,9 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <locale.h>
-#include <windows.h>
 #include <sstream>
 
-static FileParticleData dataAll;
+static CParticle::Particle loadData;
 namespace nl = nlohmann;
 
 nl::json j;//リストの生成
@@ -36,9 +35,9 @@ int index = 0;
 //============================
 //ゲット関数
 //============================
-FileParticleData GetStatus(void)
+CParticle::Particle GetStatus(void)
 {
-	return dataAll;
+	return loadData;
 }
 
 //============================
@@ -46,39 +45,36 @@ FileParticleData GetStatus(void)
 //============================
 void OutputStatus()
 {
-	dataAll = GetImguiParticle();
+	loadData = GetImguiParticle();
 
-	CParticle::Particle DataEffect = dataAll.particle;
-
-	j["POS"] = {{ "X", dataAll.pos.x} ,{ "Y", dataAll.pos.y} ,{ "Z", dataAll.pos.z } };
-	j["POSMAX"] = {{ "X", DataEffect.maxPopPos.x } ,{ "Y", DataEffect.maxPopPos.y } ,{ "Z", DataEffect.maxPopPos.z } };
-	j["POSMIN"] = {{ "X", DataEffect.minPopPos.x } ,{ "Y", DataEffect.minPopPos.y } ,{ "Z", DataEffect.minPopPos.z } };
-	j["MOVE"] = { { "X", DataEffect.move.x } ,{ "Y", DataEffect.move.y } ,{ "Z", DataEffect.move.z } };
-	j["MOVETRANSITION"] = { { "X", DataEffect.moveTransition.x } ,{ "Y", DataEffect.moveTransition.y } ,{ "Z", DataEffect.moveTransition.z } };
-	j["ROT"] = { {"X", DataEffect.rot.x} ,{ "Y", DataEffect.rot.y },{ "Z", DataEffect.rot.z } };
+	j["POSMAX"] = {{ "X", loadData.maxPopPos.x } ,{ "Y", loadData.maxPopPos.y } ,{ "Z", loadData.maxPopPos.z } };
+	j["POSMIN"] = {{ "X", loadData.minPopPos.x } ,{ "Y", loadData.minPopPos.y } ,{ "Z", loadData.minPopPos.z } };
+	j["MOVE"] = { { "X", loadData.move.x } ,{ "Y", loadData.move.y } ,{ "Z", loadData.move.z } };
+	j["MOVETRANSITION"] = { { "X", loadData.moveTransition.x } ,{ "Y", loadData.moveTransition.y } ,{ "Z", loadData.moveTransition.z } };
+	j["ROT"] = { {"X", loadData.rot.x} ,{ "Y", loadData.rot.y },{ "Z", loadData.rot.z } };
 	
-	j["COL"] = { { "R", dataAll.color.r }, {"G" ,dataAll.color.g} ,{ "B", dataAll.color.b } ,{ "A", dataAll.color.a } };
-	j["COLRANDAMMAX"] = { { "R", DataEffect.color.colRandamMax.r },{ "G" ,DataEffect.color.colRandamMax.g } ,{ "B", DataEffect.color.colRandamMax.b } ,{ "A", DataEffect.color.colRandamMax.a } };
-	j["COLRANDAMMIN"] = { { "R", DataEffect.color.colRandamMin.r },{ "G" ,DataEffect.color.colRandamMin.g } ,{ "B", DataEffect.color.colRandamMin.b } ,{ "A", DataEffect.color.colRandamMin.a } };
-	j["COLTRANSITION"] = { { "R", DataEffect.color.colTransition.r },{ "G" ,DataEffect.color.colTransition.g } ,{ "B", DataEffect.color.colTransition.b } ,{ "A", DataEffect.color.colTransition.a } };
-	j["DESTCOL"] = { { "R", DataEffect.color.destCol.r },{ "G" ,DataEffect.color.destCol.g } ,{ "B", DataEffect.color.destCol.b } ,{ "A", DataEffect.color.destCol.a } };
-	j["ENDTIME"] = DataEffect.color.nEndTime;
-	j["CNTTRANSITIONTIME"] = DataEffect.color.nCntTransitionTime;
-	j["BCOLTRANSITION"] = DataEffect.color.bColTransition;
-	j["COLRANDOM"] = DataEffect.color.bColRandom;
-	j["RANDOMTRANSITIONTIME"] = DataEffect.color.bRandomTransitionTime;
+	j["COL"] = { { "R", loadData.color.colBigin.r }, {"G" ,loadData.color.colBigin.g} ,{ "B", loadData.color.colBigin.b } ,{ "A", loadData.color.colBigin.a } };
+	j["COLRANDAMMAX"] = { { "R", loadData.color.colRandamMax.r },{ "G" ,loadData.color.colRandamMax.g } ,{ "B", loadData.color.colRandamMax.b } ,{ "A", loadData.color.colRandamMax.a } };
+	j["COLRANDAMMIN"] = { { "R", loadData.color.colRandamMin.r },{ "G" ,loadData.color.colRandamMin.g } ,{ "B", loadData.color.colRandamMin.b } ,{ "A", loadData.color.colRandamMin.a } };
+	j["COLTRANSITION"] = { { "R", loadData.color.colTransition.r },{ "G" ,loadData.color.colTransition.g } ,{ "B", loadData.color.colTransition.b } ,{ "A", loadData.color.colTransition.a } };
+	j["DESTCOL"] = { { "R", loadData.color.destCol.r },{ "G" ,loadData.color.destCol.g } ,{ "B", loadData.color.destCol.b } ,{ "A", loadData.color.destCol.a } };
+	j["ENDTIME"] = loadData.color.nEndTime;
+	j["CNTTRANSITIONTIME"] = loadData.color.nCntTransitionTime;
+	j["BCOLTRANSITION"] = loadData.color.bColTransition;
+	j["COLRANDOM"] = loadData.color.bColRandom;
+	j["RANDOMTRANSITIONTIME"] = loadData.color.bRandomTransitionTime;
 	
-	j["TYPE"] = DataEffect.type;
-	j["WIDTH"] = DataEffect.fWidth;
-	j["HEIGHT"] = DataEffect.fHeight;
-	j["ANGLE"] = DataEffect.fAngle;
-	j["ATTENUATION"] = DataEffect.fAttenuation;
-	j["RADIUS"] = DataEffect.fRadius;
-	j["WEIGHT"] = DataEffect.fWeight;
-	j["WEIGHTTRANSITION"] = DataEffect.fWeightTransition;
-	j["LIFE"] = DataEffect.nLife;
-	j["BACKROT"] = DataEffect.bBackrot;
-	j["SCALE"] = DataEffect.fScale;
+	j["TYPE"] = loadData.type;
+	j["WIDTH"] = loadData.fWidth;
+	j["HEIGHT"] = loadData.fHeight;
+	j["ANGLE"] = loadData.fAngle;
+	j["ATTENUATION"] = loadData.fAttenuation;
+	j["RADIUS"] = loadData.fRadius;
+	j["WEIGHT"] = loadData.fWeight;
+	j["WEIGHTTRANSITION"] = loadData.fWeightTransition;
+	j["LIFE"] = loadData.nLife;
+	j["BACKROT"] = loadData.bBackrot;
+	j["SCALE"] = loadData.fScale;
 
 
 	auto jobj = j.dump();
@@ -95,42 +91,40 @@ void LoadJson(const wchar_t* cUrl)
 
 	if (ifs)
 	{
-		dataAll = GetImguiParticle();
-		CParticle::Particle DataEffect = dataAll.particle;
+		loadData = GetImguiParticle();
 
 		//StringToWString(UTF8toSjis(j["name"]));
 		//DataSet.unionsname = StringToWString(UTF8toSjis(j["unions"] ["name"]));
 		ifs >> j;
 
 		//こっちで構造体にデータを入れてます//文字は変換つけないとばぐるぞ＾＾これ-＞UTF8toSjis()
-		dataAll.pos = D3DXVECTOR3(j["POS"]["X"], j["POS"]["Y"], j["POS"]["Z"]);
-		DataEffect.move = D3DXVECTOR3(j["MOVE"]["X"], j["MOVE"]["Y"], j["MOVE"]["Z"]);
-		DataEffect.rot = D3DXVECTOR3(j["ROT"] ["X"], j["ROT"] ["Y"], j["ROT"] ["Z"]);
-		DataEffect.moveTransition = D3DXVECTOR3(j["MOVETRANSITION"]["X"], j["MOVETRANSITION"]["Y"], j["MOVETRANSITION"]["Z"]);;
+		loadData.move = D3DXVECTOR3(j["MOVE"]["X"], j["MOVE"]["Y"], j["MOVE"]["Z"]);
+		loadData.rot = D3DXVECTOR3(j["ROT"] ["X"], j["ROT"] ["Y"], j["ROT"] ["Z"]);
+		loadData.moveTransition = D3DXVECTOR3(j["MOVETRANSITION"]["X"], j["MOVETRANSITION"]["Y"], j["MOVETRANSITION"]["Z"]);;
 		
-		dataAll.color = D3DXCOLOR(j["COL"] ["R"], j["COL"] ["G"], j["COL"] ["B"], j["COL"] ["A"]);
-		DataEffect.color.colRandamMax = D3DXCOLOR(j["COLRANDAMMAX"]["R"], j["COLRANDAMMAX"]["G"], j["COLRANDAMMAX"]["B"], j["COLRANDAMMAX"]["A"]);
-		DataEffect.color.colRandamMin = D3DXCOLOR(j["COLRANDAMMIN"]["R"], j["COLRANDAMMIN"]["G"], j["COLRANDAMMIN"]["B"], j["COLRANDAMMIN"]["A"]);
-		DataEffect.color.colTransition = D3DXCOLOR(j["COLTRANSITION"]["R"], j["COLTRANSITION"]["G"], j["COLTRANSITION"]["B"], j["COLTRANSITION"]["A"]);
-		DataEffect.color.destCol = D3DXCOLOR(j["DESTCOL"]["R"], j["DESTCOL"]["G"], j["DESTCOL"]["B"], j["DESTCOL"]["A"]);
-		DataEffect.color.nEndTime = j["ENDTIME"];
-		DataEffect.color.nCntTransitionTime = j["CNTTRANSITIONTIME"];
-		DataEffect.color.bColTransition = j["BCOLTRANSITION"];
-		DataEffect.color.bColRandom = j["COLRANDOM"];
-		DataEffect.color.bRandomTransitionTime = j["RANDOMTRANSITIONTIME"];
+		loadData.color.colBigin = D3DXCOLOR(j["COL"] ["R"], j["COL"] ["G"], j["COL"] ["B"], j["COL"] ["A"]);
+		loadData.color.colRandamMax = D3DXCOLOR(j["COLRANDAMMAX"]["R"], j["COLRANDAMMAX"]["G"], j["COLRANDAMMAX"]["B"], j["COLRANDAMMAX"]["A"]);
+		loadData.color.colRandamMin = D3DXCOLOR(j["COLRANDAMMIN"]["R"], j["COLRANDAMMIN"]["G"], j["COLRANDAMMIN"]["B"], j["COLRANDAMMIN"]["A"]);
+		loadData.color.colTransition = D3DXCOLOR(j["COLTRANSITION"]["R"], j["COLTRANSITION"]["G"], j["COLTRANSITION"]["B"], j["COLTRANSITION"]["A"]);
+		loadData.color.destCol = D3DXCOLOR(j["DESTCOL"]["R"], j["DESTCOL"]["G"], j["DESTCOL"]["B"], j["DESTCOL"]["A"]);
+		loadData.color.nEndTime = j["ENDTIME"];
+		loadData.color.nCntTransitionTime = j["CNTTRANSITIONTIME"];
+		loadData.color.bColTransition = j["BCOLTRANSITION"];
+		loadData.color.bColRandom = j["COLRANDOM"];
+		loadData.color.bRandomTransitionTime = j["RANDOMTRANSITIONTIME"];
 		
-		DataEffect.type = j["TYPE"];
-		DataEffect.fWidth = j["WIDTH"];
-		DataEffect.fHeight = j["HEIGHT"];
-		DataEffect.fRadius = j["RADIUS"];
-		DataEffect.fAngle = j["ANGLE"];
-		DataEffect.fWeight = j["WEIGHT"];
-		DataEffect.nLife = j["LIFE"];
-		DataEffect.fAttenuation = j["ATTENUATION"];
-		DataEffect.fWeightTransition = j["WEIGHTTRANSITION"];
-		DataEffect.nLife = j["LIFE"];
-		DataEffect.bBackrot = j["BACKROT"];
-		DataEffect.fScale = j["SCALE"];
+		loadData.type = j["TYPE"];
+		loadData.fWidth = j["WIDTH"];
+		loadData.fHeight = j["HEIGHT"];
+		loadData.fRadius = j["RADIUS"];
+		loadData.fAngle = j["ANGLE"];
+		loadData.fWeight = j["WEIGHT"];
+		loadData.nLife = j["LIFE"];
+		loadData.fAttenuation = j["ATTENUATION"];
+		loadData.fWeightTransition = j["WEIGHTTRANSITION"];
+		loadData.nLife = j["LIFE"];
+		loadData.bBackrot = j["BACKROT"];
+		loadData.fScale = j["SCALE"];
 
 	}
 

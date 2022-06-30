@@ -48,7 +48,12 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 //--------------------------------------------------
 // パーティクルデータの取得
 //--------------------------------------------------
-FileParticleData& GetImguiParticle(void);
+CParticle::Particle& GetImguiParticle(void);
+
+//--------------------------------------------------
+// パーティクル出現位置の取得
+//--------------------------------------------------
+D3DXVECTOR3& GetPopPos(void);
 
 //--------------------------------------------------
 // ファイル名の取得

@@ -23,7 +23,7 @@ public:	// 定数
 	static const int maxNumber = 21000;
 	static const int numType = 10;
 public:	// 静的変数
-	static float g_fAngle;	// 発射角度
+	static float m_fAngle;	// 発射角度
 	static int m_nIdxTex;	// テクスチャの番号
 public:	// 列挙型
 		//エフェクトの種別
@@ -55,6 +55,7 @@ public: // 構造体
 	//-------------------------------------------------
 	struct Color	// ※新規追加構造体(ファイルに追加後消してください)
 	{
+		D3DXCOLOR colBigin;			// 始まりの色
 		D3DXCOLOR colRandamMax;		// ランダムな色の範囲(最大)
 		D3DXCOLOR colRandamMin;		// ランダムな色の範囲(最小)
 		D3DXCOLOR colTransition;	// 色の遷移量
@@ -121,28 +122,16 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	static CParticle* Create(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color);
+	static CParticle* Create(const Particle& inParticle, const D3DXVECTOR3& inPos);
 	static void SetIdxTex(int idxTex);
 	static int GetIdxTex();
-	void Set(const Particle& inParticle, const D3DXVECTOR3& inPos, const D3DXCOLOR& color);
+	void Set(const Particle& inParticle, const D3DXVECTOR3& inPos);
 	void LoadTex();
-	void Delete(const int data);
-	void DeleteAll();
 	void RemoveAngle(void);
 	DWORD FloattoDword(float fVal);
 
 private:	// メンバー変数
 	Particle m_data;
 	int m_idx;
-};
-
-//-------------------------------------------------
-// ファイル読み込み用のparticleデータ
-//-------------------------------------------------
-struct FileParticleData
-{
-	D3DXVECTOR3 pos;
-	D3DXCOLOR color;
-	CParticle::Particle particle;
 };
 #endif

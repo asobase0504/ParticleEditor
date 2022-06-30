@@ -7,8 +7,8 @@
 #include "object.h"
 
 const int CObject::NUM_MAX;
-CObject* CObject::object[NUM_MAX] = {};
-int CObject::numAll = 0;
+CObject* CObject::m_object[NUM_MAX] = {};
+int CObject::m_numAll = 0;
  
 //=============================================================================
 // コンストラクタ
@@ -19,10 +19,10 @@ CObject::CObject() :
 {
 	for (int i = 0; i < NUM_MAX; i++)
 	{
-		if (object[i] == nullptr)
+		if (m_object[i] == nullptr)
 		{
-			numAll++;
-			object[i] = this;
+			m_numAll++;
+			m_object[i] = this;
 			createIdx = i;
 			break;
 		}
@@ -42,10 +42,10 @@ CObject::~CObject()
 void CObject::Release()
 {
 	int idx = createIdx;
-	object[idx]->Uninit();
-	delete object[idx];
-	object[idx] = nullptr;
-	numAll--;
+	m_object[idx]->Uninit();
+	delete m_object[idx];
+	m_object[idx] = nullptr;
+	m_numAll--;
 }
 
 //=============================================================================
@@ -55,11 +55,11 @@ void CObject::ReleaseAll()
 {
 	for (int i = 0; i < NUM_MAX; i++)
 	{
-		if (object[i] != nullptr)
+		if (m_object[i] != nullptr)
 		{
-			object[i]->Uninit();
-			delete object[i];
-			object[i] = nullptr;
+			m_object[i]->Uninit();
+			delete m_object[i];
+			m_object[i] = nullptr;
 		}
 	}
 }
@@ -71,9 +71,9 @@ void CObject::UpdateAll()
 {
 	for (int i = 0; i < NUM_MAX; i++)
 	{
-		if (object[i] != nullptr)
+		if (m_object[i] != nullptr)
 		{
-			object[i]->Update();
+			m_object[i]->Update();
 		}
 	}
 }
@@ -85,9 +85,9 @@ void CObject::DrawAll()
 {
 	for (int i = 0; i < NUM_MAX; i++)
 	{
-		if (object[i] != nullptr)
+		if (m_object[i] != nullptr)
 		{
-			object[i]->Draw();
+			m_object[i]->Draw();
 		}
 	}
 }
