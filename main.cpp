@@ -9,7 +9,6 @@
 //=================================================
 // include
 //=================================================
-#include "main.h"
 #include "renderer.h"
 #include "application.h"
 #include "texture.h"
@@ -61,7 +60,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 {
 	HWND hWnd;	//Windowハンドル識別子
 	MSG msg;	//メッセージを格納する変数
-	RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rect = { 0,0,CApplication::SCREEN_WIDTH,CApplication::SCREEN_HEIGHT };
 
 	GetCurrentDirectory(MAX_PATH, szPathdefault);
 

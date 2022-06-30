@@ -11,13 +11,6 @@
 
 class CObject
 {
-public:	// 列挙型
-
-	// CObjectクラスの派生先
-	enum TYPE
-	{
-		OBJECT_2D
-	};
 public:	// 定数
 	static const int NUM_MAX = 4096;
 public:	// 静的関数
@@ -38,10 +31,10 @@ public:
 	virtual void SetPos(const D3DXVECTOR3& inPos) { pos = inPos; }	// 位置の設定
 	void Release();
 protected:
-	static CObject* object[NUM_MAX];	// オブジェクト
-	static int numAll;	// 最大数
-	int createIdx;		// 生成番号
-	D3DXVECTOR3 pos;	// 位置
+	static CObject* m_object[NUM_MAX];	// オブジェクト
+	static int m_numAll;	// 最大数
+	int createIdx;			// 生成番号
+	D3DXVECTOR3 pos;		// 位置
 };
 
 #endif // !_RENDERER_H_

@@ -5,7 +5,7 @@
 // 
 //=========================================
 #include "renderer.h"
-#include "main.h"
+#include "application.h"
 #include "imgui_property.h"
 #include <tchar.h>
 
@@ -60,8 +60,8 @@ HRESULT CRenderer::Init(HWND hWnd, bool bWindow)
 	ZeroMemory(&d3dpp, sizeof(d3dpp));								// ワークをゼロクリア
 
 	d3dpp.BackBufferCount = 1;						// バックバッファの数
-	d3dpp.BackBufferWidth = SCREEN_WIDTH;			// ゲーム画面サイズ(幅)
-	d3dpp.BackBufferHeight = SCREEN_HEIGHT;			// ゲーム画面サイズ(高さ)
+	d3dpp.BackBufferWidth = CApplication::SCREEN_WIDTH;			// ゲーム画面サイズ(幅)
+	d3dpp.BackBufferHeight = CApplication::SCREEN_HEIGHT;			// ゲーム画面サイズ(高さ)
 	d3dpp.BackBufferFormat = d3ddm.Format;			// カラーモードの指定
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;		// 映像信号に同期してフリップする
 	d3dpp.EnableAutoDepthStencil = TRUE;			// デプスバッファ（Ｚバッファ）とステンシルバッファを作成

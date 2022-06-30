@@ -58,12 +58,14 @@ static const char*	WINDOW_NAME = "test";	// ウインドウの名前 (キャプションに表示
 //==================================================
 static char FileString[MAX_PATH * 256];	// ファイル名
 static bool	s_window = false;	// ウインドウを使用するかどうか
-static CParticle* dataParticle;
-static FileParticleData imguiParticle;	// ImGuiに保存されてるパーティクル情報
+static CParticle::Particle imguiParticle;	// ImGuiに保存されてるパーティクル情報
+static D3DXVECTOR3 popPos;				// パーティクルの出現位置
 static bool s_bEffectEnable = true;
 static float s_fScale = 50.0f;
 static const unsigned int gpu_id = 0;
 static nvmlDevice_t device;
+
+//これがSINカーブのやつ
 static ImVec2 foo[10];
 
 namespace nl = nlohmann;
@@ -1242,8 +1244,8 @@ void UpdateImguiProperty(void)
 	//エフェクト関係
 	if (ImGui::CollapsingHeader("EffectSetting"))
 	{
-		imguiParticle.color.a = 1.0f;
-		imguiParticle.particle.color.destCol.a = 1.0f;
+		imguiParticle.color.colBigin.a = 1.0f;
+		imguiParticle.color.destCol.a = 1.0f;
 
 		//imguiParticle.fScale = 50.0f;
 
@@ -1304,23 +1306,23 @@ void UpdateImguiProperty(void)
 		}
 
 		ImGui::Separator();
-		ImGui::Text("/* Pos */");
-		ImGui::SliderFloat("PosX", &imguiParticle.pos.x, 0, (float)SCREEN_WIDTH);
-		ImGui::SliderFloat("PosY", &imguiParticle.pos.y, 0, (float)SCREEN_HEIGHT);
+		ImGui::Text("/* Pos */");;
+		ImGui::SliderFloat("PosX", &popPos.x, 0.0f, (float)CApplication::SCREEN_WIDTH);
+		ImGui::SliderFloat("PosY", &popPos.y, 0.0f, (float)CApplication::SCREEN_HEIGHT);
 		ImGui::Separator();
 
 		ImGui::Text("/* Pop */");
 		// 生成範囲の設定
-		ImGui::SliderFloat("MaxPopPosX", &imguiParticle.particle.maxPopPos.x, 0, (float)SCREEN_WIDTH);
-		ImGui::SliderFloat("MinPopPosX", &imguiParticle.particle.minPopPos.x, 0, (float)SCREEN_WIDTH);
-		ImGui::SliderFloat("MaxPopPosY", &imguiParticle.particle.maxPopPos.y, 0, (float)SCREEN_HEIGHT);
-		ImGui::SliderFloat("MinPopPosY", &imguiParticle.particle.minPopPos.y, 0, (float)SCREEN_HEIGHT);
+		ImGui::SliderFloat("MaxPopPosX", &imguiParticle.maxPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
+		ImGui::SliderFloat("MinPopPosX", &imguiParticle.minPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
+		ImGui::SliderFloat("MaxPopPosY", &imguiParticle.maxPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
+		ImGui::SliderFloat("MinPopPosY", &imguiParticle.minPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
 		ImGui::Separator();
 
 		ImGui::Text("/* Move */");
-		ImGui::InputFloat2("SettingEffectMove", imguiParticle.particle.move, "%f");
-		ImGui::SliderFloat("MoveX", &imguiParticle.particle.move.x, -100.0f, 100.0f);
-		ImGui::SliderFloat("MoveY", &imguiParticle.particle.move.y, -100.0f, 100.0f);
+		ImGui::InputFloat2("SettingEffectMove", imguiParticle.move, "%f");
+		ImGui::SliderFloat("MoveX", &imguiParticle.move.x, -100.0f, 100.0f);
+		ImGui::SliderFloat("MoveY", &imguiParticle.move.y, -100.0f, 100.0f);
 
 		//詳細
 		if (ImGui::CollapsingHeader("Details"))
@@ -1328,43 +1330,43 @@ void UpdateImguiProperty(void)
 			//rot計算用
 			static float s_fDeg = 0.0f;
 			ImGui::Text("/* Rot */");
-			ImGui::InputFloat3("SettingEffectRot", imguiParticle.particle.rot, "%f");
+			ImGui::InputFloat3("SettingEffectRot", imguiParticle.rot, "%f");
 			ImGui::SliderFloat("Rot", &s_fDeg, -D3DX_PI, D3DX_PI);
 
 			if (ImGui::Checkbox("BackRot", &s_bRot))
 			{
-				imguiParticle.particle.bBackrot = !imguiParticle.particle.bBackrot;
+				imguiParticle.bBackrot = !imguiParticle.bBackrot;
 			}
 
-			float rotX = imguiParticle.pos.x * cosf(s_fDeg) + imguiParticle.pos.x * sinf(s_fDeg);
-			float rotY = imguiParticle.pos.y * sinf(s_fDeg) - imguiParticle.pos.y * cosf(s_fDeg);
+			float rotX = popPos.x * cosf(s_fDeg) + popPos.x * sinf(s_fDeg);
+			float rotY = popPos.y * sinf(s_fDeg) - popPos.y * cosf(s_fDeg);
 			float fAngle = atan2f(rotX, rotY);
-			imguiParticle.particle.rot = D3DXVECTOR3(rotX, rotY, fAngle);
+			imguiParticle.rot = D3DXVECTOR3(rotX, rotY, fAngle);
 
-			if (imguiParticle.particle.rot.z > D3DX_PI)
+			if (imguiParticle.rot.z > D3DX_PI)
 			{
-				imguiParticle.particle.rot.z -= D3DX_PI * 2;
+				imguiParticle.rot.z -= D3DX_PI * 2;
 			}
-			else if (imguiParticle.particle.rot.z < -D3DX_PI)
+			else if (imguiParticle.rot.z < -D3DX_PI)
 			{
-				imguiParticle.particle.rot.z += D3DX_PI * 2;
+				imguiParticle.rot.z += D3DX_PI * 2;
 			}
 
 			ImGui::Separator();
 			ImGui::Text("/* Scale */");
-			ImGui::SliderFloat("Scale", &imguiParticle.particle.fScale, 0.0f, 100.0f);
+			ImGui::SliderFloat("Scale", &imguiParticle.fScale, 0.0f, 100.0f);
 			ImGui::Separator();
 			ImGui::Text("/* Life */");
-			ImGui::SliderInt("Life", &imguiParticle.particle.nLife, 0, 500);
+			ImGui::SliderInt("Life", &imguiParticle.nLife, 0, 500);
 			ImGui::Separator();
 			ImGui::Text("/* Radius */");
-			ImGui::SliderFloat("Radius", &imguiParticle.particle.fRadius, 0.0f, 100.0f);
+			ImGui::SliderFloat("Radius", &imguiParticle.fRadius, 0.0f, 100.0f);
 			ImGui::Separator();
 			ImGui::Text("/* Angle */");
-			ImGui::SliderAngle("Angle", &imguiParticle.particle.fAngle, 0.0f, 2000.0f);
+			ImGui::SliderAngle("Angle", &imguiParticle.fAngle, 0.0f, 2000.0f);
 			ImGui::Separator();
 			ImGui::Text("/* Attenuation */");
-			ImGui::SliderFloat("Attenuation", &imguiParticle.particle.fAttenuation, 0.0f, 1.0f);
+			ImGui::SliderFloat("Attenuation", &imguiParticle.fAttenuation, 0.0f, 1.0f);
 
 			//挙動おかしくなっちゃった時用
 			if (ImGui::Button("DataRemove"))
@@ -1377,29 +1379,29 @@ void UpdateImguiProperty(void)
 		if (ImGui::CollapsingHeader("Color"))
 		{
 			//カラーパレット
-			ImGui::ColorEdit4("clear", (float*)&imguiParticle.particle.color);
+			ImGui::ColorEdit4("clear", (float*)&imguiParticle.color);
 
 			// ランダムカラー
-			ImGui::Checkbox("Random", &imguiParticle.particle.color.bColRandom);
+			ImGui::Checkbox("Random", &imguiParticle.color.bColRandom);
 
-			if (imguiParticle.particle.color.bColRandom)
+			if (imguiParticle.color.bColRandom)
 			{
-				ImGui::ColorEdit4("RandamMax", (float*)&imguiParticle.particle.color.colRandamMax);
-				ImGui::ColorEdit4("RandamMin", (float*)&imguiParticle.particle.color.colRandamMin);
+				ImGui::ColorEdit4("RandamMax", (float*)&imguiParticle.color.colRandamMax);
+				ImGui::ColorEdit4("RandamMin", (float*)&imguiParticle.color.colRandamMin);
 			}
 
 			// カラートラディション
-			ImGui::Checkbox("Transition", &imguiParticle.particle.color.bColTransition);
+			ImGui::Checkbox("Transition", &imguiParticle.color.bColTransition);
 
-			if (imguiParticle.particle.color.bColTransition)
+			if (imguiParticle.color.bColTransition)
 			{// 目的の色
-				ImGui::ColorEdit4("clear destColor", (float*)&imguiParticle.particle.color.destCol);
+				ImGui::ColorEdit4("clear destColor", (float*)&imguiParticle.color.destCol);
 
-				ImGui::Checkbox("RandomTransitionTime", &imguiParticle.particle.color.bRandomTransitionTime);
+				ImGui::Checkbox("RandomTransitionTime", &imguiParticle.color.bRandomTransitionTime);
 
-				if (!imguiParticle.particle.color.bRandomTransitionTime)
+				if (!imguiParticle.color.bRandomTransitionTime)
 				{
-					ImGui::SliderInt("EndTime", &imguiParticle.particle.color.nEndTime, 0, imguiParticle.particle.nLife);
+					ImGui::SliderInt("EndTime", &imguiParticle.color.nEndTime, 0, imguiParticle.nLife);
 				}
 			}
 
@@ -1531,7 +1533,7 @@ void UpdateImguiProperty(void)
 
 					if (s_nTimer >= 5)
 					{
-						imguiParticle.particle.color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
+						imguiParticle.color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
 						s_nColNum++;
 						s_nTimer = 0;
 					}
@@ -1558,20 +1560,20 @@ void UpdateImguiProperty(void)
 				break;
 			}
 
-			ImGui::SliderFloat("Alpha", &imguiParticle.particle.color.colTransition.a, -0.5f, 0.0f);
+			ImGui::SliderFloat("Alpha", &imguiParticle.color.colTransition.a, -0.5f, 0.0f);
 		}
 
 		// αブレンディングの種類
 		if (ImGui::CollapsingHeader("AlphaBlending"))
 		{
 			// 変数宣言
-			int	nBlendingType = (int)imguiParticle.particle.alphaBlend;		// 種別変更用の変数
+			int	nBlendingType = (int)imguiParticle.alphaBlend;		// 種別変更用の変数
 
 			ImGui::RadioButton("AddBlend", &nBlendingType, 0);
 			ImGui::RadioButton("SubBlend", &nBlendingType, 1);
 			ImGui::RadioButton("BlendNone", &nBlendingType, 2);
 
-			imguiParticle.particle.alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
+			imguiParticle.alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
 		}
 	}
 
@@ -1605,9 +1607,17 @@ void DrawImguiProperty(void)
 //--------------------------------------------------
 // Imguiの取得
 //--------------------------------------------------
-FileParticleData& GetImguiParticle(void)
+CParticle::Particle& GetImguiParticle(void)
 {
 	return imguiParticle;
+}
+
+//--------------------------------------------------
+// パーティクル出現位置の取得
+//--------------------------------------------------
+D3DXVECTOR3& GetPopPos(void)
+{
+	return popPos;
 }
 
 //--------------------------------------------------
@@ -1639,23 +1649,23 @@ bool bSetImguiParticle(void)
 //--------------------------------------------------
 void ParticleTemplate(void)
 {
-	imguiParticle.pos.x = SCREEN_WIDTH * 0.5f;
-	imguiParticle.pos.y = SCREEN_HEIGHT * 0.5f;
-	imguiParticle.particle.maxPopPos.x = 0.0f;
-	imguiParticle.particle.maxPopPos.y = 0.0f;
-	imguiParticle.particle.minPopPos.x = 0.0f;
-	imguiParticle.particle.minPopPos.y = 0.0f;
-	imguiParticle.particle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	imguiParticle.particle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	imguiParticle.color = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	imguiParticle.particle.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	imguiParticle.particle.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	imguiParticle.particle.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	imguiParticle.particle.color.colTransition = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	imguiParticle.particle.nLife = 60;
-	imguiParticle.particle.fScale = 50.0f;
-	imguiParticle.particle.fRadius = 4.5f;
-	imguiParticle.particle.fAngle = 20.5f;
-	imguiParticle.particle.fAttenuation = 0.98f;
-	imguiParticle.particle.alphaBlend = (CParticle::ALPHABLENDTYPE)0;
+	popPos.x = CApplication::SCREEN_WIDTH * 0.5f;
+	popPos.y = CApplication::SCREEN_HEIGHT * 0.5f;
+	imguiParticle.maxPopPos.x = 0.0f;
+	imguiParticle.maxPopPos.y = 0.0f;
+	imguiParticle.minPopPos.x = 0.0f;
+	imguiParticle.minPopPos.y = 0.0f;
+	imguiParticle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	imguiParticle.color.colBigin = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	imguiParticle.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	imguiParticle.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	imguiParticle.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	imguiParticle.color.colTransition = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	imguiParticle.nLife = 60;
+	imguiParticle.fScale = 50.0f;
+	imguiParticle.fRadius = 4.5f;
+	imguiParticle.fAngle = 20.5f;
+	imguiParticle.fAttenuation = 0.98f;
+	imguiParticle.alphaBlend = (CParticle::ALPHABLENDTYPE)0;
 }

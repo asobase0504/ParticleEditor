@@ -8,7 +8,6 @@
 #include "application.h"
 #include "renderer.h"
 #include "texture.h"
-#include "main.h"
 #include <assert.h>
 
 //=============================================================================
@@ -53,20 +52,20 @@ HRESULT CObject2D::Init()
 	// 頂点情報をロックし、頂点情報へのポインタを取得
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	pVtx[0].pos.x = SCREEN_WIDTH * 0.5f + sinf(m_rotY + fAngle + -D3DX_PI) * m_fLength;
-	pVtx[0].pos.y = SCREEN_HEIGHT * 0.5f + cosf(m_rotY + fAngle + -D3DX_PI) * m_fLength;
+	pVtx[0].pos.x = CApplication::SCREEN_WIDTH * 0.5f + sinf(m_rotY + fAngle + -D3DX_PI) * m_fLength;
+	pVtx[0].pos.y = CApplication::SCREEN_HEIGHT * 0.5f + cosf(m_rotY + fAngle + -D3DX_PI) * m_fLength;
 	pVtx[0].pos.z = 0.0f;
 
-	pVtx[1].pos.x = SCREEN_WIDTH * 0.5f + sinf(m_rotY + -fAngle + D3DX_PI) * m_fLength;
-	pVtx[1].pos.y = SCREEN_HEIGHT * 0.5f + cosf(m_rotY + -fAngle + D3DX_PI) * m_fLength;
+	pVtx[1].pos.x = CApplication::SCREEN_WIDTH * 0.5f + sinf(m_rotY + -fAngle + D3DX_PI) * m_fLength;
+	pVtx[1].pos.y = CApplication::SCREEN_HEIGHT * 0.5f + cosf(m_rotY + -fAngle + D3DX_PI) * m_fLength;
 	pVtx[1].pos.z = 0.0f;
 
-	pVtx[2].pos.x = SCREEN_WIDTH * 0.5f + sinf(m_rotY + fAngle * -1.0f) * m_fLength;
-	pVtx[2].pos.y = SCREEN_HEIGHT * 0.5f + cosf(m_rotY + fAngle * -1.0f) * m_fLength;
+	pVtx[2].pos.x = CApplication::SCREEN_WIDTH * 0.5f + sinf(m_rotY + fAngle * -1.0f) * m_fLength;
+	pVtx[2].pos.y = CApplication::SCREEN_HEIGHT * 0.5f + cosf(m_rotY + fAngle * -1.0f) * m_fLength;
 	pVtx[2].pos.z = 0.0f;
 
-	pVtx[3].pos.x = SCREEN_WIDTH * 0.5f + sinf(m_rotY + fAngle) * m_fLength;
-	pVtx[3].pos.y = SCREEN_HEIGHT * 0.5f + cosf(m_rotY + fAngle) * m_fLength;
+	pVtx[3].pos.x = CApplication::SCREEN_WIDTH * 0.5f + sinf(m_rotY + fAngle) * m_fLength;
+	pVtx[3].pos.y = CApplication::SCREEN_HEIGHT * 0.5f + cosf(m_rotY + fAngle) * m_fLength;
 	pVtx[3].pos.z = 0.0f;
 
 	// texの設定
@@ -211,12 +210,12 @@ void CObject2D::SetColor(const D3DXCOLOR & inColor)
 //=============================================================================
 CObject2D* CObject2D::Create()
 {
-	if (numAll >= NUM_MAX)
+	if (m_numAll >= NUM_MAX)
 	{
 		return nullptr;
 	}
 
-	int idx = numAll;
+	int idx = m_numAll;
 	CObject2D* objectCreate = new CObject2D;
 	objectCreate->createIdx = idx;
 
