@@ -1,5 +1,4 @@
 #include "main.h"
-#include "input.h"
 #include "BG.h"
 
 //ƒ}ƒNƒ’è‹`

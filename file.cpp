@@ -5,23 +5,14 @@
 //
 //============================
 #include "file.h"
-#include "letter.h"
 #include "particle.h"
 #include "imgui_property.h"
 #include "texture.h"
 #include "application.h"
 
-#include <iostream>
 #include <fstream>
-#include <string>
-#include <windows.h>
 #include "nlohmann/json.hpp"
 
-#include <stdio.h>
-#include <tchar.h>
-#include <locale.h>
-#include <windows.h>
-#include <sstream>
 
 static FileParticleData dataAll;
 namespace nl = nlohmann;
