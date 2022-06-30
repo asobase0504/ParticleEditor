@@ -59,6 +59,8 @@ static bool s_bEffectEnable = false;
 static float s_fScale = 50.0f;
 static const unsigned int gpu_id = 0;
 static nvmlDevice_t device;
+
+//‚±‚ê‚ªSINƒJ[ƒu‚Ì‚â‚Â
 static ImVec2 foo[10];
 
 namespace nl = nlohmann;
