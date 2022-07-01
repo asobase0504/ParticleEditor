@@ -25,6 +25,10 @@
 
 #include <implot.h>
 
+#include "particle_manager.h"
+#include "particle_emitter.h"
+#include "particle.h"
+
 //------------------------------
 //CPU
 //------------------------------
@@ -58,8 +62,6 @@ static const char*	WINDOW_NAME = "test";	// ウインドウの名前 (キャプションに表示
 //==================================================
 static char FileString[MAX_PATH * 256];	// ファイル名
 static bool	s_window = false;	// ウインドウを使用するかどうか
-static CParticle::Particle imguiParticle;	// ImGuiに保存されてるパーティクル情報
-static D3DXVECTOR3 popPos;				// パーティクルの出現位置
 static bool s_bEffectEnable = true;
 static float s_fScale = 50.0f;
 static const unsigned int gpu_id = 0;
@@ -191,19 +193,19 @@ namespace tween {
 			return p;
 		}
 
-						   // Modeled after the parabola y = x^2
+		// Modeled after the parabola y = x^2
 		case TYPE::QUADIN: {
 			return p * p;
 		}
 
-						   // Modeled after the parabola y = -x^2 + 2x
+		// Modeled after the parabola y = -x^2 + 2x
 		case TYPE::QUADOUT: {
 			return -(p * (p - 2));
 		}
 
-							// Modeled after the piecewise quadratic
-							// y = (1/2)((2x)^2)             ; [0, 0.5)
-							// y = -(1/2)((2x-1)*(2x-3) - 1) ; [0.5, 1]
+		// Modeled after the piecewise quadratic
+		// y = (1/2)((2x)^2)             ; [0, 0.5)
+		// y = -(1/2)((2x-1)*(2x-3) - 1) ; [0.5, 1]
 		case TYPE::QUADINOUT: {
 			if (p < 0.5) {
 				return 2 * p * p;
@@ -213,20 +215,20 @@ namespace tween {
 			}
 		}
 
-							  // Modeled after the cubic y = x^3
+		 // Modeled after the cubic y = x^3
 		case TYPE::CUBICIN: {
 			return p * p * p;
 		}
 
-							// Modeled after the cubic y = (x - 1)^3 + 1
+		// Modeled after the cubic y = (x - 1)^3 + 1
 		case TYPE::CUBICOUT: {
 			double f = (p - 1);
 			return f * f * f + 1;
 		}
 
-							 // Modeled after the piecewise cubic
-							 // y = (1/2)((2x)^3)       ; [0, 0.5)
-							 // y = (1/2)((2x-2)^3 + 2) ; [0.5, 1]
+		// Modeled after the piecewise cubic
+		// y = (1/2)((2x)^3)       ; [0, 0.5)
+		// y = (1/2)((2x-2)^3 + 2) ; [0.5, 1]
 		case TYPE::CUBICINOUT: {
 			if (p < 0.5) {
 				return 4 * p * p * p;
@@ -242,15 +244,15 @@ namespace tween {
 			return p * p * p * p;
 		}
 
-							// Modeled after the quartic y = 1 - (x - 1)^4
+		// Modeled after the quartic y = 1 - (x - 1)^4
 		case TYPE::QUARTOUT: {
 			double f = (p - 1);
 			return f * f * f * (1 - p) + 1;
 		}
 
-							 // Modeled after the piecewise quartic
-							 // y = (1/2)((2x)^4)        ; [0, 0.5)
-							 // y = -(1/2)((2x-2)^4 - 2) ; [0.5, 1]
+		// Modeled after the piecewise quartic
+		// y = (1/2)((2x)^4)        ; [0, 0.5)
+		// y = -(1/2)((2x-2)^4 - 2) ; [0.5, 1]
 		case TYPE::QUARTINOUT: {
 			if (p < 0.5) {
 				return 8 * p * p * p * p;
@@ -261,20 +263,20 @@ namespace tween {
 			}
 		}
 
-							   // Modeled after the quintic y = x^5
+		// Modeled after the quintic y = x^5
 		case TYPE::QUINTIN: {
 			return p * p * p * p * p;
 		}
 
-							// Modeled after the quintic y = (x - 1)^5 + 1
+		// Modeled after the quintic y = (x - 1)^5 + 1
 		case TYPE::QUINTOUT: {
 			double f = (p - 1);
 			return f * f * f * f * f + 1;
 		}
 
-							 // Modeled after the piecewise quintic
-							 // y = (1/2)((2x)^5)       ; [0, 0.5)
-							 // y = (1/2)((2x-2)^5 + 2) ; [0.5, 1]
+		// Modeled after the piecewise quintic
+		// y = (1/2)((2x)^5)       ; [0, 0.5)
+		// y = (1/2)((2x-2)^5 + 2) ; [0.5, 1]
 		case TYPE::QUINTINOUT: {
 			if (p < 0.5) {
 				return 16 * p * p * p * p * p;
@@ -285,34 +287,34 @@ namespace tween {
 			}
 		}
 
-							   // Modeled after quarter-cycle of sine wave
+		// Modeled after quarter-cycle of sine wave
 		case TYPE::SINEIN: {
 			return sin((p - 1) * pi2) + 1;
 		}
 
-						   // Modeled after quarter-cycle of sine wave (different phase)
+		// Modeled after quarter-cycle of sine wave (different phase)
 		case TYPE::SINEOUT: {
 			return sin(p * pi2);
 		}
 
-							// Modeled after half sine wave
+		// Modeled after half sine wave
 		case TYPE::SINEINOUT: {
 			return 0.5 * (1 - cos(p * pi));
 		}
 
-							  // Modeled after shifted quadrant IV of unit circle
+		// Modeled after shifted quadrant IV of unit circle
 		case TYPE::CIRCIN: {
 			return 1 - sqrt(1 - (p * p));
 		}
 
-						   // Modeled after shifted quadrant II of unit circle
+		// Modeled after shifted quadrant II of unit circle
 		case TYPE::CIRCOUT: {
 			return sqrt((2 - p) * p);
 		}
 
-							// Modeled after the piecewise circular function
-							// y = (1/2)(1 - sqrt(1 - 4x^2))           ; [0, 0.5)
-							// y = (1/2)(sqrt(-(2x - 3)*(2x - 1)) + 1) ; [0.5, 1]
+		// Modeled after the piecewise circular function
+		// y = (1/2)(1 - sqrt(1 - 4x^2))           ; [0, 0.5)
+		// y = (1/2)(sqrt(-(2x - 3)*(2x - 1)) + 1) ; [0.5, 1]
 		case TYPE::CIRCINOUT: {
 			if (p < 0.5) {
 				return 0.5 * (1 - sqrt(1 - 4 * (p * p)));
@@ -322,19 +324,19 @@ namespace tween {
 			}
 		}
 
-							  // Modeled after the exponential function y = 2^(10(x - 1))
+		// Modeled after the exponential function y = 2^(10(x - 1))
 		case TYPE::EXPOIN: {
 			return (p == 0.0) ? p : pow(2, 10 * (p - 1));
 		}
 
-						   // Modeled after the exponential function y = -2^(-10x) + 1
+		// Modeled after the exponential function y = -2^(-10x) + 1
 		case TYPE::EXPOOUT: {
 			return (p == 1.0) ? p : 1 - pow(2, -10 * p);
 		}
 
-							// Modeled after the piecewise exponential
-							// y = (1/2)2^(10(2x - 1))         ; [0,0.5)
-							// y = -(1/2)*2^(-10(2x - 1))) + 1 ; [0.5,1]
+		// Modeled after the piecewise exponential
+		// y = (1/2)2^(10(2x - 1))         ; [0,0.5)
+		// y = -(1/2)*2^(-10(2x - 1))) + 1 ; [0.5,1]
 		case TYPE::EXPOINOUT: {
 			if (p == 0.0 || p == 1.0) return p;
 
@@ -346,19 +348,19 @@ namespace tween {
 			}
 		}
 
-							  // Modeled after the damped sine wave y = sin(13pi/2*x)*pow(2, 10 * (x - 1))
+		// Modeled after the damped sine wave y = sin(13pi/2*x)*pow(2, 10 * (x - 1))
 		case TYPE::ELASTICIN: {
 			return sin(13 * pi2 * p) * pow(2, 10 * (p - 1));
 		}
 
-							  // Modeled after the damped sine wave y = sin(-13pi/2*(x + 1))*pow(2, -10x) + 1
+		// Modeled after the damped sine wave y = sin(-13pi/2*(x + 1))*pow(2, -10x) + 1
 		case TYPE::ELASTICOUT: {
 			return sin(-13 * pi2 * (p + 1)) * pow(2, -10 * p) + 1;
 		}
 
-							   // Modeled after the piecewise exponentially-damped sine wave:
-							   // y = (1/2)*sin(13pi/2*(2*x))*pow(2, 10 * ((2*x) - 1))      ; [0,0.5)
-							   // y = (1/2)*(sin(-13pi/2*((2x-1)+1))*pow(2,-10(2*x-1)) + 2) ; [0.5, 1]
+		// Modeled after the piecewise exponentially-damped sine wave:
+		// y = (1/2)*sin(13pi/2*(2*x))*pow(2, 10 * ((2*x) - 1))      ; [0,0.5)
+		// y = (1/2)*(sin(-13pi/2*((2x-1)+1))*pow(2,-10(2*x-1)) + 2) ; [0.5, 1]
 		case TYPE::ELASTICINOUT: {
 			if (p < 0.5) {
 				return 0.5 * sin(13 * pi2 * (2 * p)) * pow(2, 10 * ((2 * p) - 1));
@@ -368,33 +370,39 @@ namespace tween {
 			}
 		}
 
-								 // Modeled (originally) after the overshooting cubic y = x^3-x*sin(x*pi)
+		// Modeled (originally) after the overshooting cubic y = x^3-x*sin(x*pi)
 		case TYPE::BACKIN: { /*
 							 return p * p * p - p * sin(p * pi); */
 			double s = 1.70158f;
 			return p * p * ((s + 1) * p - s);
 		}
 
-						   // Modeled (originally) after overshooting cubic y = 1-((1-x)^3-(1-x)*sin((1-x)*pi))
-		case TYPE::BACKOUT: { /*
-							  double f = (1 - p);
-							  return 1 - (f * f * f - f * sin(f * pi)); */
+		// Modeled (originally) after overshooting cubic y = 1-((1-x)^3-(1-x)*sin((1-x)*pi))
+		case TYPE::BACKOUT: {
+			/*
+			double f = (1 - p);
+			return 1 - (f * f * f - f * sin(f * pi));
+			*/
 			double s = 1.70158f;
 			return --p, 1.f * (p*p*((s + 1)*p + s) + 1);
 		}
 
-							// Modeled (originally) after the piecewise overshooting cubic function:
-							// y = (1/2)*((2x)^3-(2x)*sin(2*x*pi))           ; [0, 0.5)
-							// y = (1/2)*(1-((1-x)^3-(1-x)*sin((1-x)*pi))+1) ; [0.5, 1]
-		case TYPE::BACKINOUT: { /*
-								if(p < 0.5) {
-								double f = 2 * p;
-								return 0.5 * (f * f * f - f * sin(f * pi));
-								}
-								else {
-								double f = (1 - (2*p - 1));
-								return 0.5 * (1 - (f * f * f - f * sin(f * pi))) + 0.5;
-								} */
+		// Modeled (originally) after the piecewise overshooting cubic function:
+		// y = (1/2)*((2x)^3-(2x)*sin(2*x*pi))           ; [0, 0.5)
+		// y = (1/2)*(1-((1-x)^3-(1-x)*sin((1-x)*pi))+1) ; [0.5, 1]
+		case TYPE::BACKINOUT: {
+			/*
+			if(p < 0.5)
+			{
+				double f = 2 * p;
+				return 0.5 * (f * f * f - f * sin(f * pi));
+			}
+			else
+			{
+				double f = (1 - (2*p - 1));
+				return 0.5 * (1 - (f * f * f - f * sin(f * pi))) + 0.5;
+			}
+			*/
 			double s = 1.70158f * 1.525f;
 			if (p < 0.5) {
 				return p *= 2, 0.5 * p * p * (p*s + p - s);
@@ -404,7 +412,7 @@ namespace tween {
 			}
 		}
 
-#           define tween$bounceout(p) ( \
+#define	tween$bounceout(p) ( \
                 (p) < 4/11.0 ? (121 * (p) * (p))/16.0 : \
                 (p) < 8/11.0 ? (363/40.0 * (p) * (p)) - (99/10.0 * (p)) + 17/5.0 : \
                 (p) < 9/10.0 ? (4356/361.0 * (p) * (p)) - (35442/1805.0 * (p)) + 16061/1805.0 \
@@ -427,7 +435,7 @@ namespace tween {
 			}
 		}
 
-#           undef tween$bounceout
+#undef tween$bounceout
 
 		case TYPE::SINESQUARE: {
 			double A = sin((p)*pi2);
@@ -890,7 +898,6 @@ void UninitImguiProperty(HWND hWnd, WNDCLASSEX wcex)
 #endif // _DEBUG
 }
 
-
 ////--------------------------------------------------
 //// 曲線制作サインカーブ
 ////--------------------------------------------------
@@ -1118,10 +1125,15 @@ void UpdateImguiProperty(void)
 
 		ImGui::EndMenuBar();
 	}
+
+	// データ
+	CParticleManager::BundledData* bundledData = &(CApplication::GetInstance()->GetParticleManager()->GetBundledData()[CParticleManager::DEBUG_TYPE]);
+
 	//パーティクルのデータ出力＆読み込み
 	if (ImGui::Button("DATA"))
 	{
-		imguiParticle = GetStatus();
+		// データの切り替えは仕様変更のためで後適用
+		//bundledData->emitterData = CApplication::GetInstance()->GetParticleFactory()->GetParticleEmitter()[CParticleFactory::DEBUG_TYPE];
 	}
 	if (ImGui::Button("OUT"))
 	{
@@ -1244,10 +1256,10 @@ void UpdateImguiProperty(void)
 	//エフェクト関係
 	if (ImGui::CollapsingHeader("EffectSetting"))
 	{
-		imguiParticle.color.colBigin.a = 1.0f;
-		imguiParticle.color.destCol.a = 1.0f;
+		bundledData->particleData.color.colBigin.a = 1.0f;
+		bundledData->particleData.color.destCol.a = 1.0f;
 
-		//imguiParticle.fScale = 50.0f;
+		//bundledData->particleData.fScale = 50.0f;
 
 		if (ImGui::Checkbox("EffectEnable", &useEffect))
 		{
@@ -1280,8 +1292,7 @@ void UpdateImguiProperty(void)
 		{
 			// テクスチャ
 			CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
-			CParticle* pParticle = CApplication::GetInstance()->GetParticle();
-			int index = pParticle->GetIdxTex();
+			int& index = CApplication::GetInstance()->GetParticleManager()->GetBundledData()[CParticleManager::DEBUG_TYPE].particleData.nIdxTex;
 
 			if (ImGui::BeginCombo("Texture", pTexture->GetPath(index, false).c_str(), 0))
 			{// コンボボタン
@@ -1301,28 +1312,30 @@ void UpdateImguiProperty(void)
 				}
 				ImGui::EndCombo();
 			}
-
-			pParticle->SetIdxTex(index);
 		}
 
+		// エミッタ―の位置を調整
+		D3DXVECTOR3 Imguipos = CApplication::GetInstance()->GetParticleManager()->GetEmitter()[0]->GetPos();
 		ImGui::Separator();
-		ImGui::Text("/* Pos */");;
-		ImGui::SliderFloat("PosX", &popPos.x, 0.0f, (float)CApplication::SCREEN_WIDTH);
-		ImGui::SliderFloat("PosY", &popPos.y, 0.0f, (float)CApplication::SCREEN_HEIGHT);
+		ImGui::Text("/* Pos */");
+		ImGui::SliderFloat("PosX", &Imguipos.x, 0.0f, (float)CApplication::SCREEN_WIDTH);
+		ImGui::SliderFloat("PosY", &Imguipos.y, 0.0f, (float)CApplication::SCREEN_HEIGHT);
 		ImGui::Separator();
+		
+		CApplication::GetInstance()->GetParticleManager()->GetEmitter()[0]->SetPos(Imguipos);
 
 		ImGui::Text("/* Pop */");
 		// 生成範囲の設定
-		ImGui::SliderFloat("MaxPopPosX", &imguiParticle.maxPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
-		ImGui::SliderFloat("MinPopPosX", &imguiParticle.minPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
-		ImGui::SliderFloat("MaxPopPosY", &imguiParticle.maxPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
-		ImGui::SliderFloat("MinPopPosY", &imguiParticle.minPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
+		ImGui::SliderFloat("MaxPopPosX", &bundledData->particleData.maxPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
+		ImGui::SliderFloat("MinPopPosX", &bundledData->particleData.minPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
+		ImGui::SliderFloat("MaxPopPosY", &bundledData->particleData.maxPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
+		ImGui::SliderFloat("MinPopPosY", &bundledData->particleData.minPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
 		ImGui::Separator();
 
 		ImGui::Text("/* Move */");
-		ImGui::InputFloat2("SettingEffectMove", imguiParticle.move, "%f");
-		ImGui::SliderFloat("MoveX", &imguiParticle.move.x, -100.0f, 100.0f);
-		ImGui::SliderFloat("MoveY", &imguiParticle.move.y, -100.0f, 100.0f);
+		ImGui::InputFloat2("SettingEffectMove", bundledData->particleData.move, "%f");
+		ImGui::SliderFloat("MoveX", &bundledData->particleData.move.x, -100.0f, 100.0f);
+		ImGui::SliderFloat("MoveY", &bundledData->particleData.move.y, -100.0f, 100.0f);
 
 		//詳細
 		if (ImGui::CollapsingHeader("Details"))
@@ -1330,43 +1343,43 @@ void UpdateImguiProperty(void)
 			//rot計算用
 			static float s_fDeg = 0.0f;
 			ImGui::Text("/* Rot */");
-			ImGui::InputFloat3("SettingEffectRot", imguiParticle.rot, "%f");
+			ImGui::InputFloat3("SettingEffectRot", bundledData->particleData.rot, "%f");
 			ImGui::SliderFloat("Rot", &s_fDeg, -D3DX_PI, D3DX_PI);
 
 			if (ImGui::Checkbox("BackRot", &s_bRot))
 			{
-				imguiParticle.bBackrot = !imguiParticle.bBackrot;
+				bundledData->particleData.bBackrot = !bundledData->particleData.bBackrot;
 			}
 
-			float rotX = popPos.x * cosf(s_fDeg) + popPos.x * sinf(s_fDeg);
-			float rotY = popPos.y * sinf(s_fDeg) - popPos.y * cosf(s_fDeg);
+			float rotX = Imguipos.x * cosf(s_fDeg) + Imguipos.x * sinf(s_fDeg);
+			float rotY = Imguipos.y * sinf(s_fDeg) - Imguipos.y * cosf(s_fDeg);
 			float fAngle = atan2f(rotX, rotY);
-			imguiParticle.rot = D3DXVECTOR3(rotX, rotY, fAngle);
+			bundledData->particleData.rot = D3DXVECTOR3(rotX, rotY, fAngle);
 
-			if (imguiParticle.rot.z > D3DX_PI)
+			if (bundledData->particleData.rot.z > D3DX_PI)
 			{
-				imguiParticle.rot.z -= D3DX_PI * 2;
+				bundledData->particleData.rot.z -= D3DX_PI * 2;
 			}
-			else if (imguiParticle.rot.z < -D3DX_PI)
+			else if (bundledData->particleData.rot.z < -D3DX_PI)
 			{
-				imguiParticle.rot.z += D3DX_PI * 2;
+				bundledData->particleData.rot.z += D3DX_PI * 2;
 			}
 
 			ImGui::Separator();
 			ImGui::Text("/* Scale */");
-			ImGui::SliderFloat("Scale", &imguiParticle.fScale, 0.0f, 100.0f);
+			ImGui::SliderFloat("Scale", &bundledData->particleData.fScale, 0.0f, 100.0f);
 			ImGui::Separator();
 			ImGui::Text("/* Life */");
-			ImGui::SliderInt("Life", &imguiParticle.nLife, 0, 500);
+			ImGui::SliderInt("Life", &bundledData->particleData.nLife, 0, 500);
 			ImGui::Separator();
 			ImGui::Text("/* Radius */");
-			ImGui::SliderFloat("Radius", &imguiParticle.fRadius, 0.0f, 100.0f);
+			ImGui::SliderFloat("Radius", &bundledData->particleData.fRadius, 0.0f, 100.0f);
 			ImGui::Separator();
 			ImGui::Text("/* Angle */");
-			ImGui::SliderAngle("Angle", &imguiParticle.fAngle, 0.0f, 2000.0f);
+			ImGui::SliderAngle("Angle", &bundledData->particleData.fAngle, 0.0f, 2000.0f);
 			ImGui::Separator();
 			ImGui::Text("/* Attenuation */");
-			ImGui::SliderFloat("Attenuation", &imguiParticle.fAttenuation, 0.0f, 1.0f);
+			ImGui::SliderFloat("Attenuation", &bundledData->particleData.fAttenuation, 0.0f, 1.0f);
 
 			//挙動おかしくなっちゃった時用
 			if (ImGui::Button("DataRemove"))
@@ -1379,29 +1392,29 @@ void UpdateImguiProperty(void)
 		if (ImGui::CollapsingHeader("Color"))
 		{
 			//カラーパレット
-			ImGui::ColorEdit4("clear", (float*)&imguiParticle.color);
+			ImGui::ColorEdit4("clear", (float*)&bundledData->particleData.color);
 
 			// ランダムカラー
-			ImGui::Checkbox("Random", &imguiParticle.color.bColRandom);
+			ImGui::Checkbox("Random", &bundledData->particleData.color.bColRandom);
 
-			if (imguiParticle.color.bColRandom)
+			if (bundledData->particleData.color.bColRandom)
 			{
-				ImGui::ColorEdit4("RandamMax", (float*)&imguiParticle.color.colRandamMax);
-				ImGui::ColorEdit4("RandamMin", (float*)&imguiParticle.color.colRandamMin);
+				ImGui::ColorEdit4("RandamMax", (float*)&bundledData->particleData.color.colRandamMax);
+				ImGui::ColorEdit4("RandamMin", (float*)&bundledData->particleData.color.colRandamMin);
 			}
 
 			// カラートラディション
-			ImGui::Checkbox("Transition", &imguiParticle.color.bColTransition);
+			ImGui::Checkbox("Transition", &bundledData->particleData.color.bColTransition);
 
-			if (imguiParticle.color.bColTransition)
+			if (bundledData->particleData.color.bColTransition)
 			{// 目的の色
-				ImGui::ColorEdit4("clear destColor", (float*)&imguiParticle.color.destCol);
+				ImGui::ColorEdit4("clear destColor", (float*)&bundledData->particleData.color.destCol);
 
-				ImGui::Checkbox("RandomTransitionTime", &imguiParticle.color.bRandomTransitionTime);
+				ImGui::Checkbox("RandomTransitionTime", &bundledData->particleData.color.bRandomTransitionTime);
 
-				if (!imguiParticle.color.bRandomTransitionTime)
+				if (!bundledData->particleData.color.bRandomTransitionTime)
 				{
-					ImGui::SliderInt("EndTime", &imguiParticle.color.nEndTime, 0, imguiParticle.nLife);
+					ImGui::SliderInt("EndTime", &bundledData->particleData.color.nEndTime, 0, bundledData->particleData.nLife);
 				}
 			}
 
@@ -1533,7 +1546,7 @@ void UpdateImguiProperty(void)
 
 					if (s_nTimer >= 5)
 					{
-						imguiParticle.color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
+						bundledData->particleData.color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
 						s_nColNum++;
 						s_nTimer = 0;
 					}
@@ -1560,20 +1573,20 @@ void UpdateImguiProperty(void)
 				break;
 			}
 
-			ImGui::SliderFloat("Alpha", &imguiParticle.color.colTransition.a, -0.5f, 0.0f);
+			ImGui::SliderFloat("Alpha", &bundledData->particleData.color.colTransition.a, -0.5f, 0.0f);
 		}
 
 		// αブレンディングの種類
 		if (ImGui::CollapsingHeader("AlphaBlending"))
 		{
 			// 変数宣言
-			int	nBlendingType = (int)imguiParticle.alphaBlend;		// 種別変更用の変数
+			int	nBlendingType = (int)bundledData->particleData.alphaBlend;		// 種別変更用の変数
 
 			ImGui::RadioButton("AddBlend", &nBlendingType, 0);
 			ImGui::RadioButton("SubBlend", &nBlendingType, 1);
 			ImGui::RadioButton("BlendNone", &nBlendingType, 2);
 
-			imguiParticle.alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
+			bundledData->particleData.alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
 		}
 	}
 
@@ -1605,22 +1618,6 @@ void DrawImguiProperty(void)
 }
 
 //--------------------------------------------------
-// Imguiの取得
-//--------------------------------------------------
-CParticle::Particle& GetImguiParticle(void)
-{
-	return imguiParticle;
-}
-
-//--------------------------------------------------
-// パーティクル出現位置の取得
-//--------------------------------------------------
-D3DXVECTOR3& GetPopPos(void)
-{
-	return popPos;
-}
-
-//--------------------------------------------------
 // ファイル名の取得
 //--------------------------------------------------
 char* GetFileName(void)
@@ -1649,23 +1646,27 @@ bool bSetImguiParticle(void)
 //--------------------------------------------------
 void ParticleTemplate(void)
 {
-	popPos.x = CApplication::SCREEN_WIDTH * 0.5f;
-	popPos.y = CApplication::SCREEN_HEIGHT * 0.5f;
-	imguiParticle.maxPopPos.x = 0.0f;
-	imguiParticle.maxPopPos.y = 0.0f;
-	imguiParticle.minPopPos.x = 0.0f;
-	imguiParticle.minPopPos.y = 0.0f;
-	imguiParticle.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	imguiParticle.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	imguiParticle.color.colBigin = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	imguiParticle.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	imguiParticle.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	imguiParticle.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	imguiParticle.color.colTransition = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	imguiParticle.nLife = 60;
-	imguiParticle.fScale = 50.0f;
-	imguiParticle.fRadius = 4.5f;
-	imguiParticle.fAngle = 20.5f;
-	imguiParticle.fAttenuation = 0.98f;
-	imguiParticle.alphaBlend = (CParticle::ALPHABLENDTYPE)0;
+	CParticleManager* manager = CApplication::GetInstance()->GetParticleManager();
+	CParticleManager::BundledData& templateData = manager->GetBundledData()[CParticleManager::DEBUG_TYPE];
+	D3DXVECTOR3 Imguipos = manager->GetEmitter()[0]->GetPos();
+	Imguipos.x = CApplication::SCREEN_WIDTH * 0.5f;
+	Imguipos.y = CApplication::SCREEN_HEIGHT * 0.5f;
+	manager->GetEmitter()[0]->SetPos(Imguipos);
+	templateData.particleData.maxPopPos.x = 0.0f;
+	templateData.particleData.maxPopPos.y = 0.0f;
+	templateData.particleData.minPopPos.x = 0.0f;
+	templateData.particleData.minPopPos.y = 0.0f;
+	templateData.particleData.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	templateData.particleData.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	templateData.particleData.color.colBigin = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	templateData.particleData.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	templateData.particleData.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	templateData.particleData.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	templateData.particleData.color.colTransition = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	templateData.particleData.nLife = 60;
+	templateData.particleData.fScale = 50.0f;
+	templateData.particleData.fRadius = 4.5f;
+	templateData.particleData.fAngle = 20.5f;
+	templateData.particleData.fAttenuation = 0.98f;
+	templateData.particleData.alphaBlend = (CParticle::ALPHABLENDTYPE)0;
 }

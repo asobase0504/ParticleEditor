@@ -14,7 +14,7 @@
 #include "object2d.h"
 #include "file.h"
 
-#include "particle.h"
+#include "particle_manager.h"
 #include "BG.h"
 #include "imgui_property.h"
 
@@ -78,8 +78,13 @@ HRESULT CApplication::Init(HWND hWnd, HINSTANCE hInstance)
 	// テクスチャ
 	texture = new CTexture;
 
+	paticleManager = new CParticleManager;
 	// パーティクル
-	LoadJson(L"data/FILE/Effect.json");
+	if (FAILED(paticleManager->Init()))
+	{
+		return E_FAIL;
+	}
+	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f,0.0f),CParticleManager::DEBUG_TYPE);
 
 	SetTex();
 
@@ -110,6 +115,14 @@ void CApplication::Uninit()
 		texture = nullptr;
 	}
 
+	if (paticleManager != nullptr)
+	{
+		paticleManager->Uninit();
+
+		delete paticleManager;
+		paticleManager = nullptr;
+	}
+
 	if (renderer != nullptr)
 	{
 		renderer->Uninit();
@@ -136,10 +149,7 @@ void CApplication::Update()
 
 	renderer->Update();
 
-	if (bSetImguiParticle())
-	{
-		CParticle::Create(GetImguiParticle(), GetPopPos());
-	}
+	paticleManager->Update();
 }
 
 //=============================================================================

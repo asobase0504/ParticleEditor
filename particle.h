@@ -23,8 +23,6 @@ public:	// 定数
 	static const int maxNumber = 21000;
 	static const int numType = 10;
 public:	// 静的変数
-	static float m_fAngle;	// 発射角度
-	static int m_nIdxTex;	// テクスチャの番号
 public:	// 列挙型
 		//エフェクトの種別
 	enum PARTICLETYPE
@@ -108,6 +106,7 @@ public: // 構造体
 		int nLife;					// 寿命
 		int nMaxLife;				// 最大寿命
 		int nMoveTime;				
+		int nIdxTex;				// テクスチャの番号
 		bool bUseWeight;			// 重さを使用するかどうか
 		bool bBackrot;				// 逆回転させるかどうか
 		bool bTexturerot;			// テクスチャ回転させるかどうか
@@ -124,11 +123,7 @@ public:
 	void Draw() override;
 
 	static CParticle* Create(const Particle& inParticle, const D3DXVECTOR3& inPos);
-	static void SetIdxTex(int idxTex);
-	static int GetIdxTex();
-	void Set(const Particle& inParticle, const D3DXVECTOR3& inPos);
 	void LoadTex();
-	void RemoveAngle(void);
 	DWORD FloattoDword(float fVal);
 
 private:	// メンバー変数

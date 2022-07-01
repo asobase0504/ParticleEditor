@@ -10,6 +10,7 @@
 //==================================================
 #include "texture.h"
 #include "application.h"
+#include "particle_manager.h"
 #include "renderer.h"
 #include "file.h"
 
@@ -152,7 +153,7 @@ void CTexture::SetPath(std::string str)
 
 		m_fileName[m_numAll] = copy;
 
-		CParticle::SetIdxTex(m_numAll);
+		CApplication::GetInstance()->GetParticleManager()->GetBundledData()[0].particleData.nIdxTex = m_numAll;
 
 		m_numAll++;
 		m_fileSave = true;

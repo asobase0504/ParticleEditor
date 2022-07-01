@@ -16,7 +16,7 @@ class CRenderer;
 class CObject;
 class CPlayer;
 class CTexture;
-class CParticle;
+class CParticleManager;
 class CBg;
 
 //-----------------------------------------
@@ -44,13 +44,13 @@ public:
 	CRenderer* GetRenderer() { return renderer; }
 	CObject** GetMyObject() { return &object; }
 	CTexture* GetTextureClass() { return texture; }
-	CParticle* GetParticle() { return particle; }
+	CParticleManager* GetParticleManager() { return paticleManager; }
 private:
 	static CApplication* application;
 	CObject* object;
 	CRenderer* renderer;
 	CTexture* texture;
-	CParticle* particle;
+	CParticleManager* paticleManager;
 	CBg* bg;
 };
 

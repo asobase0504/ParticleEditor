@@ -12,10 +12,16 @@
 //==================================================
 #include "imgui.h"
 #include "particle.h"
+#include "particle_emitter.h"
 
 #include <d3d9.h>
 #include <array>
 #include <chrono>
+
+//==================================================
+// 前方宣言
+//==================================================
+class CParticleEmitter;
 
 //==================================================
 // プロトタイプ宣言
@@ -48,12 +54,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 //--------------------------------------------------
 // パーティクルデータの取得
 //--------------------------------------------------
-CParticle::Particle& GetImguiParticle(void);
-
-//--------------------------------------------------
-// パーティクル出現位置の取得
-//--------------------------------------------------
-D3DXVECTOR3& GetPopPos(void);
+CParticleEmitter* GetImguiParticle(void);
 
 //--------------------------------------------------
 // ファイル名の取得

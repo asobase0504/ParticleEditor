@@ -182,6 +182,8 @@
     <ClCompile Include="object.cpp" />
     <ClCompile Include="object2d.cpp" />
     <ClCompile Include="particle.cpp" />
+    <ClCompile Include="particle_emitter.cpp" />
+    <ClCompile Include="particle_manager.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="utility.cpp" />
@@ -208,6 +210,8 @@
     <ClInclude Include="object.h" />
     <ClInclude Include="object2d.h" />
     <ClInclude Include="particle.h" />
+    <ClInclude Include="particle_emitter.h" />
+    <ClInclude Include="particle_manager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="resource1.h" />
