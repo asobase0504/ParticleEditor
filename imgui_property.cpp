@@ -1385,8 +1385,8 @@ void UpdateImguiProperty(void)
 
 			if (bundledData->particleData.color.bColRandom)
 			{
-				ColorPalette4("RandamMax", (float*)&bundledData->particleData.colRandamMax);
-				ColorPalette4("RandamMin", (float*)&bundledData->particleData.colRandamMin);
+				ColorPalette4("RandamMax", (float*)&bundledData->particleData.color.colRandamMax);
+				ColorPalette4("RandamMin", (float*)&bundledData->particleData.color.colRandamMin);
 			}
 
 			// カラートラディション
