@@ -33,10 +33,6 @@
 //CPU
 //------------------------------
 #include <stdio.h>
-
-//------------------------------
-//GPU
-//------------------------------
 #include <nvml.h>
 
 #if _DEBUG
@@ -1088,7 +1084,6 @@ void UpdateImguiProperty(void)
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	static D3DXCOLOR color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	static int mode = 0;
 	static int sliderInt = 0;
 	static float sliderFloat = 0;
@@ -1186,13 +1181,6 @@ void UpdateImguiProperty(void)
 		float value_you_care_about = ImGui::CurveValue(0.7f, 10, foo); // calculate value at position 0.7
 	}
 
-	//ImGui::Text("CPU1  : %d", MemoryUsageMegaBytes());
-	//void* const p = malloc(512 * 1024 * 1024);
-	// テキスト表示
-	//ImGui::Text("CPU2  : %d", MemoryUsageMegaBytes());
-	//free(p);
-	//ImGui::Text("CPU3  : %d", MemoryUsageMegaBytes());
-
 	unsigned int clockMZ = 0;
 
 	//現在の使用率取得
@@ -1256,11 +1244,6 @@ void UpdateImguiProperty(void)
 	//エフェクト関係
 	if (ImGui::CollapsingHeader("EffectSetting"))
 	{
-		bundledData->particleData.color.colBigin.a = 1.0f;
-		bundledData->particleData.color.destCol.a = 1.0f;
-
-		//bundledData->particleData.fScale = 50.0f;
-
 		if (ImGui::Checkbox("EffectEnable", &useEffect))
 		{
 			s_bEffectEnable = !s_bEffectEnable;
@@ -1279,14 +1262,17 @@ void UpdateImguiProperty(void)
 		{
 			GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
 
-			std::string File = FileString;
-			char * Data = GetBuffer();
-			HWND hWnd = GetWnd();
-			strcpy(Data, File.c_str());
+			if (FileString[0] != '\0')
+			{
+				std::string File = FileString;
+				char * Data = GetBuffer();
+				HWND hWnd = GetWnd();
+				strcpy(Data, File.c_str());
 
-			SetFileName(Data);
+				SetFileName(Data);
 
-			funcFileSave(hWnd);
+				funcFileSave(hWnd);
+			}
 		}
 
 		{
@@ -1392,15 +1378,15 @@ void UpdateImguiProperty(void)
 		if (ImGui::CollapsingHeader("Color"))
 		{
 			//カラーパレット
-			ImGui::ColorEdit4("clear", (float*)&bundledData->particleData.color);
+			ColorPalette4("clear", (float*)&bundledData->particleData.color);
 
 			// ランダムカラー
 			ImGui::Checkbox("Random", &bundledData->particleData.color.bColRandom);
 
 			if (bundledData->particleData.color.bColRandom)
 			{
-				ImGui::ColorEdit4("RandamMax", (float*)&bundledData->particleData.color.colRandamMax);
-				ImGui::ColorEdit4("RandamMin", (float*)&bundledData->particleData.color.colRandamMin);
+				ColorPalette4("RandamMax", (float*)&bundledData->particleData.colRandamMax);
+				ColorPalette4("RandamMin", (float*)&bundledData->particleData.colRandamMin);
 			}
 
 			// カラートラディション
@@ -1408,7 +1394,7 @@ void UpdateImguiProperty(void)
 
 			if (bundledData->particleData.color.bColTransition)
 			{// 目的の色
-				ImGui::ColorEdit4("clear destColor", (float*)&bundledData->particleData.color.destCol);
+				ColorPalette4("clear destColor", (float*)&bundledData->particleData.color.destCol);
 
 				ImGui::Checkbox("RandomTransitionTime", &bundledData->particleData.color.bRandomTransitionTime);
 
@@ -1416,47 +1402,6 @@ void UpdateImguiProperty(void)
 				{
 					ImGui::SliderInt("EndTime", &bundledData->particleData.color.nEndTime, 0, bundledData->particleData.nLife);
 				}
-			}
-
-			const ImVec4* s_Colors[9] =
-			{// 色の配列
-				&ImVec4(1.0f, 0.0f, 0.0f, 1.0f),	// 赤
-				&ImVec4(0.0f, 1.0f, 0.0f, 1.0f),	// 緑
-				&ImVec4(0.0f, 0.0f, 1.0f, 1.0f),	// 青
-				&ImVec4(1.0f, 1.0f, 0.0f, 1.0f),	// 黄色
-				&ImVec4(1.0f, 0.0f, 1.0f, 1.0f),	// 紫
-				&ImVec4(0.0f, 1.0f, 1.0f, 1.0f),	// 水色
-				&ImVec4(1.0f, 1.0f, 1.0f, 1.0f),	// 白
-				&ImVec4(0.5f, 0.5f, 0.5f, 1.0f),	// 灰色
-				&ImVec4(0.0f, 0.0f, 0.0f, 1.0f)		// 黒
-			};
-
-			const std::string s_ColorsName[9] =
-			{// 色の配列
-				"RED",			// 赤
-				"GREEN",		// 緑
-				"BLUE",			// 青
-				"YELLOW",		// 黄色
-				"PURPLE",		// 紫
-				"LIGHTBLUE",	// 水色
-				"WHITE",		// 白
-				"GRAY",			// 灰色
-				"BLACK"			// 黒
-			};
-
-			for (int i = 0; i < 9; i++)
-			{
-				if (i > 0)
-				{
-					ImGui::SameLine();
-				}
-				ImGui::PushID(i);
-				ImGui::PushStyleColor(ImGuiCol_Button, *s_Colors[i]);
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, *s_Colors[i]);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, *s_Colors[i]);
-				ImGui::Button(s_ColorsName[i].c_str());
-				ImGui::PopStyleColor(3);
-				ImGui::PopID();
 			}
 		}
 
@@ -1669,4 +1614,152 @@ void ParticleTemplate(void)
 	templateData.particleData.fAngle = 20.5f;
 	templateData.particleData.fAttenuation = 0.98f;
 	templateData.particleData.alphaBlend = (CParticle::ALPHABLENDTYPE)0;
+}
+
+//--------------------------------------------------
+// カラーパレット4
+//--------------------------------------------------
+void ColorPalette4(const char* label, float col[4])
+{
+	//カラーパレット
+	ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_NoDragDrop | ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_NoOptions;
+
+	static const char* ids[4] = { "##X", "##Y", "##Z", "##W" };
+	static const char* fmt_table_float[4] = { "R:%0.3f", "G:%0.3f", "B:%0.3f", "A:%0.3f" };
+	const float square_sz = ImGui::GetFrameHeight();
+	const float w_full = ImGui::CalcItemWidth();
+	const float w_button = square_sz + ImGui::GetStyle().ItemInnerSpacing.x;
+	const float w_inputs = w_full - w_button;
+	const float w_item_one = ImMax(1.0f, IM_FLOOR((w_inputs - (ImGui::GetStyle().ItemInnerSpacing.x) * (4 - 1)) / 4.0f));
+	const float w_item_last = ImMax(1.0f, IM_FLOOR(w_inputs - (w_item_one + ImGui::GetStyle().ItemInnerSpacing.x) * (4 - 1)));
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (i > 0)
+			ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+		ImGui::SetNextItemWidth((i + 1 < 4) ? w_item_one : w_item_last);
+		ImGui::DragFloat(ids[i], &col[i], 1.0f / 255.0f, 0.0f, 1.0f, fmt_table_float[i]);
+	}
+
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+
+	ImVec4 color_vec = ImVec4(col[0], col[1], col[2], col[3]);
+	bool open_popup = ImGui::ColorButton(label, color_vec, misc_flags);
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+	open_popup |= ImGui::Button("!");
+	ImGui::SameLine();
+	ImGui::Text(label);
+
+	static D3DXCOLOR backup_color;
+
+	if (open_popup)
+	{
+		ImGui::OpenPopup(label);
+		backup_color = D3DXCOLOR(col[0], col[1], col[2], col[3]);
+	}
+	if (ImGui::BeginPopup(label))
+	{
+		ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar;
+		flags |= ImGuiColorEditFlags_AlphaPreview;
+		flags |= ImGuiColorEditFlags_Float;
+
+		ColorPalette(col, (float*)&backup_color, flags);
+		ImGui::EndPopup();
+	}
+}
+
+//--------------------------------------------------
+// カラーパレット
+//--------------------------------------------------
+void ColorPalette(float color[4], float backup_color[4], ImGuiColorEditFlags flags)
+{
+	ImGui::ColorPicker4("##picker", color, flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
+	ImGui::SameLine();
+
+	ImGui::BeginGroup(); // Lock X position
+	ImGui::Text("Current");
+	ImGui::ColorButton("##current", ImVec4(color[0], color[1], color[2], color[3]), ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreview, ImVec2(60, 40));
+	ImGui::Text("Original");
+	if (ImGui::ColorButton("##original", ImVec4(backup_color[0], backup_color[1], backup_color[2], backup_color[3]), ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreview, ImVec2(60, 40)))
+	{
+		color[0] = backup_color[0];
+		color[1] = backup_color[1];
+		color[2] = backup_color[2];
+		color[3] = backup_color[3];
+	}
+
+	ImGui::Separator();
+	ImGui::Text("Palette");
+
+	static bool saved_palette_init = true;
+	static ImVec4 saved_palette[32] = {};
+	if (saved_palette_init)
+	{
+		for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
+		{
+			ImGui::ColorConvertHSVtoRGB(n / 31.0f, 0.8f, 0.8f,
+				saved_palette[n].x, saved_palette[n].y, saved_palette[n].z);
+			saved_palette[n].w = 1.0f; // Alpha
+		}
+		saved_palette_init = false;
+	}
+
+	for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
+	{
+		ImGui::PushID(n);
+		if ((n % 8) != 0)
+			ImGui::SameLine(0.0f, ImGui::GetStyle().ItemSpacing.y);
+
+		ImGuiColorEditFlags palette_button_flags = ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoTooltip;
+		if (ImGui::ColorButton("##palette", saved_palette[n], palette_button_flags, ImVec2(20, 20)))
+		{
+			color[0] = saved_palette[n].x;
+			color[1] = saved_palette[n].y;
+			color[2] = saved_palette[n].z;
+		}
+
+		// Allow user to drop colors into each palette entry. Note that ColorButton() is already a
+		// drag source by default, unless specifying the ImGuiColorEditFlags_NoDragDrop flag.
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_3F))
+				memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 3);
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F))
+				memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 4);
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGui::PopID();
+	}
+	ImGui::EndGroup();
+}
+
+//--------------------------------------------------
+// カラーからベクトルに変換
+//--------------------------------------------------
+ImVec4 ColorToImVec4(const D3DXCOLOR& color)
+{
+	ImVec4 vec;
+
+	vec.x = color.r;
+	vec.y = color.g;
+	vec.z = color.b;
+	vec.w = color.a;
+
+	return vec;
+}
+
+//--------------------------------------------------
+// ベクトルからカラーに変換
+//--------------------------------------------------
+D3DXCOLOR ImVec4ToColor(const ImVec4& vec)
+{
+	D3DXCOLOR color;
+
+	color.r = vec.x;
+	color.g = vec.y;
+	color.b = vec.z;
+	color.a = vec.w;
+
+	return color;
 }
