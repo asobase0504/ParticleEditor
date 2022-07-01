@@ -84,7 +84,9 @@ HRESULT CApplication::Init(HWND hWnd, HINSTANCE hInstance)
 	{
 		return E_FAIL;
 	}
-	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f,0.0f),CParticleManager::DEBUG_TYPE);
+	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f), CParticleManager::DEBUG_TYPE);
+	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.75f, 0.0f), CParticleManager::DEBUG_TYPE);
+	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.25f, 0.0f), CParticleManager::DEBUG_TYPE);
 
 	SetTex();
 
@@ -105,9 +107,11 @@ HRESULT CApplication::Init(HWND hWnd, HINSTANCE hInstance)
 //=============================================================================
 void CApplication::Uninit()
 {
+	// オブジェクトの解放
 	CObject::ReleaseAll();
-	texture->UnloadAll();
 
+	// テクスチャの解放
+	texture->UnloadAll();
 	if (texture != nullptr)
 	{
 		texture->SavePath();
@@ -115,6 +119,7 @@ void CApplication::Uninit()
 		texture = nullptr;
 	}
 
+	// パーティクルマネジャーの解放
 	if (paticleManager != nullptr)
 	{
 		paticleManager->Uninit();
@@ -123,6 +128,7 @@ void CApplication::Uninit()
 		paticleManager = nullptr;
 	}
 
+	// レンダラーの解放
 	if (renderer != nullptr)
 	{
 		renderer->Uninit();
@@ -131,6 +137,7 @@ void CApplication::Uninit()
 		renderer = nullptr;
 	}
 
+	// アプリケーションの解放
 	if (application != nullptr)
 	{
 		delete application;

@@ -10,17 +10,16 @@
 #include "particle_emitter.h"
 #include "utility.h"
 
-//==================================================
+//=========================================
 // 静的メンバー変数
-//==================================================
-float CParticleEmitter::m_fAngle = 0.0f;
+//=========================================
 
 //-----------------------------------------
 // コンストラクタ
 //-----------------------------------------
 CParticleEmitter::CParticleEmitter() :
-	emitterInfo({}),
-	m_data(nullptr)
+	m_info({}),
+	m_particleInfo(nullptr)
 {
 
 }
@@ -53,7 +52,10 @@ void CParticleEmitter::Uninit()
 //-----------------------------------------
 void CParticleEmitter::Update()
 {
-	Pop();
+	for (int i = 0; i < 2; i++)
+	{
+		PopParticle();
+	}
 }
 
 //-----------------------------------------
@@ -61,120 +63,110 @@ void CParticleEmitter::Update()
 //-----------------------------------------
 void CParticleEmitter::SetPos(const D3DXVECTOR3 & inPos)
 {
-	pos = inPos;
+	m_pos = inPos;
 }
 
 //-----------------------------------------
 // 出現
 //-----------------------------------------
-void CParticleEmitter::Pop(void)
+void CParticleEmitter::PopParticle(void)
 {
-	CParticle::Particle popData = *m_data;
-	popData.nMaxLife = popData.nLife;
-	popData.fWidth = popData.fScale;
-	popData.fHeight = popData.fScale;
-	popData.type = CParticle::PARTICLETYPE_NORMAL;
+	CParticle::Info popInfo = *m_particleInfo;
+	popInfo.nMaxLife = popInfo.nLife;
+	popInfo.fWidth = popInfo.fScale;
+	popInfo.fHeight = popInfo.fScale;
+	popInfo.type = CParticle::PARTICLETYPE_NORMAL;
 
-	popData.color.nCntTransitionTime = 0;
-	popData.bUse = true;
+	popInfo.bUse = true;
 
-	D3DXVECTOR3 myPos = pos;
+	D3DXVECTOR3 myPos = m_pos;
 	// 生成位置の算出
-	myPos.x += FloatRandam(popData.maxPopPos.x, -popData.minPopPos.x);
-	myPos.y += FloatRandam(popData.maxPopPos.y, -popData.minPopPos.y);
-	myPos.z += FloatRandam(popData.maxPopPos.z, -popData.minPopPos.z);
+	myPos.x += FloatRandam(popInfo.maxPopPos.x, -popInfo.minPopPos.x);
+	myPos.y += FloatRandam(popInfo.maxPopPos.y, -popInfo.minPopPos.y);
+	myPos.z += FloatRandam(popInfo.maxPopPos.z, -popInfo.minPopPos.z);
 
 	// 色の算出
-	if (popData.color.bColRandom)
+	CParticle::Color& popColor = popInfo.color;
+	popColor.nCntTransitionTime = 0;
+	if (popColor.bColRandom)
 	{// ランダムカラーを使用
-		popData.color.colBigin.r = FloatRandam(popData.color.colRandamMax.r, popData.color.colRandamMin.r);
-		popData.color.colBigin.g = FloatRandam(popData.color.colRandamMax.g, popData.color.colRandamMin.g);
-		popData.color.colBigin.b = FloatRandam(popData.color.colRandamMax.b, popData.color.colRandamMin.b);
+		popColor.colBigin.r = FloatRandam(popColor.colRandamMax.r, popColor.colRandamMin.r);
+		popColor.colBigin.g = FloatRandam(popColor.colRandamMax.g, popColor.colRandamMin.g);
+		popColor.colBigin.b = FloatRandam(popColor.colRandamMax.b, popColor.colRandamMin.b);
 
-		if (popData.color.bColTransition)
+		if (popColor.bColTransition)
 		{// 目的の色の設定
-			if (popData.color.bRandomTransitionTime)
+			if (popColor.bRandomTransitionTime)
 			{
-				popData.color.nEndTime = rand() % popData.nLife + 1;
+				popColor.nEndTime = rand() % popInfo.nLife + 1;
 			}
 
-			popData.color.destCol.r = FloatRandam(popData.color.colRandamMax.r, popData.color.colRandamMin.r);
-			popData.color.destCol.g = FloatRandam(popData.color.colRandamMax.g, popData.color.colRandamMin.g);
-			popData.color.destCol.b = FloatRandam(popData.color.colRandamMax.b, popData.color.colRandamMin.b);
+			popColor.destCol.r = FloatRandam(popColor.colRandamMax.r, popColor.colRandamMin.r);
+			popColor.destCol.g = FloatRandam(popColor.colRandamMax.g, popColor.colRandamMin.g);
+			popColor.destCol.b = FloatRandam(popColor.colRandamMax.b, popColor.colRandamMin.b);
 		}
 	}
 
-	if (popData.color.bColTransition)
+	if (popColor.bColTransition)
 	{// トラディシオンカラーを使用
-		if (popData.color.bRandomTransitionTime)
+		if (popColor.bRandomTransitionTime)
 		{
-			popData.color.nEndTime = rand() % popData.nLife + 1;
+			popColor.nEndTime = rand() % popInfo.nLife + 1;
 		}
 
-		popData.color.colTransition.r = (popData.color.destCol.r - popData.color.colBigin.r) / popData.color.nEndTime;
-		popData.color.colTransition.g = (popData.color.destCol.g - popData.color.colBigin.g) / popData.color.nEndTime;
-		popData.color.colTransition.b = (popData.color.destCol.b - popData.color.colBigin.b) / popData.color.nEndTime;
+		popColor.colTransition.r = (popColor.destCol.r - popColor.colBigin.r) / popColor.nEndTime;
+		popColor.colTransition.g = (popColor.destCol.g - popColor.colBigin.g) / popColor.nEndTime;
+		popColor.colTransition.b = (popColor.destCol.b - popColor.colBigin.b) / popColor.nEndTime;
 	}
 
-	static float ImAngle = 10.0f;
+	static float ImAngle = 30.0f;
 	float fRad = 0.0f;
 	float fGRad = 0.0f;
 
-	if (popData.bBackrot)
+	if (popInfo.bBackrot)
 	{
 		// float fRad = (popData.fAngle) * (D3DX_PI / 180);
-		fGRad = (popData.rot.z - m_fAngle);
+		fGRad = (popInfo.rot.z - m_info.fAngle);
 	}
 	else
 	{
-		fRad = (popData.fAngle) * (D3DX_PI / 180);
-		fGRad = (popData.rot.z + m_fAngle);
+		fRad = (popInfo.fAngle) * (D3DX_PI / 180);
+		fGRad = (popInfo.rot.z + m_info.fAngle);
 	}
 
 	// 挙動
 	{
-		/*
-		m_fAngle += 30.0f * i;
-		popData.move.x = sinf(fGRad) * 1.3f;
-		popData.move.y = cosf(fGRad) * 1.3f;
-
-		// ∞
-		m_fAngle += 0.7f;
-		popData.move.x = sinf((D3DX_PI / 180) * 17 * m_fAngle) * popData.fAttenuation;
-		popData.move.y = sinf((D3DX_PI / 180) * 8 * m_fAngle) * popData.fAttenuation;
-		*/
-
 		// 螺旋だったり
-		m_fAngle += ImAngle;
-		popData.move.x += (popData.fRadius * sinf(fGRad)) * popData.fAttenuation;
-		popData.move.y += (popData.fRadius * cosf(fGRad)) * popData.fAttenuation;
+		m_info.fAngle += ImAngle;
+		popInfo.move.x += (popInfo.fRadius * sinf(fGRad)) * popInfo.fAttenuation;
+		popInfo.move.y += (popInfo.fRadius * cosf(fGRad)) * popInfo.fAttenuation;
 	}
 
 	// ======================
 	// 正規化
 	// ======================
-	if (popData.fRadius > D3DX_PI)
+	if (popInfo.fRadius > D3DX_PI)
 	{
-		popData.fRadius -= D3DX_PI * 2;
+		popInfo.fRadius -= D3DX_PI * 2;
 	}
-	else if (popData.fRadius < -D3DX_PI)
+	else if (popInfo.fRadius < -D3DX_PI)
 	{
-		popData.fRadius += D3DX_PI * 2;
-	}
-
-	if (m_fAngle > D3DX_PI)
-	{
-		m_fAngle -= D3DX_PI * 2;
-	}
-	else if (m_fAngle < -D3DX_PI)
-	{
-		m_fAngle += D3DX_PI * 2;
+		popInfo.fRadius += D3DX_PI * 2;
 	}
 
-	CParticle::Create(popData, myPos);
+	if (m_info.fAngle > D3DX_PI)
+	{
+		m_info.fAngle -= D3DX_PI * 2;
+	}
+	else if (m_info.fAngle < -D3DX_PI)
+	{
+		m_info.fAngle += D3DX_PI * 2;
+	}
+
+	CParticle::Create(popInfo, myPos);
 }
 
-void CParticleEmitter::SetParticle(CParticle::Particle* inParticle)
+void CParticleEmitter::SetParticle(CParticle::Info* inParticle)
 {
-	m_data = inParticle;
+	m_particleInfo = inParticle;
 }

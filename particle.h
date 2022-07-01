@@ -85,7 +85,7 @@ public: // 構造体
 	// Author : Hamada Ryuga
 	// Author : 唐﨑結斗
 	//-------------------------------------------------
-	struct Particle
+	struct Info
 	{
 		D3DXVECTOR3 maxPopPos;		// 発生位置(最大)			※新規追加変数(ファイルに追加後消してください)
 		D3DXVECTOR3 minPopPos;		// 発生位置(最小)			※新規追加変数(ファイルに追加後消してください)
@@ -122,12 +122,12 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	static CParticle* Create(const Particle& inParticle, const D3DXVECTOR3& inPos);
+	static CParticle* Create(const Info& inParticle, const D3DXVECTOR3& inPos);
 	void LoadTex();
 	DWORD FloattoDword(float fVal);
 
 private:	// メンバー変数
-	Particle m_data;
+	Info m_data;
 	int m_idx;
 };
 #endif

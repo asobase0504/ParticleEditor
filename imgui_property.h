@@ -52,11 +52,6 @@ void DrawImguiProperty(void);
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 //--------------------------------------------------
-// パーティクルデータの取得
-//--------------------------------------------------
-CParticleEmitter* GetImguiParticle(void);
-
-//--------------------------------------------------
 // ファイル名の取得
 //--------------------------------------------------
 char* GetFileName(void);

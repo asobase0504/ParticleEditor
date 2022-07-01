@@ -136,7 +136,7 @@ void CParticle::Draw()
 //--------------------------------------------------
 // ê∂ê¨
 //--------------------------------------------------
-CParticle* CParticle::Create(const Particle& inParticle, const D3DXVECTOR3& inPos)
+CParticle* CParticle::Create(const Info& inParticle, const D3DXVECTOR3& inPos)
 {
 	CParticle* particle = nullptr;
 	if (particle == nullptr)

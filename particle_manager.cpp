@@ -41,9 +41,14 @@ HRESULT CParticleManager::Init()
 //-----------------------------------------
 void CParticleManager::Uninit()
 {
-	for (CParticleEmitter* i : m_particleEmitter)
+	for (CParticleEmitter* emitter : m_particleEmitter)
 	{
-		i->Uninit();
+		if (emitter != nullptr)
+		{
+			emitter->Uninit();
+			delete emitter;
+			emitter = nullptr;
+		}
 	}
 }
 
@@ -71,9 +76,10 @@ int CParticleManager::Create(const D3DXVECTOR3& pos, const TYPE& inType)
 	int idx = m_numAll;
 	CParticleEmitter* emitter = new CParticleEmitter();
 
-	emitter->Init();
-	emitter->SetPos(pos);
-	emitter->SetParticle(&m_bundledData[inType].particleData);
+	emitter->Init();	// 初期化
+	emitter->SetPos(pos);	// 位置の更新
+	emitter->SetParticle(&m_bundledData[inType].particleData);	// 指定されてたパーティクルデータの挿入
+	emitter->SetEmitter(m_bundledData[inType].emitterData);
 
 	m_numAll++;
 	m_particleEmitter.push_back(emitter);
@@ -89,6 +95,9 @@ void CParticleManager::SetBundledData(const BundledData&inData)
 	m_bundledData.push_back(inData);
 }
 
+//-----------------------------------------
+// 指定された番号の位置を変更する
+//-----------------------------------------
 void CParticleManager::SetEmitterPos(const int idx, const D3DXVECTOR3 & inPos)
 {
 	m_particleEmitter[idx]->SetPos(inPos);

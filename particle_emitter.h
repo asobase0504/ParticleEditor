@@ -24,11 +24,11 @@ class CParticle;
 class CParticleEmitter
 {
 public:	// 構造体
-	struct Emitter
+	struct Info
 	{
+		float fAngle;
 	};
 public:	// 静的メンバー変数
-	static float m_fAngle;	// 発射角度
 public:
 	CParticleEmitter();
 	~CParticleEmitter();
@@ -37,14 +37,15 @@ public:
 	void Uninit();
 	void Update();
 	void SetPos(const D3DXVECTOR3& inPos);
-	const D3DXVECTOR3& GetPos() { return pos; }
-	void Pop(void);
-	void SetParticle(CParticle::Particle* inParticle);
-	CParticle::Particle* GetParticle() { return m_data; }
+	const D3DXVECTOR3& GetPos() { return m_pos; }
+	void PopParticle(void);
+	void SetParticle(CParticle::Info* inParticle);
+	void SetEmitter(const Info& inEmitter) { m_info = inEmitter; }
+	CParticle::Info* GetParticle() { return m_particleInfo; }
 private:
-	D3DXVECTOR3 pos;	// 出現位置
-	Emitter emitterInfo;
-	CParticle::Particle* m_data;	// このエミッターから出るパーティクルのデータ
+	D3DXVECTOR3 m_pos;	// 出現位置
+	Info m_info;	// エミッターが管理する情報一覧
+	CParticle::Info* m_particleInfo;	// このエミッターから出るパーティクルのデータ
 };
 
 #endif // !_PARTICLE_EMITTER_H_

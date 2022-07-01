@@ -26,8 +26,6 @@
 #include <implot.h>
 
 #include "particle_manager.h"
-#include "particle_emitter.h"
-#include "particle.h"
 
 //------------------------------
 //CPU
@@ -59,7 +57,6 @@ static const char*	WINDOW_NAME = "test";	// ウインドウの名前 (キャプションに表示
 static char FileString[MAX_PATH * 256];	// ファイル名
 static bool	s_window = false;	// ウインドウを使用するかどうか
 static bool s_bEffectEnable = true;
-static float s_fScale = 50.0f;
 static const unsigned int gpu_id = 0;
 static nvmlDevice_t device;
 
@@ -496,9 +493,9 @@ namespace ImGui
 		for (int i = 0; i < dim; i++) v[i] = 0.0f;
 
 		// add basis functions
-		for (int i = 0; i<4; i++)
+		for (int i = 0; i < 4; i++)
 		{
-			int kn = k + i - 2; if (kn<0) kn = 0; else if (kn>(num - 1)) kn = num - 1;
+			int kn = k + i - 2; if (kn < 0) kn = 0; else if (kn > (num - 1)) kn = num - 1;
 
 			const signed char *co = coefs + 4 * i;
 
@@ -1084,16 +1081,14 @@ void UpdateImguiProperty(void)
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	static int mode = 0;
 	static int sliderInt = 0;
-	static float sliderFloat = 0;
-	static bool checkBox = true;
-	static char text[MAX_TEXT] = "";
 
 	static bool useEffect = true;
 	static bool s_bRot = false;
-	static bool s_bTexRot = false;
-	static bool s_bUsesrand = false;
+
+	// パーティクルのデータ
+	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
+	CParticleManager::BundledData* bundledData = &(particleManager->GetBundledData()[CParticleManager::DEBUG_TYPE]);
 
 	// ウインドウの起動時の場所
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);
@@ -1120,9 +1115,6 @@ void UpdateImguiProperty(void)
 
 		ImGui::EndMenuBar();
 	}
-
-	// データ
-	CParticleManager::BundledData* bundledData = &(CApplication::GetInstance()->GetParticleManager()->GetBundledData()[CParticleManager::DEBUG_TYPE]);
 
 	//パーティクルのデータ出力＆読み込み
 	if (ImGui::Button("DATA"))
@@ -1278,7 +1270,7 @@ void UpdateImguiProperty(void)
 		{
 			// テクスチャ
 			CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
-			int& index = CApplication::GetInstance()->GetParticleManager()->GetBundledData()[CParticleManager::DEBUG_TYPE].particleData.nIdxTex;
+			int& index = particleManager->GetBundledData()[CParticleManager::DEBUG_TYPE].particleData.nIdxTex;
 
 			if (ImGui::BeginCombo("Texture", pTexture->GetPath(index, false).c_str(), 0))
 			{// コンボボタン
@@ -1301,14 +1293,14 @@ void UpdateImguiProperty(void)
 		}
 
 		// エミッタ―の位置を調整
-		D3DXVECTOR3 Imguipos = CApplication::GetInstance()->GetParticleManager()->GetEmitter()[0]->GetPos();
+		D3DXVECTOR3 Imguipos = particleManager->GetEmitter()[0]->GetPos();
 		ImGui::Separator();
 		ImGui::Text("/* Pos */");
 		ImGui::SliderFloat("PosX", &Imguipos.x, 0.0f, (float)CApplication::SCREEN_WIDTH);
 		ImGui::SliderFloat("PosY", &Imguipos.y, 0.0f, (float)CApplication::SCREEN_HEIGHT);
 		ImGui::Separator();
 		
-		CApplication::GetInstance()->GetParticleManager()->GetEmitter()[0]->SetPos(Imguipos);
+		particleManager->GetEmitter()[0]->SetPos(Imguipos);
 
 		ImGui::Text("/* Pop */");
 		// 生成範囲の設定
@@ -1593,27 +1585,32 @@ void ParticleTemplate(void)
 {
 	CParticleManager* manager = CApplication::GetInstance()->GetParticleManager();
 	CParticleManager::BundledData& templateData = manager->GetBundledData()[CParticleManager::DEBUG_TYPE];
+
+	// 位置の取得
 	D3DXVECTOR3 Imguipos = manager->GetEmitter()[0]->GetPos();
 	Imguipos.x = CApplication::SCREEN_WIDTH * 0.5f;
 	Imguipos.y = CApplication::SCREEN_HEIGHT * 0.5f;
 	manager->GetEmitter()[0]->SetPos(Imguipos);
-	templateData.particleData.maxPopPos.x = 0.0f;
-	templateData.particleData.maxPopPos.y = 0.0f;
-	templateData.particleData.minPopPos.x = 0.0f;
-	templateData.particleData.minPopPos.y = 0.0f;
-	templateData.particleData.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	templateData.particleData.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	templateData.particleData.color.colBigin = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	templateData.particleData.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	templateData.particleData.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	templateData.particleData.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	templateData.particleData.color.colTransition = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	templateData.particleData.nLife = 60;
-	templateData.particleData.fScale = 50.0f;
-	templateData.particleData.fRadius = 4.5f;
-	templateData.particleData.fAngle = 20.5f;
-	templateData.particleData.fAttenuation = 0.98f;
-	templateData.particleData.alphaBlend = (CParticle::ALPHABLENDTYPE)0;
+
+	// パーティクルデータの取得
+	CParticle::Info& particleInfo = templateData.particleData;
+	particleInfo.maxPopPos.x = 0.0f;
+	particleInfo.maxPopPos.y = 0.0f;
+	particleInfo.minPopPos.x = 0.0f;
+	particleInfo.minPopPos.y = 0.0f;
+	particleInfo.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	particleInfo.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	particleInfo.color.colBigin = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	particleInfo.color.destCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	particleInfo.color.colRandamMax = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	particleInfo.color.colRandamMin = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	particleInfo.color.colTransition = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	particleInfo.nLife = 60;
+	particleInfo.fScale = 50.0f;
+	particleInfo.fRadius = 4.5f;
+	particleInfo.fAngle = 20.5f;
+	particleInfo.fAttenuation = 0.98f;
+	particleInfo.alphaBlend = (CParticle::ALPHABLENDTYPE)0;
 }
 
 //--------------------------------------------------

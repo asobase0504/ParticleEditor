@@ -39,8 +39,8 @@ public:	// —ñ‹“Œ^
 public:	// \‘¢‘Ì
 	struct BundledData
 	{
-		CParticle::Particle particleData;
-		CParticleEmitter::Emitter emitterData;
+		CParticle::Info particleData;
+		CParticleEmitter::Info emitterData;
 	};
 public:
 	CParticleManager();

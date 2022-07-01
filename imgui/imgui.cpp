@@ -13159,7 +13159,7 @@ static int StackToolFormatLevelInfo(ImGuiStackTool* tool, int n, bool format_for
     if (tool->StackLevel < tool->Results.Size)                                  // Only start using fallback below when all queries are done, so during queries we don't flickering ??? markers.
         return (*buf = 0);
 #ifdef IMGUI_ENABLE_TEST_ENGINE
-    if (const char* label = ImGuiTestEngine_FindItemDebugLabel(GImGui, info->ID))   // Source: ImGuiTestEngine's ItemInfo()
+    if (const char* label = ImGuiTestEngine_FindItemDebugLabel(GImGui, m_info->ID))   // Source: ImGuiTestEngine's ItemInfo()
         return ImFormatString(buf, buf_size, format_for_ui ? "??? \"%s\"" : "%s", label);
 #endif
     return ImFormatString(buf, buf_size, "???");

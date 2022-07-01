@@ -5,16 +5,12 @@
 //
 //============================
 #include "file.h"
-#include "particle.h"
-#include "imgui_property.h"
-#include "texture.h"
-#include "application.h"
-
 #include <fstream>
 #include "nlohmann/json.hpp"
 
+#include "application.h"
+#include "texture.h"
 #include "particle_manager.h"
-#include "particle.h"
 
 namespace nl = nlohmann;
 
@@ -32,34 +28,36 @@ void OutputStatus()
 {
 	CParticleManager::BundledData& loadData = CApplication::GetInstance()->GetParticleManager()->GetBundledData()[0];
 
-	j["POSMAX"] = {{ "X", loadData.particleData.maxPopPos.x } ,{ "Y", loadData.particleData.maxPopPos.y } ,{ "Z", loadData.particleData.maxPopPos.z } };
-	j["POSMIN"] = {{ "X", loadData.particleData.minPopPos.x } ,{ "Y", loadData.particleData.minPopPos.y } ,{ "Z", loadData.particleData.minPopPos.z } };
-	j["MOVE"] = { { "X", loadData.particleData.move.x } ,{ "Y", loadData.particleData.move.y } ,{ "Z", loadData.particleData.move.z } };
-	j["MOVETRANSITION"] = { { "X", loadData.particleData.moveTransition.x } ,{ "Y", loadData.particleData.moveTransition.y } ,{ "Z", loadData.particleData.moveTransition.z } };
-	j["ROT"] = { {"X", loadData.particleData.rot.x} ,{ "Y", loadData.particleData.rot.y },{ "Z", loadData.particleData.rot.z } };
+	CParticle::Info& particleInfo = loadData.particleData;
+
+	j["POSMAX"] = {{ "X", particleInfo.maxPopPos.x } ,{ "Y", particleInfo.maxPopPos.y } ,{ "Z", particleInfo.maxPopPos.z } };
+	j["POSMIN"] = {{ "X", particleInfo.minPopPos.x } ,{ "Y", particleInfo.minPopPos.y } ,{ "Z", particleInfo.minPopPos.z } };
+	j["MOVE"] = { { "X", particleInfo.move.x } ,{ "Y", particleInfo.move.y } ,{ "Z", particleInfo.move.z } };
+	j["MOVETRANSITION"] = { { "X", particleInfo.moveTransition.x } ,{ "Y", particleInfo.moveTransition.y } ,{ "Z", particleInfo.moveTransition.z } };
+	j["ROT"] = { {"X", particleInfo.rot.x} ,{ "Y", particleInfo.rot.y },{ "Z", particleInfo.rot.z } };
 	
-	j["COL"] = { { "R", loadData.particleData.color.colBigin.r }, {"G" ,loadData.particleData.color.colBigin.g} ,{ "B", loadData.particleData.color.colBigin.b } ,{ "A", loadData.particleData.color.colBigin.a } };
-	j["COLRANDAMMAX"] = { { "R", loadData.particleData.color.colRandamMax.r },{ "G" ,loadData.particleData.color.colRandamMax.g } ,{ "B", loadData.particleData.color.colRandamMax.b } ,{ "A", loadData.particleData.color.colRandamMax.a } };
-	j["COLRANDAMMIN"] = { { "R", loadData.particleData.color.colRandamMin.r },{ "G" ,loadData.particleData.color.colRandamMin.g } ,{ "B", loadData.particleData.color.colRandamMin.b } ,{ "A", loadData.particleData.color.colRandamMin.a } };
-	j["COLTRANSITION"] = { { "R", loadData.particleData.color.colTransition.r },{ "G" ,loadData.particleData.color.colTransition.g } ,{ "B", loadData.particleData.color.colTransition.b } ,{ "A", loadData.particleData.color.colTransition.a } };
-	j["DESTCOL"] = { { "R", loadData.particleData.color.destCol.r },{ "G" ,loadData.particleData.color.destCol.g } ,{ "B", loadData.particleData.color.destCol.b } ,{ "A", loadData.particleData.color.destCol.a } };
-	j["ENDTIME"] = loadData.particleData.color.nEndTime;
-	j["CNTTRANSITIONTIME"] = loadData.particleData.color.nCntTransitionTime;
-	j["BCOLTRANSITION"] = loadData.particleData.color.bColTransition;
-	j["COLRANDOM"] = loadData.particleData.color.bColRandom;
-	j["RANDOMTRANSITIONTIME"] = loadData.particleData.color.bRandomTransitionTime;
+	j["COL"] = { { "R", particleInfo.color.colBigin.r }, {"G" ,particleInfo.color.colBigin.g} ,{ "B", particleInfo.color.colBigin.b } ,{ "A", particleInfo.color.colBigin.a } };
+	j["COLRANDAMMAX"] = { { "R", particleInfo.color.colRandamMax.r },{ "G" ,particleInfo.color.colRandamMax.g } ,{ "B", particleInfo.color.colRandamMax.b } ,{ "A", particleInfo.color.colRandamMax.a } };
+	j["COLRANDAMMIN"] = { { "R", particleInfo.color.colRandamMin.r },{ "G" ,particleInfo.color.colRandamMin.g } ,{ "B", particleInfo.color.colRandamMin.b } ,{ "A", particleInfo.color.colRandamMin.a } };
+	j["COLTRANSITION"] = { { "R", particleInfo.color.colTransition.r },{ "G" ,particleInfo.color.colTransition.g } ,{ "B", particleInfo.color.colTransition.b } ,{ "A", particleInfo.color.colTransition.a } };
+	j["DESTCOL"] = { { "R", particleInfo.color.destCol.r },{ "G" ,particleInfo.color.destCol.g } ,{ "B", particleInfo.color.destCol.b } ,{ "A", particleInfo.color.destCol.a } };
+	j["ENDTIME"] = particleInfo.color.nEndTime;
+	j["CNTTRANSITIONTIME"] = particleInfo.color.nCntTransitionTime;
+	j["BCOLTRANSITION"] = particleInfo.color.bColTransition;
+	j["COLRANDOM"] = particleInfo.color.bColRandom;
+	j["RANDOMTRANSITIONTIME"] = particleInfo.color.bRandomTransitionTime;
 	
-	j["TYPE"] = loadData.particleData.type;
-	j["WIDTH"] = loadData.particleData.fWidth;
-	j["HEIGHT"] = loadData.particleData.fHeight;
-	j["ANGLE"] = loadData.particleData.fAngle;
-	j["ATTENUATION"] = loadData.particleData.fAttenuation;
-	j["RADIUS"] = loadData.particleData.fRadius;
-	j["WEIGHT"] = loadData.particleData.fWeight;
-	j["WEIGHTTRANSITION"] = loadData.particleData.fWeightTransition;
-	j["LIFE"] = loadData.particleData.nLife;
-	j["BACKROT"] = loadData.particleData.bBackrot;
-	j["SCALE"] = loadData.particleData.fScale;
+	j["TYPE"] = particleInfo.type;
+	j["WIDTH"] = particleInfo.fWidth;
+	j["HEIGHT"] = particleInfo.fHeight;
+	j["ANGLE"] = particleInfo.fAngle;
+	j["ATTENUATION"] = particleInfo.fAttenuation;
+	j["RADIUS"] = particleInfo.fRadius;
+	j["WEIGHT"] = particleInfo.fWeight;
+	j["WEIGHTTRANSITION"] = particleInfo.fWeightTransition;
+	j["LIFE"] = particleInfo.nLife;
+	j["BACKROT"] = particleInfo.bBackrot;
+	j["SCALE"] = particleInfo.fScale;
 
 
 	auto jobj = j.dump();
@@ -80,39 +78,40 @@ void LoadJson(const wchar_t* cUrl)
 	if (ifs)
 	{
 		CParticleManager::BundledData loadData = {};
+		CParticle::Info& particleInfo = loadData.particleData;
 
 		//StringToWString(UTF8toSjis(j["name"]));
 		//DataSet.unionsname = StringToWString(UTF8toSjis(j["unions"] ["name"]));
 		ifs >> j;
 
 		//こっちで構造体にデータを入れてます//文字は変換つけないとばぐるぞ＾＾これ-＞UTF8toSjis()
-		loadData.particleData.move = D3DXVECTOR3(j["MOVE"]["X"], j["MOVE"]["Y"], j["MOVE"]["Z"]);
-		loadData.particleData.rot = D3DXVECTOR3(j["ROT"] ["X"], j["ROT"] ["Y"], j["ROT"] ["Z"]);
-		loadData.particleData.moveTransition = D3DXVECTOR3(j["MOVETRANSITION"]["X"], j["MOVETRANSITION"]["Y"], j["MOVETRANSITION"]["Z"]);;
+		particleInfo.move = D3DXVECTOR3(j["MOVE"]["X"], j["MOVE"]["Y"], j["MOVE"]["Z"]);
+		particleInfo.rot = D3DXVECTOR3(j["ROT"] ["X"], j["ROT"] ["Y"], j["ROT"] ["Z"]);
+		particleInfo.moveTransition = D3DXVECTOR3(j["MOVETRANSITION"]["X"], j["MOVETRANSITION"]["Y"], j["MOVETRANSITION"]["Z"]);;
 		
-		loadData.particleData.color.colBigin = D3DXCOLOR(j["COL"] ["R"], j["COL"] ["G"], j["COL"] ["B"], j["COL"] ["A"]);
-		loadData.particleData.color.colRandamMax = D3DXCOLOR(j["COLRANDAMMAX"]["R"], j["COLRANDAMMAX"]["G"], j["COLRANDAMMAX"]["B"], j["COLRANDAMMAX"]["A"]);
-		loadData.particleData.color.colRandamMin = D3DXCOLOR(j["COLRANDAMMIN"]["R"], j["COLRANDAMMIN"]["G"], j["COLRANDAMMIN"]["B"], j["COLRANDAMMIN"]["A"]);
-		loadData.particleData.color.colTransition = D3DXCOLOR(j["COLTRANSITION"]["R"], j["COLTRANSITION"]["G"], j["COLTRANSITION"]["B"], j["COLTRANSITION"]["A"]);
-		loadData.particleData.color.destCol = D3DXCOLOR(j["DESTCOL"]["R"], j["DESTCOL"]["G"], j["DESTCOL"]["B"], j["DESTCOL"]["A"]);
-		loadData.particleData.color.nEndTime = j["ENDTIME"];
-		loadData.particleData.color.nCntTransitionTime = j["CNTTRANSITIONTIME"];
-		loadData.particleData.color.bColTransition = j["BCOLTRANSITION"];
-		loadData.particleData.color.bColRandom = j["COLRANDOM"];
-		loadData.particleData.color.bRandomTransitionTime = j["RANDOMTRANSITIONTIME"];
+		particleInfo.color.colBigin = D3DXCOLOR(j["COL"] ["R"], j["COL"] ["G"], j["COL"] ["B"], j["COL"] ["A"]);
+		particleInfo.color.colRandamMax = D3DXCOLOR(j["COLRANDAMMAX"]["R"], j["COLRANDAMMAX"]["G"], j["COLRANDAMMAX"]["B"], j["COLRANDAMMAX"]["A"]);
+		particleInfo.color.colRandamMin = D3DXCOLOR(j["COLRANDAMMIN"]["R"], j["COLRANDAMMIN"]["G"], j["COLRANDAMMIN"]["B"], j["COLRANDAMMIN"]["A"]);
+		particleInfo.color.colTransition = D3DXCOLOR(j["COLTRANSITION"]["R"], j["COLTRANSITION"]["G"], j["COLTRANSITION"]["B"], j["COLTRANSITION"]["A"]);
+		particleInfo.color.destCol = D3DXCOLOR(j["DESTCOL"]["R"], j["DESTCOL"]["G"], j["DESTCOL"]["B"], j["DESTCOL"]["A"]);
+		particleInfo.color.nEndTime = j["ENDTIME"];
+		particleInfo.color.nCntTransitionTime = j["CNTTRANSITIONTIME"];
+		particleInfo.color.bColTransition = j["BCOLTRANSITION"];
+		particleInfo.color.bColRandom = j["COLRANDOM"];
+		particleInfo.color.bRandomTransitionTime = j["RANDOMTRANSITIONTIME"];
 		
-		loadData.particleData.type = j["TYPE"];
-		loadData.particleData.fWidth = j["WIDTH"];
-		loadData.particleData.fHeight = j["HEIGHT"];
-		loadData.particleData.fRadius = j["RADIUS"];
-		loadData.particleData.fAngle = j["ANGLE"];
-		loadData.particleData.fWeight = j["WEIGHT"];
-		loadData.particleData.nLife = j["LIFE"];
-		loadData.particleData.fAttenuation = j["ATTENUATION"];
-		loadData.particleData.fWeightTransition = j["WEIGHTTRANSITION"];
-		loadData.particleData.nLife = j["LIFE"];
-		loadData.particleData.bBackrot = j["BACKROT"];
-		loadData.particleData.fScale = j["SCALE"];
+		particleInfo.type = j["TYPE"];
+		particleInfo.fWidth = j["WIDTH"];
+		particleInfo.fHeight = j["HEIGHT"];
+		particleInfo.fRadius = j["RADIUS"];
+		particleInfo.fAngle = j["ANGLE"];
+		particleInfo.fWeight = j["WEIGHT"];
+		particleInfo.nLife = j["LIFE"];
+		particleInfo.fAttenuation = j["ATTENUATION"];
+		particleInfo.fWeightTransition = j["WEIGHTTRANSITION"];
+		particleInfo.nLife = j["LIFE"];
+		particleInfo.bBackrot = j["BACKROT"];
+		particleInfo.fScale = j["SCALE"];
 
 		CApplication::GetInstance()->GetParticleManager()->SetBundledData(loadData);
 	}
