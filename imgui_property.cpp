@@ -1168,13 +1168,6 @@ void UpdateImguiProperty(void)
 		float value_you_care_about = ImGui::CurveValue(0.7f, 10, foo); // calculate value at position 0.7
 	}
 
-	//ImGui::Text("CPU1  : %d", MemoryUsageMegaBytes());
-	//void* const p = malloc(512 * 1024 * 1024);
-	// テキスト表示
-	//ImGui::Text("CPU2  : %d", MemoryUsageMegaBytes());
-	//free(p);
-	//ImGui::Text("CPU3  : %d", MemoryUsageMegaBytes());
-
 	unsigned int clockMZ = 0;
 
 	//現在の使用率取得
@@ -1256,14 +1249,17 @@ void UpdateImguiProperty(void)
 		{
 			GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
 
-			std::string File = FileString;
-			char * Data = GetBuffer();
-			HWND hWnd = GetWnd();
-			strcpy(Data, File.c_str());
+			if (FileString[0] != '\0')
+			{
+				std::string File = FileString;
+				char * Data = GetBuffer();
+				HWND hWnd = GetWnd();
+				strcpy(Data, File.c_str());
 
-			SetFileName(Data);
+				SetFileName(Data);
 
-			funcFileSave(hWnd);
+				funcFileSave(hWnd);
+			}
 		}
 
 		{
