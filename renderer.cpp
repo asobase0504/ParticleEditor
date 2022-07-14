@@ -7,6 +7,7 @@
 #include "renderer.h"
 #include "application.h"
 #include "imgui_property.h"
+#include "object.h"
 #include <tchar.h>
 
 //--------------------------------------------------

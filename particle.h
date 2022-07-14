@@ -8,9 +8,6 @@
 #include <d3dx9.h>
 #include "object2d.h"
 
-//マクロ定義
-#define FVF_VERTEX_PARTICLE	(D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_PSIZE)
-
 //-------------------------------------------------
 // パーティクルクラス
 // Author : Tanaka Kouta
@@ -110,7 +107,6 @@ public: // 構造体
 		bool bUseWeight;			// 重さを使用するかどうか
 		bool bBackrot;				// 逆回転させるかどうか
 		bool bTexturerot;			// テクスチャ回転させるかどうか
-		bool bUse;					// 使用しているか
 	};
 
 public:

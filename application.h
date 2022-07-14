@@ -25,8 +25,8 @@ class CBg;
 class CApplication
 {
 public: // 定数
-	static const int SCREEN_WIDTH = 1280;	// スクリーンの高さ
-	static const int SCREEN_HEIGHT = 720;
+	static const int SCREEN_WIDTH = 1280;	// スクリーンの幅
+	static const int SCREEN_HEIGHT = 720;	// スクリーンの高さ
 
 public: // シングルトンのインスタンス取得
 	static CApplication* GetInstance();
@@ -46,12 +46,11 @@ public:
 	CTexture* GetTextureClass() { return texture; }
 	CParticleManager* GetParticleManager() { return paticleManager; }
 private:
-	static CApplication* application;
-	CObject* object;
-	CRenderer* renderer;
-	CTexture* texture;
-	CParticleManager* paticleManager;
-	CBg* bg;
+	static CApplication* application;	// アプリケーション
+	CObject* object;	// オブジェクト
+	CRenderer* renderer;	// レンダラ―
+	CTexture* texture;	// テクスチャ
+	CParticleManager* paticleManager;	// パーティクルマネジャー
+	CBg* bg;	// 背景
 };
-
 #endif // !_APPLICATION_H_

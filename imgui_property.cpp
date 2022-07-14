@@ -661,25 +661,25 @@ namespace ImGui
 
 		// bg grid
 		window->DrawList->AddLine(
-			ImVec2(bb.Min.x, bb.Min.y + ht / 2),
-			ImVec2(bb.Max.x, bb.Min.y + ht / 2),
+			ImVec2(bb.Min.x, bb.Min.y + ht * 0.5f),
+			ImVec2(bb.Max.x, bb.Min.y + ht * 0.5f),
 			GetColorU32(ImGuiCol_TextDisabled), 3);
 
 		window->DrawList->AddLine(
-			ImVec2(bb.Min.x, bb.Min.y + ht / 4),
-			ImVec2(bb.Max.x, bb.Min.y + ht / 4),
+			ImVec2(bb.Min.x, bb.Min.y + ht * 0.25f),
+			ImVec2(bb.Max.x, bb.Min.y + ht * 0.25f),
 			GetColorU32(ImGuiCol_TextDisabled));
 
 		window->DrawList->AddLine(
-			ImVec2(bb.Min.x, bb.Min.y + ht / 4 * 3),
-			ImVec2(bb.Max.x, bb.Min.y + ht / 4 * 3),
+			ImVec2(bb.Min.x, bb.Min.y + ht * 0.25f * 3),
+			ImVec2(bb.Max.x, bb.Min.y + ht * 0.25f * 3),
 			GetColorU32(ImGuiCol_TextDisabled));
 
 		for (i = 0; i < 9; i++)
 		{
 			window->DrawList->AddLine(
-				ImVec2(bb.Min.x + (wd / 10) * (i + 1), bb.Min.y),
-				ImVec2(bb.Min.x + (wd / 10) * (i + 1), bb.Max.y),
+				ImVec2(bb.Min.x + (wd * 0.1f) * (i + 1), bb.Min.y),
+				ImVec2(bb.Min.x + (wd * 0.1f) * (i + 1), bb.Max.y),
 				GetColorU32(ImGuiCol_TextDisabled));
 		}
 
