@@ -166,7 +166,7 @@ namespace tween {
 	{
 		using namespace std;
 
-		const double d = 1.f;
+		const double d = 1.0f;
 		const double pi = 3.1415926535897932384626433832795;
 		const double pi2 = 3.1415926535897932384626433832795 / 2;
 
@@ -588,7 +588,7 @@ namespace ImGui
 
 			for (i = 1; i < max - 1; i++)
 			{
-				if (abs(points[i].x - points[i - 1].x) < 1 / 128.0)
+				if (abs(points[i].x - points[i - 1].x) < 1 / 128.0f)
 				{
 					kill = i;
 				}
@@ -619,8 +619,8 @@ namespace ImGui
 				p = points[left + 1] - pos;
 				float p2d = sqrt(p.x*p.x + p.y*p.y);
 				int sel = -1;
-				if (p1d < (1 / 16.0)) sel = left;
-				if (p2d < (1 / 16.0)) sel = left + 1;
+				if (p1d < (1 / 16.0f)) sel = left;
+				if (p2d < (1 / 16.0f)) sel = left + 1;
 
 				if (sel != -1)
 				{
@@ -1176,60 +1176,14 @@ void UpdateImguiProperty(void)
 	//現在の使用率取得
 	nvmlDeviceGetClock(device, NVML_CLOCK_MEM, NVML_CLOCK_ID_CURRENT, &clockMZ);
 
-	float clockNau = (float)clockMZ *0.1f;
+	float clockNau = (float)clockMZ * 0.1f;
 
-	// テキスト表示
+	// GPUの表示
 	ImGui::Text("GPU  : %.2f%%", clockNau);
-
-	//グラフ
-	static float v[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-	
-	//グラフの四角からでないようにするやつ
-	{
-		if (v[0] <= 0.0f)
-		{
-			v[0] = 0.0f;
-		}
-
-		if (v[0] >= 1.0f)
-		{
-			v[0] = 1.0f;
-		}
-
-		if (v[1] <= 0.0f)
-		{
-			v[1] = 0.0f;
-		}
-
-		if (v[1] >= 1.0f)
-		{
-			v[1] = 1.0f;
-		}
-
-		if (v[2] >= 1.0f)
-		{
-			v[2] = 1.0f;
-		}
-
-		if (v[2] <= 0.0f)
-		{
-			v[2] = 0.0f;
-		}
-
-		if (v[3] >= 1.0f)
-		{
-			v[3] = 1.0f;
-		}
-
-		if (v[3] <= 0.0f)
-		{
-			v[3] = 0.0f;
-		}
-	}
-
-	// テキスト表示
+	// FPSの表示
 	ImGui::Text("FPS  : %.2f", ImGui::GetIO().Framerate);
-	ImGui::Separator();
+
+	ImGui::Separator();	// 区切り線
 
 	//エフェクト関係
 	if (ImGui::CollapsingHeader("EffectSetting"))
@@ -1268,7 +1222,7 @@ void UpdateImguiProperty(void)
 		{
 			// テクスチャ
 			CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
-			int& index = particleManager->GetBundledData()[CParticleManager::DEBUG_TYPE].particleData.nIdxTex;
+			int& index = particleManager->GetBundledData()[0].particleData.nIdxTex;
 
 			if (ImGui::BeginCombo("Texture", pTexture->GetPath(index, false).c_str(), 0))
 			{// コンボボタン
@@ -1582,7 +1536,7 @@ bool bSetImguiParticle(void)
 void ParticleTemplate(void)
 {
 	CParticleManager* manager = CApplication::GetInstance()->GetParticleManager();
-	CParticleManager::BundledData& templateData = manager->GetBundledData()[CParticleManager::DEBUG_TYPE];
+	CParticleManager::BundledData& templateData = manager->GetBundledData()[0];
 
 	// 位置の取得
 	D3DXVECTOR3 Imguipos = manager->GetEmitter()[0]->GetPos();

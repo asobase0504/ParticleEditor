@@ -27,7 +27,7 @@ int index = 0;
 void OutputStatus()
 {
 	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
-	CParticleEmitter* loadData = particleManager->GetEmitter()[CParticleManager::DEBUG_TYPE];
+	CParticleEmitter* loadData = particleManager->GetEmitter()[0];
 
 	CParticle::Info& particleInfo = *loadData->GetParticle();
 
@@ -123,7 +123,7 @@ void LoadJson(const wchar_t* cUrl)
 		}
 		else
 		{
-			CApplication::GetInstance()->GetParticleManager()->ChangeBundledData(CParticleManager::DEBUG_TYPE, loadData);
+			CApplication::GetInstance()->GetParticleManager()->ChangeBundledData(0, loadData);
 		}
 	}
 }

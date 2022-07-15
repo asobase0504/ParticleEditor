@@ -10,6 +10,8 @@
 #include "particle_manager.h"
 #include "file.h"
 
+#include <assert.h>
+
 //-----------------------------------------
 // コンストラクタ
 //-----------------------------------------
@@ -71,7 +73,7 @@ void CParticleManager::Update()
 //-----------------------------------------
 // 生成
 //-----------------------------------------
-int CParticleManager::Create(const D3DXVECTOR3& pos, const TYPE& inType)
+int CParticleManager::Create(const D3DXVECTOR3& pos, const int& index)
 {
 	int idx = m_numAll;
 	CParticleEmitter* emitter = new CParticleEmitter();
@@ -79,8 +81,14 @@ int CParticleManager::Create(const D3DXVECTOR3& pos, const TYPE& inType)
 	emitter->Init();		// 初期化
 	emitter->SetPos(pos);	// 位置の更新
 
-	emitter->SetParticle(m_bundledData.at(inType).particleData);	// 指定されてたパーティクルデータの挿入
-	emitter->SetEmitter(m_bundledData.at(inType).emitterData);
+	if (m_bundledData.size() <= index)
+	{
+		assert(false);
+		return 0;
+	}
+
+	emitter->SetParticle(m_bundledData.at(index).particleData);	// 指定されてたパーティクルデータの挿入
+	emitter->SetEmitter(m_bundledData.at(index).emitterData);
 
 	m_numAll++;
 	m_particleEmitter.push_back(emitter);

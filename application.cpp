@@ -84,9 +84,9 @@ HRESULT CApplication::Init(HWND hWnd, HINSTANCE hInstance)
 	{
 		return E_FAIL;
 	}
-	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f), CParticleManager::DEBUG_TYPE);
-	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.75f, 0.0f), CParticleManager::DEBUG_TYPE);
-	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.25f, 0.0f), CParticleManager::DEBUG_TYPE);
+	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f), 0);
+	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.75f, 0.0f), 0);
+	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.25f, 0.0f), 0);
 
 	SetTex();
 
@@ -158,7 +158,7 @@ void CApplication::Update()
 
 	if (GetKeyboardTrigger(DIK_F1))
 	{
-		paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), CParticleManager::TYPE_01);
+		paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), 1);
 	}
 
 	paticleManager->Update();

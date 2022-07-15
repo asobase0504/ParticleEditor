@@ -25,17 +25,6 @@ class CParticleEmitter;
 //=========================================
 class CParticleManager
 {
-public:	// óÒãìå^
-	enum TYPE
-	{
-		DEBUG_TYPE = 0,
-		TYPE_01,
-		TYPE_02,
-		TYPE_04,
-		TYPE_05,
-		TYPE_06,
-	};
-
 public:	// ç\ë¢ëÃ
 	struct BundledData
 	{
@@ -49,7 +38,7 @@ public:
 	HRESULT Init();
 	void Uninit();
 	void Update();
-	int Create(const D3DXVECTOR3& pos, const TYPE& inType);
+	int Create(const D3DXVECTOR3& pos, const int& idx);
 	void SetBundledData(const BundledData&inData);
 	void ChangeBundledData(const int idx, const BundledData&inData);
 	void SetEmitterPos(const int idx,const D3DXVECTOR3& inPos);
