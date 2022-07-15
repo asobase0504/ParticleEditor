@@ -13,8 +13,11 @@
 //------------------------------
 #include "imgui_impl_dx9.h"
 #include "imgui_impl_win32.h"
-#define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_property.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui_internal.h"
+//#include <cmath>
+
 #include "main.h"
 #include "file.h"
 #include "application.h"
@@ -30,9 +33,9 @@
 //------------------------------
 //CPU
 //------------------------------
-#include <stdio.h>
-#include <nvml.h>
+//#include <stdio.h>
 
+#include <nvml.h>
 #if _DEBUG
 #pragma comment(lib, "nvml.lib")
 #else
@@ -43,7 +46,7 @@
 //==================================================
 // マクロ定義
 //==================================================
-#define IMGUI_DEFINE_MATH_OPERATORS
+
 
 //==================================================
 // 定義
@@ -82,15 +85,6 @@ nl::json Sin;//リストの生成
 // v1.20 - add iq's interpolation code
 // v1.10 - easing and colors        
 // v1.00 - jari komppa's original
-
-#pragma once
-
-#include "imgui.h"
-
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui_internal.h"
-
-#include <cmath>
 
 /* To use, add this prototype somewhere..
 
@@ -864,8 +858,6 @@ void InitImguiProperty(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 	nvmlDeviceGetHandleByIndex(gpu_id, &device);
 	foo[0].x = -1;
 
-	// パーティクルをテンプレート状態にする
-	ParticleTemplate();
 #endif // _DEBUG
 }
 
@@ -1065,6 +1057,7 @@ void UninitImguiProperty(HWND hWnd, WNDCLASSEX wcex)
 //		oneGraphSize.y = 150.f;
 //	}
 //}
+
 //--------------------------------------------------
 // 更新
 //--------------------------------------------------
@@ -1088,7 +1081,9 @@ void UpdateImguiProperty(void)
 
 	// パーティクルのデータ
 	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
-	CParticleManager::BundledData* bundledData = &(particleManager->GetBundledData()[CParticleManager::DEBUG_TYPE]);
+
+	// 編集するエミッタ―の情報
+	CParticleEmitter* emitter = particleManager->GetEmitter()[0];
 
 	// ウインドウの起動時の場所
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);
@@ -1117,11 +1112,15 @@ void UpdateImguiProperty(void)
 	}
 
 	//パーティクルのデータ出力＆読み込み
-	if (ImGui::Button("DATA"))
+	if (ImGui::Button("JSON_LOAD"))
 	{
 		LoadJson(L"data/FILE/DataEffectOutput.json");
+
+		// 読み込んだ末尾に変更する。
+		emitter->SetParticle((particleManager->GetBundledData().end() - 1)->particleData);
+		emitter->SetEmitter((particleManager->GetBundledData().end() - 1)->emitterData);
 	}
-	if (ImGui::Button("OUT"))
+	if (ImGui::Button("JSON_SAVE"))
 	{
 		OutputStatus();
 	}
@@ -1303,16 +1302,16 @@ void UpdateImguiProperty(void)
 
 		ImGui::Text("/* Pop */");
 		// 生成範囲の設定
-		ImGui::SliderFloat("MaxPopPosX", &bundledData->particleData.maxPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
-		ImGui::SliderFloat("MinPopPosX", &bundledData->particleData.minPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
-		ImGui::SliderFloat("MaxPopPosY", &bundledData->particleData.maxPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
-		ImGui::SliderFloat("MinPopPosY", &bundledData->particleData.minPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
+		ImGui::SliderFloat("MaxPopPosX", &emitter->GetParticle()->maxPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
+		ImGui::SliderFloat("MinPopPosX", &emitter->GetParticle()->minPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
+		ImGui::SliderFloat("MaxPopPosY", &emitter->GetParticle()->maxPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
+		ImGui::SliderFloat("MinPopPosY", &emitter->GetParticle()->minPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
 		ImGui::Separator();
 
 		ImGui::Text("/* Move */");
-		ImGui::InputFloat2("SettingEffectMove", bundledData->particleData.move, "%f");
-		ImGui::SliderFloat("MoveX", &bundledData->particleData.move.x, -100.0f, 100.0f);
-		ImGui::SliderFloat("MoveY", &bundledData->particleData.move.y, -100.0f, 100.0f);
+		ImGui::InputFloat2("SettingEffectMove", emitter->GetParticle()->move, "%f");
+		ImGui::SliderFloat("MoveX", &emitter->GetParticle()->move.x, -100.0f, 100.0f);
+		ImGui::SliderFloat("MoveY", &emitter->GetParticle()->move.y, -100.0f, 100.0f);
 
 		//詳細
 		if (ImGui::CollapsingHeader("Details"))
@@ -1320,43 +1319,43 @@ void UpdateImguiProperty(void)
 			//rot計算用
 			static float s_fDeg = 0.0f;
 			ImGui::Text("/* Rot */");
-			ImGui::InputFloat3("SettingEffectRot", bundledData->particleData.rot, "%f");
+			ImGui::InputFloat3("SettingEffectRot", emitter->GetParticle()->rot, "%f");
 			ImGui::SliderFloat("Rot", &s_fDeg, -D3DX_PI, D3DX_PI);
 
 			if (ImGui::Checkbox("BackRot", &s_bRot))
 			{
-				bundledData->particleData.bBackrot = !bundledData->particleData.bBackrot;
+				emitter->GetParticle()->bBackrot = !emitter->GetParticle()->bBackrot;
 			}
 
 			float rotX = Imguipos.x * cosf(s_fDeg) + Imguipos.x * sinf(s_fDeg);
 			float rotY = Imguipos.y * sinf(s_fDeg) - Imguipos.y * cosf(s_fDeg);
 			float fAngle = atan2f(rotX, rotY);
-			bundledData->particleData.rot = D3DXVECTOR3(rotX, rotY, fAngle);
+			emitter->GetParticle()->rot = D3DXVECTOR3(rotX, rotY, fAngle);
 
-			if (bundledData->particleData.rot.z > D3DX_PI)
+			if (emitter->GetParticle()->rot.z > D3DX_PI)
 			{
-				bundledData->particleData.rot.z -= D3DX_PI * 2;
+				emitter->GetParticle()->rot.z -= D3DX_PI * 2;
 			}
-			else if (bundledData->particleData.rot.z < -D3DX_PI)
+			else if (emitter->GetParticle()->rot.z < -D3DX_PI)
 			{
-				bundledData->particleData.rot.z += D3DX_PI * 2;
+				emitter->GetParticle()->rot.z += D3DX_PI * 2;
 			}
 
 			ImGui::Separator();
 			ImGui::Text("/* Scale */");
-			ImGui::SliderFloat("Scale", &bundledData->particleData.fScale, 0.0f, 100.0f);
+			ImGui::SliderFloat("Scale", &emitter->GetParticle()->fScale, 0.0f, 100.0f);
 			ImGui::Separator();
 			ImGui::Text("/* Life */");
-			ImGui::SliderInt("Life", &bundledData->particleData.nLife, 0, 500);
+			ImGui::SliderInt("Life", &emitter->GetParticle()->nLife, 0, 500);
 			ImGui::Separator();
 			ImGui::Text("/* Radius */");
-			ImGui::SliderFloat("Radius", &bundledData->particleData.fRadius, 0.0f, 100.0f);
+			ImGui::SliderFloat("Radius", &emitter->GetParticle()->fRadius, 0.0f, 100.0f);
 			ImGui::Separator();
 			ImGui::Text("/* Angle */");
-			ImGui::SliderAngle("Angle", &bundledData->particleData.fAngle, 0.0f, 2000.0f);
+			ImGui::SliderAngle("Angle", &emitter->GetParticle()->fAngle, 0.0f, 2000.0f);
 			ImGui::Separator();
 			ImGui::Text("/* Attenuation */");
-			ImGui::SliderFloat("Attenuation", &bundledData->particleData.fAttenuation, 0.0f, 1.0f);
+			ImGui::SliderFloat("Attenuation", &emitter->GetParticle()->fAttenuation, 0.0f, 1.0f);
 
 			//挙動おかしくなっちゃった時用
 			if (ImGui::Button("DataRemove"))
@@ -1369,29 +1368,29 @@ void UpdateImguiProperty(void)
 		if (ImGui::CollapsingHeader("Color"))
 		{
 			//カラーパレット
-			ColorPalette4("clear", (float*)&bundledData->particleData.color);
+			ColorPalette4("clear", (float*)&emitter->GetParticle()->color);
 
 			// ランダムカラー
-			ImGui::Checkbox("Random", &bundledData->particleData.color.bColRandom);
+			ImGui::Checkbox("Random", &emitter->GetParticle()->color.bColRandom);
 
-			if (bundledData->particleData.color.bColRandom)
+			if (emitter->GetParticle()->color.bColRandom)
 			{
-				ColorPalette4("RandamMax", (float*)&bundledData->particleData.color.colRandamMax);
-				ColorPalette4("RandamMin", (float*)&bundledData->particleData.color.colRandamMin);
+				ColorPalette4("RandamMax", (float*)&emitter->GetParticle()->color.colRandamMax);
+				ColorPalette4("RandamMin", (float*)&emitter->GetParticle()->color.colRandamMin);
 			}
 
 			// カラートラディション
-			ImGui::Checkbox("Transition", &bundledData->particleData.color.bColTransition);
+			ImGui::Checkbox("Transition", &emitter->GetParticle()->color.bColTransition);
 
-			if (bundledData->particleData.color.bColTransition)
+			if (emitter->GetParticle()->color.bColTransition)
 			{// 目的の色
-				ColorPalette4("clear destColor", (float*)&bundledData->particleData.color.destCol);
+				ColorPalette4("clear destColor", (float*)&emitter->GetParticle()->color.destCol);
 
-				ImGui::Checkbox("RandomTransitionTime", &bundledData->particleData.color.bRandomTransitionTime);
+				ImGui::Checkbox("RandomTransitionTime", &emitter->GetParticle()->color.bRandomTransitionTime);
 
-				if (!bundledData->particleData.color.bRandomTransitionTime)
+				if (!emitter->GetParticle()->color.bRandomTransitionTime)
 				{
-					ImGui::SliderInt("EndTime", &bundledData->particleData.color.nEndTime, 0, bundledData->particleData.nLife);
+					ImGui::SliderInt("EndTime", &emitter->GetParticle()->color.nEndTime, 0, emitter->GetParticle()->nLife);
 				}
 			}
 		}
@@ -1482,7 +1481,7 @@ void UpdateImguiProperty(void)
 
 					if (s_nTimer >= 5)
 					{
-						bundledData->particleData.color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
+						emitter->GetParticle()->color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
 						s_nColNum++;
 						s_nTimer = 0;
 					}
@@ -1509,20 +1508,20 @@ void UpdateImguiProperty(void)
 				break;
 			}
 
-			ImGui::SliderFloat("Alpha", &bundledData->particleData.color.colTransition.a, -0.5f, 0.0f);
+			ImGui::SliderFloat("Alpha", &emitter->GetParticle()->color.colTransition.a, -0.5f, 0.0f);
 		}
 
 		// αブレンディングの種類
 		if (ImGui::CollapsingHeader("AlphaBlending"))
 		{
 			// 変数宣言
-			int	nBlendingType = (int)bundledData->particleData.alphaBlend;		// 種別変更用の変数
+			int	nBlendingType = (int)emitter->GetParticle()->alphaBlend;		// 種別変更用の変数
 
 			ImGui::RadioButton("AddBlend", &nBlendingType, 0);
 			ImGui::RadioButton("SubBlend", &nBlendingType, 1);
 			ImGui::RadioButton("BlendNone", &nBlendingType, 2);
 
-			bundledData->particleData.alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
+			emitter->GetParticle()->alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
 		}
 	}
 

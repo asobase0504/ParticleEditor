@@ -51,8 +51,10 @@ public:
 	void Update();
 	int Create(const D3DXVECTOR3& pos, const TYPE& inType);
 	void SetBundledData(const BundledData&inData);
-	void ChangeBundledData(const int idx ,const BundledData&inData);
+	void ChangeBundledData(const int idx, const BundledData&inData);
 	void SetEmitterPos(const int idx,const D3DXVECTOR3& inPos);
+
+	// ÉQÉbÉ^Å\
 	std::vector<BundledData>& GetBundledData() { return m_bundledData; }
 	std::vector<CParticleEmitter*> GetEmitter() { return m_particleEmitter; }
 private:

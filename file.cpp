@@ -26,9 +26,10 @@ int index = 0;
 //============================
 void OutputStatus()
 {
-	CParticleManager::BundledData& loadData = CApplication::GetInstance()->GetParticleManager()->GetBundledData()[0];
+	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
+	CParticleEmitter* loadData = particleManager->GetEmitter()[CParticleManager::DEBUG_TYPE];
 
-	CParticle::Info& particleInfo = loadData.particleData;
+	CParticle::Info& particleInfo = *loadData->GetParticle();
 
 	j["POSMAX"] = {{ "X", particleInfo.maxPopPos.x } ,{ "Y", particleInfo.maxPopPos.y } ,{ "Z", particleInfo.maxPopPos.z } };
 	j["POSMIN"] = {{ "X", particleInfo.minPopPos.x } ,{ "Y", particleInfo.minPopPos.y } ,{ "Z", particleInfo.minPopPos.z } };
@@ -118,7 +119,7 @@ void LoadJson(const wchar_t* cUrl)
 		if (chack)
 		{
 			CApplication::GetInstance()->GetParticleManager()->SetBundledData(loadData);
-			chack = false;
+			//chack = false;
 		}
 		else
 		{

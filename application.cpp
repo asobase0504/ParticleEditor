@@ -156,6 +156,11 @@ void CApplication::Update()
 
 	renderer->Update();
 
+	if (GetKeyboardTrigger(DIK_F1))
+	{
+		paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), CParticleManager::TYPE_01);
+	}
+
 	paticleManager->Update();
 }
 

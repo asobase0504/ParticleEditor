@@ -19,7 +19,7 @@
 //-----------------------------------------
 CParticleEmitter::CParticleEmitter() :
 	m_info({}),
-	m_particleInfo(nullptr)
+	m_particleInfo({})
 {
 
 }
@@ -71,7 +71,7 @@ void CParticleEmitter::SetPos(const D3DXVECTOR3 & inPos)
 //-----------------------------------------
 void CParticleEmitter::PopParticle(void)
 {
-	CParticle::Info popInfo = *m_particleInfo;
+	CParticle::Info popInfo = m_particleInfo;
 	popInfo.nMaxLife = popInfo.nLife;
 	popInfo.fWidth = popInfo.fScale;
 	popInfo.fHeight = popInfo.fScale;
@@ -167,7 +167,7 @@ void CParticleEmitter::PopParticle(void)
 //-----------------------------------------
 // ê›íË
 //-----------------------------------------
-void CParticleEmitter::SetParticle(CParticle::Info* inParticle)
+void CParticleEmitter::SetParticle(const CParticle::Info& inParticle)
 {
 	m_particleInfo = inParticle;
 }
