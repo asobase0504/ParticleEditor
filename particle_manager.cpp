@@ -76,7 +76,7 @@ int CParticleManager::Create(const D3DXVECTOR3& pos, const TYPE& inType)
 	int idx = m_numAll;
 	CParticleEmitter* emitter = new CParticleEmitter();
 
-	emitter->Init();	// 初期化
+	emitter->Init();		// 初期化
 	emitter->SetPos(pos);	// 位置の更新
 	emitter->SetParticle(&m_bundledData[inType].particleData);	// 指定されてたパーティクルデータの挿入
 	emitter->SetEmitter(m_bundledData[inType].emitterData);
@@ -93,6 +93,11 @@ int CParticleManager::Create(const D3DXVECTOR3& pos, const TYPE& inType)
 void CParticleManager::SetBundledData(const BundledData&inData)
 {
 	m_bundledData.push_back(inData);
+}
+
+void CParticleManager::ChangeBundledData(const int idx, const BundledData&inData)
+{
+	m_bundledData.at(idx) = inData;
 }
 
 //-----------------------------------------

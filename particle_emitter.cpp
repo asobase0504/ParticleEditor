@@ -52,7 +52,7 @@ void CParticleEmitter::Uninit()
 //-----------------------------------------
 void CParticleEmitter::Update()
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		PopParticle();
 	}
@@ -164,6 +164,9 @@ void CParticleEmitter::PopParticle(void)
 	CParticle::Create(popInfo, myPos);
 }
 
+//-----------------------------------------
+// Ý’è
+//-----------------------------------------
 void CParticleEmitter::SetParticle(CParticle::Info* inParticle)
 {
 	m_particleInfo = inParticle;

@@ -113,9 +113,18 @@ void LoadJson(const wchar_t* cUrl)
 		particleInfo.bBackrot = j["BACKROT"];
 		particleInfo.fScale = j["SCALE"];
 
-		CApplication::GetInstance()->GetParticleManager()->SetBundledData(loadData);
-	}
+		static bool chack = true;
 
+		if (chack)
+		{
+			CApplication::GetInstance()->GetParticleManager()->SetBundledData(loadData);
+			chack = false;
+		}
+		else
+		{
+			CApplication::GetInstance()->GetParticleManager()->ChangeBundledData(CParticleManager::DEBUG_TYPE, loadData);
+		}
+	}
 }
 
 void LoadJsonTex(const char* cUrl)

@@ -1119,8 +1119,7 @@ void UpdateImguiProperty(void)
 	//パーティクルのデータ出力＆読み込み
 	if (ImGui::Button("DATA"))
 	{
-		// データの切り替えは仕様変更のためで後適用
-		//bundledData->emitterData = CApplication::GetInstance()->GetParticleFactory()->GetParticleEmitter()[CParticleFactory::DEBUG_TYPE];
+		LoadJson(L"data/FILE/DataEffectOutput.json");
 	}
 	if (ImGui::Button("OUT"))
 	{
