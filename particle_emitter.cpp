@@ -52,7 +52,8 @@ void CParticleEmitter::Uninit()
 //-----------------------------------------
 void CParticleEmitter::Update()
 {
-	for (int i = 0; i < 1; i++)
+	int popNumber = 5;
+	for (int i = 0; i < popNumber; i++)
 	{
 		PopParticle();
 	}

@@ -93,7 +93,13 @@ int CParticleManager::Create(const D3DXVECTOR3& pos, const int& index)
 	m_numAll++;
 	m_particleEmitter.push_back(emitter);
 
-	return idx;
+	return m_particleEmitter.size();
+}
+
+void CParticleManager::Release(const int idx)
+{
+	delete m_particleEmitter.at(idx-1);
+	m_particleEmitter.erase(m_particleEmitter.begin() + (idx - 1));
 }
 
 //-----------------------------------------

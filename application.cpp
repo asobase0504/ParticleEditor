@@ -156,9 +156,16 @@ void CApplication::Update()
 
 	renderer->Update();
 
+	static int a;
+
 	if (GetKeyboardTrigger(DIK_F1))
 	{
-		paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), 1);
+		a = paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), 0);
+	}
+
+	if (GetKeyboardTrigger(DIK_F2))
+	{
+		paticleManager->Release(a);
 	}
 
 	paticleManager->Update();

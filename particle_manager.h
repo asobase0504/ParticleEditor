@@ -39,6 +39,7 @@ public:
 	void Uninit();
 	void Update();
 	int Create(const D3DXVECTOR3& pos, const int& idx);
+	void Release(const int idx);
 	void SetBundledData(const BundledData&inData);
 	void ChangeBundledData(const int idx, const BundledData&inData);
 	void SetEmitterPos(const int idx,const D3DXVECTOR3& inPos);
