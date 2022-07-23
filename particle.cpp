@@ -65,24 +65,14 @@ void CParticle::Update()
 	pos += m_data.move;
 
 	// 推移
-	m_data.nLife--;							// 体力の減少
+	m_data.nLife--;								// 体力の減少
 	m_data.move.y += m_data.fWeight;			// 重力
 	m_data.move *= m_data.fAttenuation;			// 移動量の推移
 	m_data.fWeight += m_data.fWeightTransition;	// 重さの推移
 
-	D3DXCOLOR myColor = GetColor();
-	if (m_data.color.bColTransition)
-	{// 色の推移
-		if (m_data.color.nEndTime >= m_data.color.nCntTransitionTime)
-		{
-			m_data.color.nCntTransitionTime++;
-			myColor += m_data.color.colTransition;
-		}
-	}
-	myColor.a -= 1.0f / m_data.nMaxLife;
+	ColorTransition();	// 色の遷移
 
 	SetPos(pos);
-	SetColor(myColor);
 	SetSize(D3DXVECTOR2(m_data.fWidth, m_data.fHeight));
 
 	if (m_data.nLife <= 0)
@@ -174,9 +164,20 @@ void CParticle::LoadTex()
 }
 
 //--------------------------------------------------
-// float を DWORD に変換
+// 色の遷移
 //--------------------------------------------------
-DWORD CParticle::FloattoDword(float fVal)
+void CParticle::ColorTransition()
 {
-	return *((DWORD*)&fVal);
+	D3DXCOLOR myColor = GetColor();
+	if (m_data.color.bColTransition)
+	{// 色の推移
+		if (m_data.color.nEndTime >= m_data.color.nCntTransitionTime)
+		{
+			m_data.color.nCntTransitionTime++;
+			myColor += m_data.color.colTransition;
+		}
+	}
+	myColor.a -= 1.0f / m_data.nMaxLife;
+
+	SetColor(myColor);
 }

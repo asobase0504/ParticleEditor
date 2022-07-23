@@ -26,6 +26,8 @@ class CParticleEmitter
 public:	// 構造体
 	struct Info
 	{
+		D3DXVECTOR3 maxPopPos;		// 発生位置(最大)
+		D3DXVECTOR3 minPopPos;		// 発生位置(最小)
 		float fAngle;
 	};
 public:	// 静的メンバー変数
@@ -41,6 +43,9 @@ public:
 	void PopParticle(void);
 	void SetParticle(const CParticle::Info& inParticle);
 	void SetEmitter(const Info& inEmitter) { m_info = inEmitter; }
+
+	Info* GetEmitterInfo() { return &m_info; }
+
 	CParticle::Info* GetParticle() { return &m_particleInfo; }
 private:
 	D3DXVECTOR3 m_pos;	// 出現位置

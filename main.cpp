@@ -35,23 +35,21 @@
 //=================================================
 // 静的変数
 //=================================================
-static int s_nCountFPS;							// FPSのカウンター
-static bool bPress = false;						// リボンバーのトリガー処理のために必要な変数
-static D3DPRESENT_PARAMETERS s_d3dpp = {};
+static int s_nCountFPS;		// FPSのカウンター
+static bool bPress = false;	// リボンバーのトリガー処理のために必要な変数
 
 //プロトタイプ宣言
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 // Forward declare message handler from imgui_impl_win32.cpp
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 static bool bTexUse = false;
 
 char buffer1[MAX_PATH];
-CRenderer* renderer;
 
 HWND hWnd;	//Windowハンドル識別子
-static TCHAR		szPathdefault[MAX_PATH];
+static TCHAR szPathdefault[MAX_PATH];
 
 //===================
 //メイン関数
@@ -101,14 +99,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 		hInstance,					// インスタンスハンドル
 		IDI_APPLICATION);			// Window作成データ
 
-	DWORD dwCurrentTime;	// 現在時刻
-	DWORD dwExedastTime;	// 最後更新時刻
-	DWORD dwFrameCount;		// フレームカウント
-	DWORD dwFPSLastTime;	// 最後のFPS
+	//乱数の初期化
+	srand((unsigned int)time(0));
 
 	CApplication* application = CApplication::GetInstance();
 
-	if (FAILED(application->Init(hWnd, hInstance)))	// ここをfalseにすると大画面になる
+	if (FAILED(application->Init(hWnd, hInstance)))
 	{// 初期化が失敗した場合
 		return -1;
 	}
@@ -130,21 +126,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsClassic();
 
 	// Setup Platform/Renderer backends
 	InitImguiProperty(hWnd, application->GetRenderer()->GetDevice());
-	//ImGui_ImplWin32_Init(hWnd);
-	//ImGui_ImplDX9_Init(s_pD3DDevice);
 
 	//分解能の設定
 	timeBeginPeriod(1);
 
-	dwCurrentTime = 0;
-	dwExedastTime = timeGetTime();
-
-	dwFrameCount = 0;
-	dwFPSLastTime = timeGetTime();
+	DWORD dwCurrentTime = 0;				// 現在時刻
+	DWORD dwExedastTime = timeGetTime();	// 最後更新時刻
+	DWORD dwFrameCount = 0;					// フレームカウント
+	DWORD dwFPSLastTime = timeGetTime();	// 最後のFPS
 
 	// メッセージループ
 	while (1)
@@ -212,9 +204,11 @@ void funcFileSave(HWND hWnd)
 {
 	static OPENFILENAME	ofn;
 
-	static TCHAR		szFile[MAX_PATH];
-	static TCHAR	    szPath[MAX_PATH];
-	if (szPath[0] == TEXT('\0')) {
+	static TCHAR szFile[MAX_PATH];
+	static TCHAR szPath[MAX_PATH];
+
+	if (szPath[0] == TEXT('\0'))
+	{
 
 		//Currentをテクスチャにのとこに変更します
 		SetCurrentDirectory(szPathdefault);
@@ -223,7 +217,9 @@ void funcFileSave(HWND hWnd)
 
 		GetCurrentDirectory(MAX_PATH, szPath);
 	}
-	if (ofn.lStructSize == 0) {
+
+	if (ofn.lStructSize == 0)
+	{
 		ofn.lStructSize = sizeof(OPENFILENAME);
 		ofn.hwndOwner = hWnd;
 		ofn.lpstrInitialDir = szPath;	// 初期フォルダ位置
@@ -234,7 +230,9 @@ void funcFileSave(HWND hWnd)
 		ofn.lpstrTitle = TEXT("画像ファイルを保存します。");
 		ofn.Flags = OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 	}
-	if (GetSaveFileName(&ofn)) {
+
+	if (GetSaveFileName(&ofn))
+	{
 		MessageBox(hWnd, szFile, TEXT("ファイル名を付けて保存"), MB_OK);
 	}
 

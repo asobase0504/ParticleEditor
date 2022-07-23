@@ -84,8 +84,6 @@ public: // 構造体
 	//-------------------------------------------------
 	struct Info
 	{
-		D3DXVECTOR3 maxPopPos;		// 発生位置(最大)			※新規追加変数(ファイルに追加後消してください)
-		D3DXVECTOR3 minPopPos;		// 発生位置(最小)			※新規追加変数(ファイルに追加後消してください)
 		D3DXVECTOR3 move;			// 移動量
 		D3DXVECTOR3 moveTransition;	// 移動量の推移量
 		D3DXVECTOR3 rot;			// 向き
@@ -102,7 +100,7 @@ public: // 構造体
 		float fScale;				// 全体的な大きさ
 		int nLife;					// 寿命
 		int nMaxLife;				// 最大寿命
-		int nMoveTime;				
+		int nMoveTime;				//							※未使用変数
 		int nIdxTex;				// テクスチャの番号
 		bool bUseWeight;			// 重さを使用するかどうか
 		bool bBackrot;				// 逆回転させるかどうか
@@ -120,7 +118,9 @@ public:
 
 	static CParticle* Create(const Info& inParticle, const D3DXVECTOR3& inPos);
 	void LoadTex();
-	DWORD FloattoDword(float fVal);
+
+private:	// プライベート関数
+	void ColorTransition();
 
 private:	// メンバー変数
 	Info m_data;

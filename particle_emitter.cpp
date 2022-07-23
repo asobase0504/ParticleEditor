@@ -68,7 +68,7 @@ void CParticleEmitter::SetPos(const D3DXVECTOR3 & inPos)
 }
 
 //-----------------------------------------
-// 出現
+// パーティクルの出現
 //-----------------------------------------
 void CParticleEmitter::PopParticle(void)
 {
@@ -80,9 +80,9 @@ void CParticleEmitter::PopParticle(void)
 
 	D3DXVECTOR3 myPos = m_pos;
 	// 生成位置の算出
-	myPos.x += FloatRandam(popInfo.maxPopPos.x, -popInfo.minPopPos.x);
-	myPos.y += FloatRandam(popInfo.maxPopPos.y, -popInfo.minPopPos.y);
-	myPos.z += FloatRandam(popInfo.maxPopPos.z, -popInfo.minPopPos.z);
+	myPos.x += FloatRandam(m_info.maxPopPos.x, -m_info.minPopPos.x);
+	myPos.y += FloatRandam(m_info.maxPopPos.y, -m_info.minPopPos.y);
+	myPos.z += FloatRandam(m_info.maxPopPos.z, -m_info.minPopPos.z);
 
 	// 色の算出
 	CParticle::Color& popColor = popInfo.color;

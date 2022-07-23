@@ -16,7 +16,6 @@
 
 #include "particle_manager.h"
 #include "BG.h"
-#include "imgui_property.h"
 
 //-----------------------------------------------------------------------------
 // 静的メンバー変数の初期化
@@ -59,9 +58,6 @@ CApplication::~CApplication()
 //=============================================================================
 HRESULT CApplication::Init(HWND hWnd, HINSTANCE hInstance)
 {
-	//乱数の初期化
-	srand((unsigned int)time(0));
-
 	// レンダリングクラス
 	renderer = new CRenderer;
 	if (FAILED(renderer->Init(hWnd, true)))

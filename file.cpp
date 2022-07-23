@@ -30,9 +30,10 @@ void OutputStatus()
 	CParticleEmitter* loadData = particleManager->GetEmitter()[0];
 
 	CParticle::Info& particleInfo = *loadData->GetParticle();
+	CParticleEmitter::Info& emitterInfo = *loadData->GetEmitterInfo();
 
-	j["POSMAX"] = {{ "X", particleInfo.maxPopPos.x } ,{ "Y", particleInfo.maxPopPos.y } ,{ "Z", particleInfo.maxPopPos.z } };
-	j["POSMIN"] = {{ "X", particleInfo.minPopPos.x } ,{ "Y", particleInfo.minPopPos.y } ,{ "Z", particleInfo.minPopPos.z } };
+	j["POSMAX"] = {{ "X", emitterInfo.maxPopPos.x } ,{ "Y", emitterInfo.maxPopPos.y } ,{ "Z", emitterInfo.maxPopPos.z } };
+	j["POSMIN"] = {{ "X", emitterInfo.minPopPos.x } ,{ "Y", emitterInfo.minPopPos.y } ,{ "Z", emitterInfo.minPopPos.z } };
 	j["MOVE"] = { { "X", particleInfo.move.x } ,{ "Y", particleInfo.move.y } ,{ "Z", particleInfo.move.z } };
 	j["MOVETRANSITION"] = { { "X", particleInfo.moveTransition.x } ,{ "Y", particleInfo.moveTransition.y } ,{ "Z", particleInfo.moveTransition.z } };
 	j["ROT"] = { {"X", particleInfo.rot.x} ,{ "Y", particleInfo.rot.y },{ "Z", particleInfo.rot.z } };
@@ -80,14 +81,15 @@ void LoadJson(const wchar_t* cUrl)
 	{
 		CParticleManager::BundledData loadData = {};
 		CParticle::Info& particleInfo = loadData.particleData;
+		CParticleEmitter::Info& emitterInfo = loadData.emitterData;
 
 		//StringToWString(UTF8toSjis(j["name"]));
 		//DataSet.unionsname = StringToWString(UTF8toSjis(j["unions"] ["name"]));
 		ifs >> j;
 
 		//こっちで構造体にデータを入れてます//文字は変換つけないとばぐるぞ＾＾これ-＞UTF8toSjis()
-		particleInfo.maxPopPos = D3DXVECTOR3(j["POSMAX"]["X"], j["POSMAX"]["Y"], j["POSMAX"]["Z"]);
-		particleInfo.minPopPos = D3DXVECTOR3(j["POSMIN"]["X"], j["POSMIN"]["Y"], j["POSMIN"]["Z"]);
+		emitterInfo.maxPopPos = D3DXVECTOR3(j["POSMAX"]["X"], j["POSMAX"]["Y"], j["POSMAX"]["Z"]);
+		emitterInfo.minPopPos = D3DXVECTOR3(j["POSMIN"]["X"], j["POSMIN"]["Y"], j["POSMIN"]["Z"]);
 	
 		particleInfo.move = D3DXVECTOR3(j["MOVE"]["X"], j["MOVE"]["Y"], j["MOVE"]["Z"]);
 		particleInfo.rot = D3DXVECTOR3(j["ROT"] ["X"], j["ROT"] ["Y"], j["ROT"] ["Z"]);
