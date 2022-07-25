@@ -18,70 +18,32 @@
 //==================================================
 // プロトタイプ宣言
 //==================================================
-//--------------------------------------------------
-// 初期化
-//--------------------------------------------------
-void InitImguiProperty(HWND hWnd, LPDIRECT3DDEVICE9 pDevice);
 
-//--------------------------------------------------
-// 終了
-//--------------------------------------------------
-void UninitImguiProperty(HWND hWnd, WNDCLASSEX wcex);
+class CImguiProperty
+{
+public:
+	CImguiProperty();
+	~CImguiProperty();
 
-//--------------------------------------------------
-// 更新
-//--------------------------------------------------
-void UpdateImguiProperty(void);
-
-//--------------------------------------------------
-// 描画
-//--------------------------------------------------
-void DrawImguiProperty(void);
+	void Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice);
+	void Uninit(HWND hWnd, WNDCLASSEX wcex);
+	void Update();
+	void Draw();
+	char* GetFileName(void);
+	void SetFileName(char*FileStringData);
+	bool bSetImguiParticle(void);
+	void ParticleTemplate(void);
+	void ColorPalette4(const char* label, float col[4]);
+	void ColorPalette(float color[4], float backup_color[4], ImGuiColorEditFlags flags);
+	ImVec4 ColorToImVec4(const D3DXCOLOR& color);
+	D3DXCOLOR ImVec4ToColor(const ImVec4& vec);
+private:
+};
 
 //--------------------------------------------------
 // 入力検知
 //--------------------------------------------------
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-//--------------------------------------------------
-// ファイル名の取得
-//--------------------------------------------------
-char* GetFileName(void);
-
-//--------------------------------------------------
-// パーティクルの使用状況取得
-//--------------------------------------------------
-bool bSetImguiParticle(void);
-
-//--------------------------------------------------
-// ファイル名の取得
-//--------------------------------------------------
-void SetFileName(char*FileStringData);
-
-//--------------------------------------------------
-// パーティクルのテンプレート
-//--------------------------------------------------
-void ParticleTemplate(void);
-
-//--------------------------------------------------
-// カラーパレット4
-//--------------------------------------------------
-void ColorPalette4(const char* label, float col[4]);
-
-//--------------------------------------------------
-// カラーパレット
-//--------------------------------------------------
-void ColorPalette(float color[4], float backup_color[4], ImGuiColorEditFlags flags);
-
-//--------------------------------------------------
-// カラーからベクトルに変換
-//--------------------------------------------------
-ImVec4 ColorToImVec4(const D3DXCOLOR& color);
-
-//--------------------------------------------------
-// ベクトルからカラーに変換
-//--------------------------------------------------
-D3DXCOLOR ImVec4ToColor(const ImVec4& vec);
 
 class Profiler
 {

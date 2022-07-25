@@ -15,7 +15,6 @@
 //プロトタイプ宣言
 //--------------------------------------------------
 BOOL GetFile(HWND hWnd, TCHAR* fname, int nsize, TCHAR* initDir);
-float GetAngle(void);
 bool *TexUse(void);
 char *GetBuffer(void);
 HWND GetWnd(void);

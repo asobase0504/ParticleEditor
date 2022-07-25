@@ -12,6 +12,7 @@
 #include "renderer.h"
 #include "texture.h"
 #include "object2d.h"
+#include "imgui_property.h"
 #include "file.h"
 
 #include "particle_manager.h"
@@ -93,6 +94,10 @@ HRESULT CApplication::Init(HWND hWnd, HINSTANCE hInstance)
 		return E_FAIL;
 	}
 
+	imguiProperty = new CImguiProperty;
+
+	imguiProperty->Init(hWnd, GetRenderer()->GetDevice());
+
 	return S_OK;
 }
 
@@ -133,6 +138,15 @@ void CApplication::Uninit()
 		renderer = nullptr;
 	}
 
+	// imguiの解放
+	if (imguiProperty != nullptr)
+	{
+		//imguiProperty->Uninit();
+
+		delete imguiProperty;
+		imguiProperty = nullptr;
+	}
+
 	// アプリケーションの解放
 	if (application != nullptr)
 	{
@@ -165,6 +179,8 @@ void CApplication::Update()
 	}
 
 	paticleManager->Update();
+
+	imguiProperty->Update();	// imguiの更新
 }
 
 //=============================================================================

@@ -18,6 +18,7 @@ class CPlayer;
 class CTexture;
 class CParticleManager;
 class CBg;
+class CImguiProperty;
 
 //-----------------------------------------
 // アプリケーションクラス
@@ -45,6 +46,7 @@ public:
 	CObject** GetMyObject() { return &object; }
 	CTexture* GetTextureClass() { return texture; }
 	CParticleManager* GetParticleManager() { return paticleManager; }
+	CImguiProperty* GetImguiProperty() { return imguiProperty; }
 private:
 	static CApplication* application;	// アプリケーション
 	CObject* object;	// オブジェクト
@@ -52,5 +54,6 @@ private:
 	CTexture* texture;	// テクスチャ
 	CParticleManager* paticleManager;	// パーティクルマネジャー
 	CBg* bg;	// 背景
+	CImguiProperty* imguiProperty;
 };
 #endif // !_APPLICATION_H_

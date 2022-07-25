@@ -61,7 +61,6 @@ void OutputStatus()
 	j["BACKROT"] = particleInfo.bBackrot;
 	j["SCALE"] = particleInfo.fScale;
 
-
 	auto jobj = j.dump();
 	std::ofstream writing_file;
 	const std::string pathToJSON = "data/FILE/DataEffectOutput.json";

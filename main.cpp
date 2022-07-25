@@ -109,26 +109,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 		return -1;
 	}
 
-	// Show the window
-	::ShowWindow(hWnd, SW_SHOWDEFAULT);
-	::UpdateWindow(hWnd);
-
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ImFontConfig config;
-	config.MergeMode = true;
-
-	// imguiにフォントを追加
-	io.Fonts->AddFontDefault();
-	io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\meiryo.ttc", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
-
-	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-
 	// Setup Platform/Renderer backends
-	InitImguiProperty(hWnd, application->GetRenderer()->GetDevice());
+	//InitImguiProperty(hWnd, application->GetRenderer()->GetDevice());
 
 	//分解能の設定
 	timeBeginPeriod(1);
@@ -169,8 +151,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine,
 			{//60分の1秒経過
 				dwExedastTime = dwCurrentTime;	// 処理開始の時刻[現在時刻]を保存
 
-				// imguiの更新
-				UpdateImguiProperty();
 				// 更新
 				application->Update();
 
@@ -240,8 +220,8 @@ void funcFileSave(HWND hWnd)
 	{
 
 		//fileの名前を入れます
-		SetFileName(szFile);
-	
+		CApplication::GetInstance()->GetImguiProperty()->SetFileName(szFile);
+
 		CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
 		pTexture->SetPath(szFile);
 	

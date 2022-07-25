@@ -64,9 +64,7 @@ static nvmlDevice_t device;
 //これがSINカーブのやつ
 static ImVec2 foo[10];
 
-namespace nl = nlohmann;
-
-nl::json Sin;//リストの生成
+nlohmann::json Sin;//リストの生成
 
  // init data so editor knows to take it from here
 //unsigned MemoryUsageMegaBytes(void)
@@ -804,9 +802,23 @@ namespace ImGui
 
 
 //--------------------------------------------------
+// コンストラクタ
+//--------------------------------------------------
+CImguiProperty::CImguiProperty()
+{
+}
+
+//--------------------------------------------------
+// デストラクタ
+//--------------------------------------------------
+CImguiProperty::~CImguiProperty()
+{
+}
+
+//--------------------------------------------------
 // 初期化
 //--------------------------------------------------
-void InitImguiProperty(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
+void CImguiProperty::Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 {
 #ifdef _DEBUG
 
@@ -863,7 +875,7 @@ void InitImguiProperty(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 //--------------------------------------------------
 // 終了
 //--------------------------------------------------
-void UninitImguiProperty(HWND hWnd, WNDCLASSEX wcex)
+void CImguiProperty::Uninit(HWND hWnd, WNDCLASSEX wcex)
 {
 #ifdef _DEBUG
 
@@ -885,7 +897,7 @@ void UninitImguiProperty(HWND hWnd, WNDCLASSEX wcex)
 //--------------------------------------------------
 // 更新
 //--------------------------------------------------
-void UpdateImguiProperty(void)
+void CImguiProperty::Update()
 {
 #ifdef _DEBUG
 
@@ -960,14 +972,14 @@ void UpdateImguiProperty(void)
 			//StringToWString(UTF8toSjis(j["name"]));
 			//DataSet.unionsname = StringToWString(UTF8toSjis(j["unions"] ["name"]));
 			ifs >> Sin;
-			
+
 			for (int nCnt = 0; nCnt < 10; nCnt++)
 			{
 				std::string name = "Sin";
 				std::string Number = std::to_string(nCnt);
 				name += Number;
 
-				foo[nCnt] = ImVec2(Sin[name]["X"], Sin[name]["Y"]);	
+				foo[nCnt] = ImVec2(Sin[name]["X"], Sin[name]["Y"]);
 			}
 		}
 	}
@@ -975,7 +987,7 @@ void UpdateImguiProperty(void)
 	{
 		for (int nCnt = 0; nCnt < 10; nCnt++)
 		{
-			
+
 			std::string name = "Sin";
 			std::string Number = std::to_string(nCnt);
 			name += Number;
@@ -989,7 +1001,7 @@ void UpdateImguiProperty(void)
 		writing_file << jobj << std::endl;
 		writing_file.close();
 	}
-	
+
 	if (ImGui::Curve("Das editor", ImVec2(600, 200), 10, foo))
 	{
 		float value_you_care_about = ImGui::CurveValue(0.7f, 10, foo); // calculate value at position 0.7
@@ -1075,7 +1087,7 @@ void UpdateImguiProperty(void)
 		ImGui::SliderFloat("PosX", &Imguipos.x, 0.0f, (float)CApplication::SCREEN_WIDTH);
 		ImGui::SliderFloat("PosY", &Imguipos.y, 0.0f, (float)CApplication::SCREEN_HEIGHT);
 		ImGui::Separator();
-		
+
 		particleManager->GetEmitter()[0]->SetPos(Imguipos);
 
 		ImGui::Text("/* Pop */");
@@ -1192,33 +1204,31 @@ void UpdateImguiProperty(void)
 				ImGui::Combo("ColorType", &nTypeNum, Items, IM_ARRAYSIZE(Items));
 
 				//赤
-				if (nTypeNum == 0)
+				switch (nTypeNum)
 				{
+				case 0:
 					ImGui::PlotLines("Custom Gradation", s_fCustR, IM_ARRAYSIZE(s_fCustR), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
 
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 					ImGui::SliderFloat("Red", &s_fCustR[s_nSetTime], -0.5f, 0.5f);
 					ImGui::PopStyleColor();
-				}
-
-				//緑
-				if (nTypeNum == 1)
-				{
+					break;
+				case 1:
 					ImGui::PlotLines("Custom Gradation", s_fCustG, IM_ARRAYSIZE(s_fCustG), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
 
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
 					ImGui::SliderFloat("Green", &s_fCustG[s_nSetTime], -0.5f, 0.5f);
 					ImGui::PopStyleColor();
-				}
-
-				//青
-				if (nTypeNum == 2)
-				{
+					break;
+				case 2:
 					ImGui::PlotLines("Custom Gradation", s_fCustB, IM_ARRAYSIZE(s_fCustB), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
 
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.6f, 1.0f, 1.0f));
 					ImGui::SliderFloat("Blue", &s_fCustB[s_nSetTime], -0.5f, 0.5f);
 					ImGui::PopStyleColor();
+					break;
+				default:
+					break;
 				}
 
 				ImGui::SliderInt("SetKey", &s_nSetTime, 0, 9);
@@ -1312,7 +1322,7 @@ void UpdateImguiProperty(void)
 //--------------------------------------------------
 // 描画
 //--------------------------------------------------
-void DrawImguiProperty(void)
+void CImguiProperty::Draw()
 {
 #ifdef _DEBUG
 
@@ -1330,15 +1340,15 @@ void DrawImguiProperty(void)
 //--------------------------------------------------
 // ファイル名の取得
 //--------------------------------------------------
-char* GetFileName(void)
+char * CImguiProperty::GetFileName(void)
 {
 	return FileString;
 }
 
 //--------------------------------------------------
-// ファイル名の取得
+// ファイル名の設定
 //--------------------------------------------------
-void SetFileName(char*FileStringData)
+void CImguiProperty::SetFileName(char * FileStringData)
 {
 	strcpy(FileString, FileStringData);
 }
@@ -1346,15 +1356,15 @@ void SetFileName(char*FileStringData)
 //--------------------------------------------------
 // エフェクト使用状況の取得
 //--------------------------------------------------
-bool bSetImguiParticle(void)
+bool CImguiProperty::bSetImguiParticle(void)
 {
-	return s_bEffectEnable;
+	return false;
 }
 
 //--------------------------------------------------
 // パーティクルのテンプレート
 //--------------------------------------------------
-void ParticleTemplate(void)
+void CImguiProperty::ParticleTemplate(void)
 {
 	CParticleManager* manager = CApplication::GetInstance()->GetParticleManager();
 	CParticleManager::BundledData& templateData = manager->GetBundledData()[0];
@@ -1390,7 +1400,7 @@ void ParticleTemplate(void)
 //--------------------------------------------------
 // カラーパレット4
 //--------------------------------------------------
-void ColorPalette4(const char* label, float col[4])
+void CImguiProperty::ColorPalette4(const char * label, float col[4])
 {
 	//カラーパレット
 	ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_NoDragDrop | ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_NoOptions;
@@ -1442,7 +1452,7 @@ void ColorPalette4(const char* label, float col[4])
 //--------------------------------------------------
 // カラーパレット
 //--------------------------------------------------
-void ColorPalette(float color[4], float backup_color[4], ImGuiColorEditFlags flags)
+void CImguiProperty::ColorPalette(float color[4], float backup_color[4], ImGuiColorEditFlags flags)
 {
 	ImGui::ColorPicker4("##picker", color, flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
 	ImGui::SameLine();
@@ -1508,7 +1518,7 @@ void ColorPalette(float color[4], float backup_color[4], ImGuiColorEditFlags fla
 //--------------------------------------------------
 // カラーからベクトルに変換
 //--------------------------------------------------
-ImVec4 ColorToImVec4(const D3DXCOLOR& color)
+ImVec4 CImguiProperty::ColorToImVec4(const D3DXCOLOR & color)
 {
 	ImVec4 vec;
 
@@ -1523,7 +1533,7 @@ ImVec4 ColorToImVec4(const D3DXCOLOR& color)
 //--------------------------------------------------
 // ベクトルからカラーに変換
 //--------------------------------------------------
-D3DXCOLOR ImVec4ToColor(const ImVec4& vec)
+D3DXCOLOR CImguiProperty::ImVec4ToColor(const ImVec4 & vec)
 {
 	D3DXCOLOR color;
 

@@ -166,7 +166,7 @@ void CRenderer::Draw()
 	{
 		CObject::DrawAll();	// オブジェクト
 
-		DrawImguiProperty();	// imgui
+		CApplication::GetInstance()->GetImguiProperty()->Draw();	// imguiの描画
 
 		// Direct3Dによる描画の終了
 		pD3DDevice->EndScene();
