@@ -50,6 +50,7 @@ void OutputStatus()
 	j["RANDOMTRANSITIONTIME"] = particleInfo.color.bRandomTransitionTime;
 	
 	j["TYPE"] = particleInfo.type;
+	j["SCALETRANSITION"] = { { "X", particleInfo.scaleTransition.x } ,{ "Y", particleInfo.scaleTransition.y }};
 	j["WIDTH"] = particleInfo.fWidth;
 	j["HEIGHT"] = particleInfo.fHeight;
 	j["ANGLE"] = particleInfo.fAngle;
@@ -91,10 +92,10 @@ void LoadJson(const wchar_t* cUrl)
 		emitterInfo.minPopPos = D3DXVECTOR3(j["POSMIN"]["X"], j["POSMIN"]["Y"], j["POSMIN"]["Z"]);
 	
 		particleInfo.move = D3DXVECTOR3(j["MOVE"]["X"], j["MOVE"]["Y"], j["MOVE"]["Z"]);
-		particleInfo.rot = D3DXVECTOR3(j["ROT"] ["X"], j["ROT"] ["Y"], j["ROT"] ["Z"]);
+		particleInfo.rot = D3DXVECTOR3(j["ROT"]["X"], j["ROT"]["Y"], j["ROT"]["Z"]);
 		particleInfo.moveTransition = D3DXVECTOR3(j["MOVETRANSITION"]["X"], j["MOVETRANSITION"]["Y"], j["MOVETRANSITION"]["Z"]);;
 		
-		particleInfo.color.colBigin = D3DXCOLOR(j["COL"] ["R"], j["COL"] ["G"], j["COL"] ["B"], j["COL"] ["A"]);
+		particleInfo.color.colBigin = D3DXCOLOR(j["COL"]["R"], j["COL"]["G"], j["COL"]["B"], j["COL"]["A"]);
 		particleInfo.color.colRandamMax = D3DXCOLOR(j["COLRANDAMMAX"]["R"], j["COLRANDAMMAX"]["G"], j["COLRANDAMMAX"]["B"], j["COLRANDAMMAX"]["A"]);
 		particleInfo.color.colRandamMin = D3DXCOLOR(j["COLRANDAMMIN"]["R"], j["COLRANDAMMIN"]["G"], j["COLRANDAMMIN"]["B"], j["COLRANDAMMIN"]["A"]);
 		particleInfo.color.colTransition = D3DXCOLOR(j["COLTRANSITION"]["R"], j["COLTRANSITION"]["G"], j["COLTRANSITION"]["B"], j["COLTRANSITION"]["A"]);
@@ -106,6 +107,7 @@ void LoadJson(const wchar_t* cUrl)
 		particleInfo.color.bRandomTransitionTime = j["RANDOMTRANSITIONTIME"];
 		
 		particleInfo.type = j["TYPE"];
+		//particleInfo.scaleTransition = D3DXVECTOR2(j["SCALETRANSITION"]["X"], j["SCALETRANSITION"]["Y"]);
 		particleInfo.fWidth = j["WIDTH"];
 		particleInfo.fHeight = j["HEIGHT"];
 		particleInfo.fRadius = j["RADIUS"];

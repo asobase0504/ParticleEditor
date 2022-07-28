@@ -65,10 +65,12 @@ void CParticle::Update()
 	pos += m_data.move;
 
 	// 推移
-	m_data.nLife--;								// 体力の減少
-	m_data.move.y += m_data.fWeight;			// 重力
-	m_data.move *= m_data.fAttenuation;			// 移動量の推移
-	m_data.fWeight += m_data.fWeightTransition;	// 重さの推移
+	m_data.nLife--;									// 体力の減少
+	m_data.move.y += m_data.fWeight;				// 重力
+	m_data.move *= m_data.fAttenuation;				// 移動量の推移
+	m_data.fWeight += m_data.fWeightTransition;		// 重さの推移
+	m_data.fWidth += m_data.scaleTransition.x;		// 幅の推移
+	m_data.fHeight += m_data.scaleTransition.y;		// 高さの推移
 
 	ColorTransition();	// 色の遷移
 

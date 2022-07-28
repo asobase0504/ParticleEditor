@@ -84,27 +84,28 @@ public: // 構造体
 	//-------------------------------------------------
 	struct Info
 	{
-		D3DXVECTOR3 move;			// 移動量
-		D3DXVECTOR3 moveTransition;	// 移動量の推移量
-		D3DXVECTOR3 rot;			// 向き
-		PARTICLETYPE type;			// エフェクトの種類
-		Color color;				// カラー					※新規追加変数(ファイルに追加後消してください)
-		ALPHABLENDTYPE alphaBlend;	// αブレンディングの種別
-		float fWidth;				// 幅
-		float fHeight;				// 高さ
-		float fAngle;				// 角度
-		float fAttenuation;			// 減衰値
-		float fRadius;				// 半径
-		float fWeight;				// 重さ
-		float fWeightTransition;	// 重さの推移量
-		float fScale;				// 全体的な大きさ
-		int nLife;					// 寿命
-		int nMaxLife;				// 最大寿命
-		int nMoveTime;				//							※未使用変数
-		int nIdxTex;				// テクスチャの番号
-		bool bUseWeight;			// 重さを使用するかどうか
-		bool bBackrot;				// 逆回転させるかどうか
-		bool bTexturerot;			// テクスチャ回転させるかどうか
+		D3DXVECTOR3 move;				// 移動量
+		D3DXVECTOR3 moveTransition;		// 移動量の推移量
+		D3DXVECTOR3 rot;				// 向き
+		PARTICLETYPE type;				// エフェクトの種類
+		Color color;					// カラー
+		ALPHABLENDTYPE alphaBlend;		// αブレンディングの種別
+		D3DXVECTOR2 scaleTransition;	// サイズの推移量			※新規追加変数(ファイルに追加後消してください)
+		float fWidth;					// 幅
+		float fHeight;					// 高さ
+		float fAngle;					// 角度
+		float fAttenuation;				// 減衰値
+		float fRadius;					// 半径
+		float fWeight;					// 重さ
+		float fWeightTransition;		// 重さの推移量
+		float fScale;					// 全体的な大きさ
+		int nLife;						// 寿命
+		int nMaxLife;					// 最大寿命
+		int nMoveTime;					//							※未使用変数
+		int nIdxTex;					// テクスチャの番号
+		bool bUseWeight;				// 重さを使用するかどうか
+		bool bBackrot;					// 逆回転させるかどうか
+		bool bTexturerot;				// テクスチャ回転させるかどうか
 	};
 
 public:

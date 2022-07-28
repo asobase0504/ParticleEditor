@@ -49,24 +49,29 @@
 //==================================================
 // 定義
 //==================================================
-static const int	MAX_TEXT = 1024;		// テキストの最大文字数
-static const char*	WINDOW_NAME = "test";	// ウインドウの名前 (キャプションに表示)
+const char* CImguiProperty::FontPath = "c:\\Windows\\Fonts\\meiryo.ttc";				// 使用するフォント
+const float CImguiProperty::FontSize = 18.0f;											// フォントサイズ
+const ImVec4 CImguiProperty::TitleBarColor = ImVec4(0.615f, 0.215f, 0.341f, 1.0f);		// タイトルバーの色
+const ImVec4 CImguiProperty::SliderBarColor = ImVec4(0.615f, 0.215f, 0.341f, 1.0f);		// スライダーバーの色
+const ImVec4 CImguiProperty::CheckMarkColor = ImVec4(0.615f, 0.215f, 0.341f, 1.0f);		// チェックマークの色
+const ImVec4 CImguiProperty::ScrollBarColor = ImVec4(0.0f, 0.7f, 0.2f, 1.0f);			// スクロールバーの色
+const ImVec4 CImguiProperty::HeaderColor = ImVec4(1.0f, 1.0f, 1.0f, 0.309f);			// ヘッダーの基本色
+const ImVec4 CImguiProperty::HeaderHoveredColor = ImVec4(1.0f, 1.0f, 1.0f, 0.75f);		// ヘッダーにマウスカーソルを合わせた時の色
+const ImVec4 CImguiProperty::HeaderActiveColor = ImVec4(1.0f, 1.0f, 1.0f, 0.85f);		// ヘッダークリック時の色
+
+//const int CImguiProperty::MAX_TEXT = 1024;
+const char* CImguiProperty::WINDOW_NAME = "test";
 
 //==================================================
 // スタティック変数
 //==================================================
-static char FileString[MAX_PATH * 256];	// ファイル名
-static bool	s_window = false;	// ウインドウを使用するかどうか
-static bool s_bEffectEnable = true;
-static const unsigned int gpu_id = 0;
 static nvmlDevice_t device;
 
 //これがSINカーブのやつ
-static ImVec2 foo[10];
 
 nlohmann::json Sin;//リストの生成
 
- // init data so editor knows to take it from here
+// init data so editor knows to take it from here
 //unsigned MemoryUsageMegaBytes(void)
 //{
 //	MEMORYSTATUSEX m = { sizeof m };
@@ -800,7 +805,6 @@ namespace ImGui
 
 };
 
-
 //--------------------------------------------------
 // コンストラクタ
 //--------------------------------------------------
@@ -818,7 +822,7 @@ CImguiProperty::~CImguiProperty()
 //--------------------------------------------------
 // 初期化
 //--------------------------------------------------
-void CImguiProperty::Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
+HWND CImguiProperty::Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 {
 #ifdef _DEBUG
 
@@ -835,30 +839,31 @@ void CImguiProperty::Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 
 	// 文字の設定
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\meiryo.ttc", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF(FontPath, FontSize, nullptr, io.Fonts->GetGlyphRangesJapanese());
 
 	// スタイルの設定
 	ImGui::StyleColorsDark();
 
 	// タイトルバーの色設定
-	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.615f, 0.215f, 0.341f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.615f, 0.215f, 0.341f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, ImVec4(0.615f, 0.215f, 0.341f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_TitleBg, TitleBarColor);
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, TitleBarColor);
+	ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, TitleBarColor);
 
 	// スライドの色設定
-	ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.615f, 0.215f, 0.341f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, ImVec4(0.615f, 0.215f, 0.341f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_SliderGrab, SliderBarColor);
+	ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, SliderBarColor);
 
 	// チェックマークの色設定
-	ImGui::PushStyleColor(ImGuiCol_CheckMark, ImVec4(0.615f, 0.215f, 0.341f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_CheckMark, CheckMarkColor);
 
 	// スクロールの色設定
-	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, ScrollBarColor);
 
 	// ヘッダーの色設定
-	ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.0f, 1.0f, 1.0f, 0.309f));
-	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.0f, 1.0f, 1.0f, 0.75f));
-	ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(1.0f, 1.0f, 1.0f, 0.85f));
+	ImGui::PushStyleColor(ImGuiCol_Header, HeaderColor);
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, HeaderHoveredColor);
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, HeaderActiveColor);
 
 	// プラットフォームの設定/Renderer backends
 	ImGui_ImplWin32_Init(hWnd);
@@ -869,6 +874,7 @@ void CImguiProperty::Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 	nvmlDeviceGetHandleByIndex(gpu_id, &device);
 	foo[0].x = -1;
 
+	return S_OK;
 #endif // _DEBUG
 }
 
@@ -912,9 +918,6 @@ void CImguiProperty::Update()
 
 	static int sliderInt = 0;
 
-	static bool useEffect = true;
-	static bool s_bRot = false;
-
 	// パーティクルのデータ
 	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
 
@@ -956,6 +959,7 @@ void CImguiProperty::Update()
 		emitter->SetParticle((particleManager->GetBundledData().end() - 1)->particleData);
 		emitter->SetEmitter((particleManager->GetBundledData().end() - 1)->emitterData);
 	}
+
 	if (ImGui::Button("JSON_SAVE"))
 	{
 		OutputStatus();
@@ -983,6 +987,7 @@ void CImguiProperty::Update()
 			}
 		}
 	}
+
 	if (ImGui::Button("SINOUT"))
 	{
 		for (int nCnt = 0; nCnt < 10; nCnt++)
@@ -1016,6 +1021,7 @@ void CImguiProperty::Update()
 
 	// GPUの表示
 	ImGui::Text("GPU  : %.2f%%", clockNau);
+
 	// FPSの表示
 	ImGui::Text("FPS  : %.2f", ImGui::GetIO().Framerate);
 
@@ -1024,299 +1030,316 @@ void CImguiProperty::Update()
 	//エフェクト関係
 	if (ImGui::CollapsingHeader("EffectSetting"))
 	{
-		if (ImGui::Checkbox("EffectEnable", &useEffect))
-		{
-			s_bEffectEnable = !s_bEffectEnable;
-		}
-
-		if (ImGui::Button("Template"))
-		{
-			// パーティクルをテンプレート状態にする
-			ParticleTemplate();
-		}
-
-		ImGui::Separator();
-		ImGui::Text("/* Texture */");
-		//ここTEXよみこみ
-		if (ImGui::Button("LOAD TEXTURE"))
-		{
-			GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
-
-			if (FileString[0] != '\0')
-			{
-				std::string File = FileString;
-				char * Data = GetBuffer();
-				HWND hWnd = GetWnd();
-				strcpy(Data, File.c_str());
-
-				SetFileName(Data);
-
-				funcFileSave(hWnd);
-			}
-		}
-
-		{
-			// テクスチャ
-			CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
-			int& index = particleManager->GetBundledData()[0].particleData.nIdxTex;
-
-			if (ImGui::BeginCombo("Texture", pTexture->GetPath(index, false).c_str(), 0))
-			{// コンボボタン
-				for (int i = 0; i < pTexture->GetNumAll(); i++)
-				{
-					const bool is_selected = (index == i);
-
-					if (ImGui::Selectable(pTexture->GetPath(i, false).c_str(), is_selected))
-					{// 選ばれた選択肢に変更
-						index = i;
-					}
-
-					if (is_selected)
-					{// 選択肢の項目を開く
-						ImGui::SetItemDefaultFocus();
-					}
-				}
-				ImGui::EndCombo();
-			}
-		}
-
-		// エミッタ―の位置を調整
-		D3DXVECTOR3 Imguipos = particleManager->GetEmitter()[0]->GetPos();
-		ImGui::Separator();
-		ImGui::Text("/* Pos */");
-		ImGui::SliderFloat("PosX", &Imguipos.x, 0.0f, (float)CApplication::SCREEN_WIDTH);
-		ImGui::SliderFloat("PosY", &Imguipos.y, 0.0f, (float)CApplication::SCREEN_HEIGHT);
-		ImGui::Separator();
-
-		particleManager->GetEmitter()[0]->SetPos(Imguipos);
-
-		ImGui::Text("/* Pop */");
-		// 生成範囲の設定
-		ImGui::SliderFloat("MaxPopPosX", &emitter->GetEmitterInfo()->maxPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
-		ImGui::SliderFloat("MinPopPosX", &emitter->GetEmitterInfo()->minPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
-		ImGui::SliderFloat("MaxPopPosY", &emitter->GetEmitterInfo()->maxPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
-		ImGui::SliderFloat("MinPopPosY", &emitter->GetEmitterInfo()->minPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
-		ImGui::Separator();
-
-		ImGui::Text("/* Move */");
-		ImGui::InputFloat2("SettingEffectMove", emitter->GetParticle()->move, "%f");
-		ImGui::SliderFloat("MoveX", &emitter->GetParticle()->move.x, -100.0f, 100.0f);
-		ImGui::SliderFloat("MoveY", &emitter->GetParticle()->move.y, -100.0f, 100.0f);
-
-		//詳細
-		if (ImGui::CollapsingHeader("Details"))
-		{
-			//rot計算用
-			static float s_fDeg = 0.0f;
-			ImGui::Text("/* Rot */");
-			ImGui::InputFloat3("SettingEffectRot", emitter->GetParticle()->rot, "%f");
-			ImGui::SliderFloat("Rot", &s_fDeg, -D3DX_PI, D3DX_PI);
-
-			if (ImGui::Checkbox("BackRot", &s_bRot))
-			{
-				emitter->GetParticle()->bBackrot = !emitter->GetParticle()->bBackrot;
-			}
-
-			float rotX = Imguipos.x * cosf(s_fDeg) + Imguipos.x * sinf(s_fDeg);
-			float rotY = Imguipos.y * sinf(s_fDeg) - Imguipos.y * cosf(s_fDeg);
-			float fAngle = atan2f(rotX, rotY);
-			emitter->GetParticle()->rot = D3DXVECTOR3(rotX, rotY, fAngle);
-
-			if (emitter->GetParticle()->rot.z > D3DX_PI)
-			{
-				emitter->GetParticle()->rot.z -= D3DX_PI * 2.0f;
-			}
-			else if (emitter->GetParticle()->rot.z < -D3DX_PI)
-			{
-				emitter->GetParticle()->rot.z += D3DX_PI * 2.0f;
-			}
-
-			ImGui::Separator();
-			ImGui::Text("/* Scale */");
-			ImGui::SliderFloat("Scale", &emitter->GetParticle()->fScale, 0.0f, 100.0f);
-			ImGui::Separator();
-			ImGui::Text("/* Life */");
-			ImGui::SliderInt("Life", &emitter->GetParticle()->nLife, 0, 500);
-			ImGui::Separator();
-			ImGui::Text("/* Radius */");
-			ImGui::SliderFloat("Radius", &emitter->GetParticle()->fRadius, 0.0f, 100.0f);
-			ImGui::Separator();
-			ImGui::Text("/* Angle */");
-			ImGui::SliderAngle("Angle", &emitter->GetParticle()->fAngle, 0.0f, 2000.0f);
-			ImGui::Separator();
-			ImGui::Text("/* Attenuation */");
-			ImGui::SliderFloat("Attenuation", &emitter->GetParticle()->fAttenuation, 0.0f, 1.0f);
-
-			//挙動おかしくなっちゃった時用
-			if (ImGui::Button("DataRemove"))
-			{
-				//DeleteParticleAll();
-				//RemoveAngle();
-			}
-		}
-
-		if (ImGui::CollapsingHeader("Color"))
-		{
-			//カラーパレット
-			ColorPalette4("clear", (float*)&emitter->GetParticle()->color);
-
-			// ランダムカラー
-			ImGui::Checkbox("Random", &emitter->GetParticle()->color.bColRandom);
-
-			if (emitter->GetParticle()->color.bColRandom)
-			{
-				ColorPalette4("RandamMax", (float*)&emitter->GetParticle()->color.colRandamMax);
-				ColorPalette4("RandamMin", (float*)&emitter->GetParticle()->color.colRandamMin);
-			}
-
-			// カラートラディション
-			ImGui::Checkbox("Transition", &emitter->GetParticle()->color.bColTransition);
-
-			if (emitter->GetParticle()->color.bColTransition)
-			{// 目的の色
-				ColorPalette4("clear destColor", (float*)&emitter->GetParticle()->color.destCol);
-
-				ImGui::Checkbox("RandomTransitionTime", &emitter->GetParticle()->color.bRandomTransitionTime);
-
-				if (!emitter->GetParticle()->color.bRandomTransitionTime)
-				{
-					ImGui::SliderInt("EndTime", &emitter->GetParticle()->color.nEndTime, 0, emitter->GetParticle()->nLife);
-				}
-			}
-		}
-
-		//グラデーション
-		if (ImGui::CollapsingHeader("Gradation"))
-		{
-			static float s_fCustR[10];
-			static float s_fCustG[10];
-			static float s_fCustB[10];
-			static int s_nSpeed = 1;
-			static int selecttype = 0;
-
-			ImGui::RadioButton("Custom", &selecttype, 1);
-
-			if (selecttype == 1)
-			{
-				static int s_nSetTime = 0;
-				static int nTypeNum = 0;
-				const char *Items[] = { "Red", "Green", "Blue" };
-				ImGui::Combo("ColorType", &nTypeNum, Items, IM_ARRAYSIZE(Items));
-
-				//赤
-				switch (nTypeNum)
-				{
-				case 0:
-					ImGui::PlotLines("Custom Gradation", s_fCustR, IM_ARRAYSIZE(s_fCustR), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
-
-					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-					ImGui::SliderFloat("Red", &s_fCustR[s_nSetTime], -0.5f, 0.5f);
-					ImGui::PopStyleColor();
-					break;
-				case 1:
-					ImGui::PlotLines("Custom Gradation", s_fCustG, IM_ARRAYSIZE(s_fCustG), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
-
-					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-					ImGui::SliderFloat("Green", &s_fCustG[s_nSetTime], -0.5f, 0.5f);
-					ImGui::PopStyleColor();
-					break;
-				case 2:
-					ImGui::PlotLines("Custom Gradation", s_fCustB, IM_ARRAYSIZE(s_fCustB), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
-
-					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.6f, 1.0f, 1.0f));
-					ImGui::SliderFloat("Blue", &s_fCustB[s_nSetTime], -0.5f, 0.5f);
-					ImGui::PopStyleColor();
-					break;
-				default:
-					break;
-				}
-
-				ImGui::SliderInt("SetKey", &s_nSetTime, 0, 9);
-				ImGui::SliderInt("Speed", &s_nSpeed, 1, 30);		//数値が高くなると変化速度がゆっくりになる
-
-				/*グラフの全ての色の数値を０にする*/
-				if (ImGui::Button("All Zero"))
-				{
-					for (int i = 0; i < 10; i++)
-					{
-						memset(&s_fCustR[i], 0, sizeof(s_fCustR[i]));
-						memset(&s_fCustG[i], 0, sizeof(s_fCustG[i]));
-						memset(&s_fCustB[i], 0, sizeof(s_fCustB[i]));
-					}
-				}
-			}
-
-			ImGui::RadioButton("Gradation None", &selecttype, 0);
-
-			static int s_nCounter;
-			static int s_nTimer;
-			static int s_nColNum;
-
-			switch (selecttype)
-			{
-			case 1:
-				s_nCounter++;
-
-				//ゼロ除算回避
-				if (s_nSpeed <= 0)
-				{
-					s_nSpeed = 1;
-				}
-
-				if ((s_nCounter % s_nSpeed) == 0)
-				{//一定時間経過
-					s_nTimer++;
-
-					if (s_nTimer >= 5)
-					{
-						emitter->GetParticle()->color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
-						s_nColNum++;
-						s_nTimer = 0;
-					}
-				}
-
-				if (s_nCounter >= 60)
-				{
-					s_nCounter = 0;
-				}
-
-				if (s_nColNum >= 10)
-				{
-					s_nColNum = 0;
-				}
-
-				break;
-
-			case 2:
-
-				break;
-			case 0:
-				break;
-			default:
-				break;
-			}
-
-			ImGui::SliderFloat("Alpha", &emitter->GetParticle()->color.colTransition.a, -0.5f, 0.0f);
-		}
-
-		// αブレンディングの種類
-		if (ImGui::CollapsingHeader("AlphaBlending"))
-		{
-			// 変数宣言
-			int	nBlendingType = (int)emitter->GetParticle()->alphaBlend;		// 種別変更用の変数
-
-			ImGui::RadioButton("AddBlend", &nBlendingType, 0);
-			ImGui::RadioButton("SubBlend", &nBlendingType, 1);
-			ImGui::RadioButton("BlendNone", &nBlendingType, 2);
-
-			emitter->GetParticle()->alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
-		}
+		ParticleProperty();
 	}
 
 	ImPlot::ShowDemoWindow();
 	ImGui::End();
 
 #endif // _DEBUG
+}
+
+//--------------------------------------------------
+// パーティクルのImGui
+//--------------------------------------------------
+void CImguiProperty::ParticleProperty()
+{
+	static bool useEffect = true;
+	// パーティクルのデータ
+	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
+
+	// 編集するエミッタ―の情報
+	CParticleEmitter* emitter = particleManager->GetEmitter()[0];
+
+	if (ImGui::Checkbox("EffectEnable", &useEffect))
+	{
+		s_bEffectEnable = !s_bEffectEnable;
+	}
+
+	if (ImGui::Button("Template"))
+	{
+		// パーティクルをテンプレート状態にする
+		ParticleTemplate();
+	}
+
+	ImGui::Separator();
+	ImGui::Text("/* Texture */");	//ここTEXよみこみ
+	if (ImGui::Button("LOAD TEXTURE"))
+	{
+		GetFile(nullptr, FileString, sizeof(FileString), TEXT("C:\\"));
+
+		if (FileString[0] != '\0')
+		{
+			std::string File = FileString;
+			char * Data = GetBuffer();
+			HWND hWnd = GetWnd();
+			strcpy(Data, File.c_str());
+
+			SetFileName(Data);
+
+			funcFileSave(hWnd);
+		}
+	}
+
+	{
+		// テクスチャ
+		CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
+		int& index = particleManager->GetBundledData()[0].particleData.nIdxTex;
+
+		if (ImGui::BeginCombo("Texture", pTexture->GetPath(index, false).c_str(), 0))
+		{// コンボボタン
+			for (int i = 0; i < pTexture->GetNumAll(); i++)
+			{
+				const bool is_selected = (index == i);
+
+				if (ImGui::Selectable(pTexture->GetPath(i, false).c_str(), is_selected))
+				{// 選ばれた選択肢に変更
+					index = i;
+				}
+
+				if (is_selected)
+				{// 選択肢の項目を開く
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+	}
+
+	// エミッタ―の位置を調整
+	D3DXVECTOR3 Imguipos = particleManager->GetEmitter()[0]->GetPos();
+	ImGui::Separator();
+	ImGui::Text("/* Pos */");
+	ImGui::SliderFloat("PosX", &Imguipos.x, 0.0f, (float)CApplication::SCREEN_WIDTH);
+	ImGui::SliderFloat("PosY", &Imguipos.y, 0.0f, (float)CApplication::SCREEN_HEIGHT);
+	ImGui::Separator();
+
+	particleManager->GetEmitter()[0]->SetPos(Imguipos);
+
+	// 生成範囲の設定
+	ImGui::Text("/* Pop */");
+	ImGui::SliderFloat("MaxPopPosX", &emitter->GetEmitterInfo()->maxPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
+	ImGui::SliderFloat("MinPopPosX", &emitter->GetEmitterInfo()->minPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
+	ImGui::SliderFloat("MaxPopPosY", &emitter->GetEmitterInfo()->maxPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
+	ImGui::SliderFloat("MinPopPosY", &emitter->GetEmitterInfo()->minPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
+	ImGui::Separator();
+
+	ImGui::Text("/* Move */");
+	ImGui::InputFloat2("SettingEffectMove", emitter->GetParticle()->move, "%f");
+	ImGui::SliderFloat("MoveX", &emitter->GetParticle()->move.x, -100.0f, 100.0f);
+	ImGui::SliderFloat("MoveY", &emitter->GetParticle()->move.y, -100.0f, 100.0f);
+
+	//詳細
+	if (ImGui::CollapsingHeader("Details"))
+	{
+		//rot計算用
+		static float s_fDeg = 0.0f;
+		ImGui::Text("/* Rot */");
+		ImGui::InputFloat3("SettingEffectRot", emitter->GetParticle()->rot, "%f");
+		ImGui::SliderFloat("Rot", &s_fDeg, -D3DX_PI, D3DX_PI);
+
+		static bool s_bRot = false;
+		if (ImGui::Checkbox("BackRot", &s_bRot))
+		{
+			emitter->GetParticle()->bBackrot = !emitter->GetParticle()->bBackrot;
+		}
+
+		float rotX = Imguipos.x * cosf(s_fDeg) + Imguipos.x * sinf(s_fDeg);
+		float rotY = Imguipos.y * sinf(s_fDeg) - Imguipos.y * cosf(s_fDeg);
+		float fAngle = atan2f(rotX, rotY);
+		emitter->GetParticle()->rot = D3DXVECTOR3(rotX, rotY, fAngle);
+
+		if (emitter->GetParticle()->rot.z > D3DX_PI)
+		{
+			emitter->GetParticle()->rot.z -= D3DX_PI * 2.0f;
+		}
+		else if (emitter->GetParticle()->rot.z < -D3DX_PI)
+		{
+			emitter->GetParticle()->rot.z += D3DX_PI * 2.0f;
+		}
+
+		ImGui::Separator();
+		ImGui::Text("/* Scale */");
+		ImGui::SliderFloat("Scale", &emitter->GetParticle()->fScale, 0.0f, 100.0f);
+		ImGui::SliderFloat("ScaleTransfome.x", &emitter->GetParticle()->scaleTransition.x, 0.0f, 100.0f);
+		ImGui::SliderFloat("ScaleTransfome.y", &emitter->GetParticle()->scaleTransition.y, 0.0f, 100.0f);
+		ImGui::Separator();
+		ImGui::Text("/* Life */");
+		ImGui::SliderInt("Life", &emitter->GetParticle()->nLife, 0, 500);
+		ImGui::Separator();
+		ImGui::Text("/* Radius */");
+		ImGui::SliderFloat("Radius", &emitter->GetParticle()->fRadius, 0.0f, 100.0f);
+		ImGui::Separator();
+		ImGui::Text("/* Angle */");
+		ImGui::SliderAngle("Angle", &emitter->GetParticle()->fAngle, 0.0f, 2000.0f);
+		ImGui::Separator();
+		ImGui::Text("/* Attenuation */");
+		ImGui::SliderFloat("Attenuation", &emitter->GetParticle()->fAttenuation, 0.0f, 1.0f);
+
+		//挙動おかしくなっちゃった時用
+		if (ImGui::Button("DataRemove"))
+		{
+			//DeleteParticleAll();
+			//RemoveAngle();
+		}
+	}
+
+	if (ImGui::CollapsingHeader("Color"))
+	{
+		//カラーパレット
+		ColorPalette4("clear", (float*)&emitter->GetParticle()->color);
+
+		// ランダムカラー
+		ImGui::Checkbox("Random", &emitter->GetParticle()->color.bColRandom);
+
+		if (emitter->GetParticle()->color.bColRandom)
+		{
+			ColorPalette4("RandamMax", (float*)&emitter->GetParticle()->color.colRandamMax);
+			ColorPalette4("RandamMin", (float*)&emitter->GetParticle()->color.colRandamMin);
+		}
+
+		// カラートラディション
+		ImGui::Checkbox("Transition", &emitter->GetParticle()->color.bColTransition);
+
+		if (emitter->GetParticle()->color.bColTransition)
+		{// 目的の色
+			ColorPalette4("clear destColor", (float*)&emitter->GetParticle()->color.destCol);
+
+			ImGui::Checkbox("RandomTransitionTime", &emitter->GetParticle()->color.bRandomTransitionTime);
+
+			if (!emitter->GetParticle()->color.bRandomTransitionTime)
+			{
+				ImGui::SliderInt("EndTime", &emitter->GetParticle()->color.nEndTime, 0, emitter->GetParticle()->nLife);
+			}
+		}
+	}
+
+	//グラデーション
+	if (ImGui::CollapsingHeader("Gradation"))
+	{
+		static float s_fCustR[10];
+		static float s_fCustG[10];
+		static float s_fCustB[10];
+		static int s_nSpeed = 1;
+		static int selecttype = 0;
+
+		ImGui::RadioButton("Custom", &selecttype, 1);
+
+		if (selecttype == 1)
+		{
+			static int s_nSetTime = 0;
+			static int nTypeNum = 0;
+			const char *Items[] = { "Red", "Green", "Blue" };
+			ImGui::Combo("ColorType", &nTypeNum, Items, IM_ARRAYSIZE(Items));
+
+			//赤
+			switch (nTypeNum)
+			{
+			case 0:
+				ImGui::PlotLines("Custom Gradation", s_fCustR, IM_ARRAYSIZE(s_fCustR), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+				ImGui::SliderFloat("Red", &s_fCustR[s_nSetTime], -0.5f, 0.5f);
+				ImGui::PopStyleColor();
+				break;
+			case 1:
+				ImGui::PlotLines("Custom Gradation", s_fCustG, IM_ARRAYSIZE(s_fCustG), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+				ImGui::SliderFloat("Green", &s_fCustG[s_nSetTime], -0.5f, 0.5f);
+				ImGui::PopStyleColor();
+				break;
+			case 2:
+				ImGui::PlotLines("Custom Gradation", s_fCustB, IM_ARRAYSIZE(s_fCustB), 0, nullptr, -0.5f, 0.5f, ImVec2(0, 100));
+
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.6f, 1.0f, 1.0f));
+				ImGui::SliderFloat("Blue", &s_fCustB[s_nSetTime], -0.5f, 0.5f);
+				ImGui::PopStyleColor();
+				break;
+			default:
+				break;
+			}
+
+			ImGui::SliderInt("SetKey", &s_nSetTime, 0, 9);
+			ImGui::SliderInt("Speed", &s_nSpeed, 1, 30);		//数値が高くなると変化速度がゆっくりになる
+
+																/*グラフの全ての色の数値を０にする*/
+			if (ImGui::Button("All Zero"))
+			{
+				for (int i = 0; i < 10; i++)
+				{
+					memset(&s_fCustR[i], 0, sizeof(s_fCustR[i]));
+					memset(&s_fCustG[i], 0, sizeof(s_fCustG[i]));
+					memset(&s_fCustB[i], 0, sizeof(s_fCustB[i]));
+				}
+			}
+		}
+
+		ImGui::RadioButton("Gradation None", &selecttype, 0);
+
+		static int s_nCounter;
+		static int s_nTimer;
+		static int s_nColNum;
+
+		switch (selecttype)
+		{
+		case 1:
+			s_nCounter++;
+
+			//ゼロ除算回避
+			if (s_nSpeed <= 0)
+			{
+				s_nSpeed = 1;
+			}
+
+			if ((s_nCounter % s_nSpeed) == 0)
+			{//一定時間経過
+				s_nTimer++;
+
+				if (s_nTimer >= 5)
+				{
+					emitter->GetParticle()->color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
+					s_nColNum++;
+					s_nTimer = 0;
+				}
+			}
+
+			if (s_nCounter >= 60)
+			{
+				s_nCounter = 0;
+			}
+
+			if (s_nColNum >= 10)
+			{
+				s_nColNum = 0;
+			}
+
+			break;
+
+		case 2:
+
+			break;
+		case 0:
+			break;
+		default:
+			break;
+		}
+
+		ImGui::SliderFloat("Alpha", &emitter->GetParticle()->color.colTransition.a, -0.5f, 0.0f);
+	}
+
+	// αブレンディングの種類
+	if (ImGui::CollapsingHeader("AlphaBlending"))
+	{
+		// 変数宣言
+		int	nBlendingType = (int)emitter->GetParticle()->alphaBlend;		// 種別変更用の変数
+
+		ImGui::RadioButton("AddBlend", &nBlendingType, 0);
+		ImGui::RadioButton("SubBlend", &nBlendingType, 1);
+		ImGui::RadioButton("BlendNone", &nBlendingType, 2);
+
+		emitter->GetParticle()->alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
+	}
 }
 
 //--------------------------------------------------
