@@ -30,7 +30,11 @@
 
 //マクロ定義
 #define CLASS_NAME	"WindowClass"
-#define WINDOW_NAME	"effect"
+#define WINDOW_NAME	"EffectEdit"
+
+// メモリーリークのチャック
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
 
 //=================================================
 // 静的変数
@@ -56,6 +60,9 @@ static TCHAR szPathdefault[MAX_PATH];
 //===================
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hlnstacePrev, LPSTR ipCmdLine, int nCmdShow)
 {
+	// メモリーリークのチャック
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 	HWND hWnd;	//Windowハンドル識別子
 	MSG msg;	//メッセージを格納する変数
 	RECT rect = { 0,0,CApplication::SCREEN_WIDTH,CApplication::SCREEN_HEIGHT };

@@ -16,7 +16,6 @@
 // コンストラクタ
 //-----------------------------------------
 CParticleManager::CParticleManager() :
-	m_numAll(0),
 	m_bundledData({}),
 	m_particleEmitter({})
 {
@@ -68,38 +67,43 @@ void CParticleManager::Update()
 
 		i->Update();
 	}
+	ReleaseEmitter();
 }
 
 //-----------------------------------------
 // 生成
 //-----------------------------------------
-int CParticleManager::Create(const D3DXVECTOR3& pos, const int& index)
+CParticleEmitter* CParticleManager::Create(const D3DXVECTOR3& pos, const int& index)
 {
-	int idx = m_numAll;
 	CParticleEmitter* emitter = new CParticleEmitter();
 
 	emitter->Init();		// 初期化
 	emitter->SetPos(pos);	// 位置の更新
 
-	if (m_bundledData.size() <= index)
+	// 指定された番号内にデータが入っているか否か
+	if (0 > index || m_bundledData.size() <= index)
 	{
 		assert(false);
 		return 0;
 	}
 
 	emitter->SetParticle(m_bundledData.at(index).particleData);	// 指定されてたパーティクルデータの挿入
-	emitter->SetEmitter(m_bundledData.at(index).emitterData);
+	emitter->SetEmitter(m_bundledData.at(index).emitterData);	// 指定されてたエミッタ―データの挿入
 
-	m_numAll++;
 	m_particleEmitter.push_back(emitter);
 
-	return (int)m_particleEmitter.size();
+	return emitter;
 }
 
-void CParticleManager::Release(const int idx)
+//-----------------------------------------
+// 指定したエミッタ―を削除する
+//-----------------------------------------
+void CParticleManager::ReleaseEmitter()
 {
-	delete m_particleEmitter.at(idx-1);
-	m_particleEmitter.erase(m_particleEmitter.begin() + (idx - 1));
+	m_particleEmitter.remove_if([](CParticleEmitter* inEmitter)
+	{
+		return inEmitter->GetNeedsDelete();
+	});
 }
 
 //-----------------------------------------
@@ -116,12 +120,4 @@ void CParticleManager::SetBundledData(const BundledData& inData)
 void CParticleManager::ChangeBundledData(const int idx, const BundledData& inData)
 {
 	m_bundledData.at(idx) = inData;
-}
-
-//-----------------------------------------
-// 指定された番号の位置を変更する
-//-----------------------------------------
-void CParticleManager::SetEmitterPos(const int idx, const D3DXVECTOR3 & inPos)
-{
-	m_particleEmitter.at(idx)->SetPos(inPos);
 }

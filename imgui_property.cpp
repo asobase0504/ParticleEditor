@@ -29,6 +29,7 @@
 #include <implot.h>
 
 #include "particle_manager.h"
+#include "particle_edit.h"
 
 //------------------------------
 //CPU
@@ -49,15 +50,15 @@
 //==================================================
 // 定義
 //==================================================
-const char* CImguiProperty::FontPath = "c:\\Windows\\Fonts\\meiryo.ttc";				// 使用するフォント
-const float CImguiProperty::FontSize = 18.0f;											// フォントサイズ
-const ImVec4 CImguiProperty::TitleBarColor = ImVec4(0.615f, 0.215f, 0.341f, 1.0f);		// タイトルバーの色
-const ImVec4 CImguiProperty::SliderBarColor = ImVec4(0.615f, 0.215f, 0.341f, 1.0f);		// スライダーバーの色
-const ImVec4 CImguiProperty::CheckMarkColor = ImVec4(0.615f, 0.215f, 0.341f, 1.0f);		// チェックマークの色
-const ImVec4 CImguiProperty::ScrollBarColor = ImVec4(0.0f, 0.7f, 0.2f, 1.0f);			// スクロールバーの色
-const ImVec4 CImguiProperty::HeaderColor = ImVec4(1.0f, 1.0f, 1.0f, 0.309f);			// ヘッダーの基本色
-const ImVec4 CImguiProperty::HeaderHoveredColor = ImVec4(1.0f, 1.0f, 1.0f, 0.75f);		// ヘッダーにマウスカーソルを合わせた時の色
-const ImVec4 CImguiProperty::HeaderActiveColor = ImVec4(1.0f, 1.0f, 1.0f, 0.85f);		// ヘッダークリック時の色
+const char* CImguiProperty::FontPath = "c:\\Windows\\Fonts\\meiryo.ttc";			// 使用するフォント
+const float CImguiProperty::FontSize = 18.0f;										// フォントサイズ
+const ImVec4 CImguiProperty::TitleBarColor = ImVec4(0.615f, 0.215f, 0.341f, 1.0f);	// タイトルバーの色
+const ImVec4 CImguiProperty::SliderBarColor = ImVec4(0.615f, 0.215f, 0.341f, 1.0f);	// スライダーバーの色
+const ImVec4 CImguiProperty::CheckMarkColor = ImVec4(0.615f, 0.215f, 0.341f, 1.0f);	// チェックマークの色
+const ImVec4 CImguiProperty::ScrollBarColor = ImVec4(0.0f, 0.7f, 0.2f, 1.0f);		// スクロールバーの色
+const ImVec4 CImguiProperty::HeaderColor = ImVec4(1.0f, 1.0f, 1.0f, 0.309f);		// ヘッダーの基本色
+const ImVec4 CImguiProperty::HeaderHoveredColor = ImVec4(1.0f, 1.0f, 1.0f, 0.75f);	// ヘッダーにマウスカーソルを合わせた時の色
+const ImVec4 CImguiProperty::HeaderActiveColor = ImVec4(1.0f, 1.0f, 1.0f, 0.85f);	// ヘッダークリック時の色
 
 //const int CImguiProperty::MAX_TEXT = 1024;
 const char* CImguiProperty::WINDOW_NAME = "test";
@@ -920,9 +921,10 @@ void CImguiProperty::Update()
 
 	// パーティクルのデータ
 	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
+	CParticleEdit* particleEdit = CApplication::GetInstance()->GetParticleEdit();
 
 	// 編集するエミッタ―の情報
-	CParticleEmitter* emitter = particleManager->GetEmitter()[0];
+	CParticleEmitter* emitter = particleEdit->GetEmitter();
 
 	// ウインドウの起動時の場所
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);
@@ -1046,10 +1048,10 @@ void CImguiProperty::ParticleProperty()
 {
 	static bool useEffect = true;
 	// パーティクルのデータ
-	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
+	CParticleEdit* particleEdit = CApplication::GetInstance()->GetParticleEdit();
 
 	// 編集するエミッタ―の情報
-	CParticleEmitter* emitter = particleManager->GetEmitter()[0];
+	CParticleEmitter* emitter = particleEdit->GetEmitter();
 
 	if (ImGui::Checkbox("EffectEnable", &useEffect))
 	{
@@ -1082,39 +1084,39 @@ void CImguiProperty::ParticleProperty()
 	}
 
 	{
-		// テクスチャ
-		CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
-		int& index = particleManager->GetBundledData()[0].particleData.nIdxTex;
+		//// テクスチャ
+		//CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
+		//int& index = particleEdit->GetBundledData()[0].particleData.nIdxTex;
 
-		if (ImGui::BeginCombo("Texture", pTexture->GetPath(index, false).c_str(), 0))
-		{// コンボボタン
-			for (int i = 0; i < pTexture->GetNumAll(); i++)
-			{
-				const bool is_selected = (index == i);
+		//if (ImGui::BeginCombo("Texture", pTexture->GetPath(index, false).c_str(), 0))
+		//{// コンボボタン
+		//	for (int i = 0; i < pTexture->GetNumAll(); i++)
+		//	{
+		//		const bool is_selected = (index == i);
 
-				if (ImGui::Selectable(pTexture->GetPath(i, false).c_str(), is_selected))
-				{// 選ばれた選択肢に変更
-					index = i;
-				}
+		//		if (ImGui::Selectable(pTexture->GetPath(i, false).c_str(), is_selected))
+		//		{// 選ばれた選択肢に変更
+		//			index = i;
+		//		}
 
-				if (is_selected)
-				{// 選択肢の項目を開く
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}
+		//		if (is_selected)
+		//		{// 選択肢の項目を開く
+		//			ImGui::SetItemDefaultFocus();
+		//		}
+		//	}
+		//	ImGui::EndCombo();
+		//}
 	}
 
 	// エミッタ―の位置を調整
-	D3DXVECTOR3 Imguipos = particleManager->GetEmitter()[0]->GetPos();
+	D3DXVECTOR3 Imguipos = particleEdit->GetEmitter()->GetPos();
 	ImGui::Separator();
 	ImGui::Text("/* Pos */");
 	ImGui::SliderFloat("PosX", &Imguipos.x, 0.0f, (float)CApplication::SCREEN_WIDTH);
 	ImGui::SliderFloat("PosY", &Imguipos.y, 0.0f, (float)CApplication::SCREEN_HEIGHT);
 	ImGui::Separator();
 
-	particleManager->GetEmitter()[0]->SetPos(Imguipos);
+	particleEdit->GetEmitter()->SetPos(Imguipos);
 
 	// 生成範囲の設定
 	ImGui::Text("/* Pop */");
@@ -1391,12 +1393,15 @@ void CImguiProperty::ParticleTemplate(void)
 {
 	CParticleManager* manager = CApplication::GetInstance()->GetParticleManager();
 	CParticleManager::BundledData& templateData = manager->GetBundledData()[0];
+	// 編集するエミッタ―の情報
+	CParticleEdit* particleEdit = CApplication::GetInstance()->GetParticleEdit();
+	CParticleEmitter* emitter = particleEdit->GetEmitter();
 
 	// 位置の取得
-	D3DXVECTOR3 Imguipos = manager->GetEmitter()[0]->GetPos();
+	D3DXVECTOR3 Imguipos = emitter->GetPos();
 	Imguipos.x = CApplication::SCREEN_WIDTH * 0.5f;
 	Imguipos.y = CApplication::SCREEN_HEIGHT * 0.5f;
-	manager->GetEmitter()[0]->SetPos(Imguipos);
+	emitter->SetPos(Imguipos);
 
 	// パーティクルデータの取得
 	CParticle::Info& particleInfo = templateData.particleData;

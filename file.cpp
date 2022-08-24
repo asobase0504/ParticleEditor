@@ -7,16 +7,17 @@
 #include "file.h"
 #include <fstream>
 #include "nlohmann/json.hpp"
+#include <map>
+#include <assert.h>
 
 #include "application.h"
 #include "texture.h"
 #include "particle_manager.h"
+#include "particle_edit.h"
 
-namespace nl = nlohmann;
+nlohmann::json j;//リストの生成
 
-nl::json j;//リストの生成
-
-nl::json TEX;//リストの生成
+nlohmann::json TEX;//リストの生成
 
 std::string Lync[256];
 int index = 0;
@@ -27,7 +28,9 @@ int index = 0;
 void OutputStatus()
 {
 	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
-	CParticleEmitter* loadData = particleManager->GetEmitter()[0];
+	// 編集するエミッタ―の情報
+	CParticleEdit* particleEdit = CApplication::GetInstance()->GetParticleEdit();
+	CParticleEmitter* loadData = particleEdit->GetEmitter();
 
 	CParticle::Info& particleInfo = *loadData->GetParticle();
 	CParticleEmitter::Info& emitterInfo = *loadData->GetEmitterInfo();
@@ -50,7 +53,7 @@ void OutputStatus()
 	j["RANDOMTRANSITIONTIME"] = particleInfo.color.bRandomTransitionTime;
 	
 	j["TYPE"] = particleInfo.type;
-	j["SCALETRANSITION"] = { { "X", particleInfo.scaleTransition.x } ,{ "Y", particleInfo.scaleTransition.y }};
+	j["SCALE_TRANSITION"] = { { "X", particleInfo.scaleTransition.x } ,{ "Y", particleInfo.scaleTransition.y } ,{ "Z", particleInfo.scaleTransition.y } };
 	j["WIDTH"] = particleInfo.fWidth;
 	j["HEIGHT"] = particleInfo.fHeight;
 	j["ANGLE"] = particleInfo.fAngle;
@@ -87,6 +90,15 @@ void LoadJson(const wchar_t* cUrl)
 		//DataSet.unionsname = StringToWString(UTF8toSjis(j["unions"] ["name"]));
 		ifs >> j;
 
+		if (j.count("POSMIN") == 0)
+		{
+			assert(true);
+		}
+		else
+		{
+			assert(true);
+		}
+
 		//こっちで構造体にデータを入れてます//文字は変換つけないとばぐるぞ＾＾これ-＞UTF8toSjis()
 		emitterInfo.maxPopPos = D3DXVECTOR3(j["POSMAX"]["X"], j["POSMAX"]["Y"], j["POSMAX"]["Z"]);
 		emitterInfo.minPopPos = D3DXVECTOR3(j["POSMIN"]["X"], j["POSMIN"]["Y"], j["POSMIN"]["Z"]);
@@ -107,7 +119,7 @@ void LoadJson(const wchar_t* cUrl)
 		particleInfo.color.bRandomTransitionTime = j["RANDOMTRANSITIONTIME"];
 		
 		particleInfo.type = j["TYPE"];
-		//particleInfo.scaleTransition = D3DXVECTOR2(j["SCALETRANSITION"]["X"], j["SCALETRANSITION"]["Y"]);
+		particleInfo.scaleTransition = D3DXVECTOR3(j["SCALE_TRANSITION"]["X"], j["SCALE_TRANSITION"]["Y"], j["SCALE_TRANSITION"]["Z"]);
 		particleInfo.fWidth = j["WIDTH"];
 		particleInfo.fHeight = j["HEIGHT"];
 		particleInfo.fRadius = j["RADIUS"];

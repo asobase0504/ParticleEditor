@@ -16,6 +16,9 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{cd4905bc-658d-4e27-988d-72512d853bbb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\particle">
+      <UniqueIdentifier>{56758089-f84a-4ed9-aec4-a278de66023c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BG.cpp">
@@ -69,9 +72,6 @@
     <ClCompile Include="renderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="particle.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="implot_demo.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -87,14 +87,20 @@
     <ClCompile Include="application.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="particle_emitter.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="particle_manager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="input.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="particle.cpp">
+      <Filter>ソース ファイル\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle_edit.cpp">
+      <Filter>ソース ファイル\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle_emitter.cpp">
+      <Filter>ソース ファイル\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle_manager.cpp">
+      <Filter>ソース ファイル\particle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -161,15 +167,6 @@
     <ClInclude Include="object2d.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="particle.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="particle_emitter.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="particle_manager.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="renderer.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
@@ -181,6 +178,18 @@
     </ClInclude>
     <ClInclude Include="texture.h">
       <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="particle.h">
+      <Filter>ソース ファイル\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle_edit.h">
+      <Filter>ソース ファイル\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle_emitter.h">
+      <Filter>ソース ファイル\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle_manager.h">
+      <Filter>ソース ファイル\particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

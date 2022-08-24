@@ -90,7 +90,7 @@ public: // 構造体
 		PARTICLETYPE type;				// エフェクトの種類
 		Color color;					// カラー
 		ALPHABLENDTYPE alphaBlend;		// αブレンディングの種別
-		D3DXVECTOR2 scaleTransition;	// サイズの推移量			※新規追加変数(ファイルに追加後消してください)
+		D3DXVECTOR3 scaleTransition;	// サイズの推移量			※新規追加変数(ファイルに追加後消してください)
 		float fWidth;					// 幅
 		float fHeight;					// 高さ
 		float fAngle;					// 角度

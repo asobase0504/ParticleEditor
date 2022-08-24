@@ -12,10 +12,10 @@
 #include "renderer.h"
 #include "texture.h"
 #include "object2d.h"
-#include "imgui_property.h"
 #include "file.h"
 
 #include "particle_manager.h"
+#include "particle_edit.h"
 #include "BG.h"
 
 //-----------------------------------------------------------------------------
@@ -94,9 +94,12 @@ HRESULT CApplication::Init(HWND hWnd, HINSTANCE hInstance)
 		return E_FAIL;
 	}
 
-	imguiProperty = new CImguiProperty;
+	particleEdit = new CParticleEdit;
 
-	imguiProperty->Init(hWnd, GetRenderer()->GetDevice());
+	if (FAILED(particleEdit->Init(hWnd)))
+	{
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -138,13 +141,12 @@ void CApplication::Uninit()
 		renderer = nullptr;
 	}
 
-	// imguiの解放
-	if (imguiProperty != nullptr)
+	if (particleEdit != nullptr)
 	{
-		//imguiProperty->Uninit();
+		particleEdit->Uninit();
 
-		delete imguiProperty;
-		imguiProperty = nullptr;
+		delete particleEdit;
+		particleEdit = nullptr;
 	}
 
 	// アプリケーションの解放
@@ -166,21 +168,20 @@ void CApplication::Update()
 
 	renderer->Update();
 
-	static int a;
+	static CParticleEmitter* test;
 
 	if (GetKeyboardTrigger(DIK_F1))
 	{
-		a = paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), 0);
+		test = paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), 0);
 	}
 
 	if (GetKeyboardTrigger(DIK_F2))
 	{
-		paticleManager->Release(a);
+		test->SetNeedsDelete(true);
 	}
 
 	paticleManager->Update();
-
-	imguiProperty->Update();	// imguiの更新
+	particleEdit->Update();
 }
 
 //=============================================================================
@@ -191,4 +192,9 @@ void CApplication::Update()
 void CApplication::Draw()
 {
 	renderer->Draw();
+}
+
+CImguiProperty * CApplication::GetImguiProperty()
+{
+	return particleEdit->GetImguiProperty();
 }

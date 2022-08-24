@@ -1,88 +1,93 @@
 {
-	"ALPHABLEND_TYPE": 1,
-	"ANGLE": 20.5,
-	"ATTENUATION": 0.9800000190734863,
-	"BACKROT": false,
-	"BCOLTRANSITION": true,
-	"CNTTRANSITIONTIME": 0,
-	"COL": {
-		"A": 1,
-		"B": 0,
-		"G": 1,
-		"R": 0.029411792755126953
-	},
-	"COLRANDAMMAX": {
-		"A": 1,
-		"B": 0.16111589968204498,
-		"G": 0.7303921580314636,
-		"R": 0.46249744296073914
-	},
-	"COLRANDAMMIN": {
-		"A": 1,
-		"B": 0.21149243414402008,
-		"G": 0.7352941036224365,
-		"R": 0.07569202780723572
-	},
-	"COLRANDOM": true,
-	"COLTRANSITION": {
-		"A": 1,
-		"B": 0,
-		"G": 0,
-		"R": 0
-	},
-	"DESTCOL": {
-		"A": 1,
-		"B": 1,
-		"G": 1,
-		"R": 1
-	},
-	"DIVISION": {
-		"X": 1,
-		"Y": 1
-	},
-	"EFFECTTYPE": 0,
-	"ENDTIME": 0,
-	"HEIGHT": 0,
-	"LIFE": 60,
-	"MOVE": {
-		"X": 0.4690000116825104,
-		"Y": -7.980999946594238,
-		"Z": 0
-	},
-	"MOVETRANSITION": {
-		"X": 0,
-		"Y": 0,
-		"Z": 0
-	},
-	"MULTITEX": "0",
-	"NUMPARTICLE": 1,
-	"POS": {
-		"X": 640,
-		"Y": 360,
-		"Z": 0
-	},
-	"POSMAX": {
-		"X": 0,
-		"Y": 0,
-		"Z": 0
-	},
-	"POSMIN": {
-		"X": 0,
-		"Y": 0,
-		"Z": 0
-	},
-	"RADIUS": 4.5,
-	"RANDOMTRANSITIONTIME": true,
-	"ROT": {
-		"X": 640,
-		"Y": -360,
-		"Z": 2.0831856727600098
-	},
-	"SCALE": 50,
-	"SPEED": 10,
-	"TIME": 0,
-	"TYPE": 0,
-	"WEIGHT": 0,
-	"WEIGHTTRANSITION": 0,
-	"WIDTH": 0
+  "ALPHABLEND_TYPE": 1,
+  "ANGLE": 20.5,
+  "ATTENUATION": 0.9800000190734863,
+  "BACKROT": false,
+  "BCOLTRANSITION": true,
+  "CNTTRANSITIONTIME": 0,
+  "COL": {
+    "A": 1.0,
+    "B": 0.0,
+    "G": 1.0,
+    "R": 0.029411792755126953
+  },
+  "COLRANDAMMAX": {
+    "A": 1.0,
+    "B": 0.16111589968204498,
+    "G": 0.7303921580314636,
+    "R": 0.46249744296073914
+  },
+  "COLRANDAMMIN": {
+    "A": 1.0,
+    "B": 0.21149243414402008,
+    "G": 0.7352941036224365,
+    "R": 0.07569202780723572
+  },
+  "COLRANDOM": true,
+  "COLTRANSITION": {
+    "A": 1.0,
+    "B": 0.0,
+    "G": 0.0,
+    "R": 0.0
+  },
+  "DESTCOL": {
+    "A": 1.0,
+    "B": 1.0,
+    "G": 1.0,
+    "R": 1.0
+  },
+  "DIVISION": {
+    "X": 1,
+    "Y": 1
+  },
+  "EFFECTTYPE": 0,
+  "ENDTIME": 0,
+  "HEIGHT": 0.0,
+  "LIFE": 60,
+  "MOVE": {
+    "X": 0.4690000116825104,
+    "Y": -7.980999946594238,
+    "Z": 0.0
+  },
+  "MOVETRANSITION": {
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 0.0
+  },
+  "MULTITEX": "0",
+  "NUMPARTICLE": 1,
+  "POS": {
+    "X": 640,
+    "Y": 360,
+    "Z": 0
+  },
+  "POSMAX": {
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 0.0
+  },
+  "POSMIN": {
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 0.0
+  },
+  "RADIUS": 4.5,
+  "RANDOMTRANSITIONTIME": true,
+  "ROT": {
+    "X": 640.0,
+    "Y": -360.0,
+    "Z": 2.0831856727600098
+  },
+  "SCALE": 50.0,
+  "SCALE_TRANSITION": {
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 0.0
+  },
+  "SPEED": 10,
+  "TIME": 0,
+  "TYPE": 0,
+  "WEIGHT": 0.0,
+  "WEIGHTTRANSITION": 0.0,
+  "WIDTH": 0.0
 }

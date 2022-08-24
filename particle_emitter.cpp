@@ -19,7 +19,8 @@
 //-----------------------------------------
 CParticleEmitter::CParticleEmitter() :
 	m_info({}),
-	m_particleInfo({})
+	m_particleInfo({}),
+	m_needsDelete(false)
 {
 
 }

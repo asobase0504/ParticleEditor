@@ -19,6 +19,7 @@ class CTexture;
 class CParticleManager;
 class CBg;
 class CImguiProperty;
+class CParticleEdit;
 
 //-----------------------------------------
 // アプリケーションクラス
@@ -46,14 +47,16 @@ public:
 	CObject** GetMyObject() { return &object; }
 	CTexture* GetTextureClass() { return texture; }
 	CParticleManager* GetParticleManager() { return paticleManager; }
-	CImguiProperty* GetImguiProperty() { return imguiProperty; }
+	CParticleEdit* GetParticleEdit() { return particleEdit; }
+	CImguiProperty* GetImguiProperty();
+
 private:
 	static CApplication* application;	// アプリケーション
-	CObject* object;	// オブジェクト
-	CRenderer* renderer;	// レンダラ―
-	CTexture* texture;	// テクスチャ
+	CObject* object;					// オブジェクト
+	CRenderer* renderer;				// レンダラ―
+	CTexture* texture;					// テクスチャ
 	CParticleManager* paticleManager;	// パーティクルマネジャー
-	CBg* bg;	// 背景
-	CImguiProperty* imguiProperty;
+	CParticleEdit* particleEdit;
+	CBg* bg;							// 背景
 };
 #endif // !_APPLICATION_H_
