@@ -968,6 +968,7 @@ void CParticleImgui::ParticleProperty()
 	static bool useEffect = true;
 	// パーティクルのデータ
 	CParticleEdit* particleEdit = CApplication::GetInstance()->GetParticleEdit();
+	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
 
 	// 編集するエミッタ―の情報
 	CParticleEmitter* emitter = particleEdit->GetEmitter();
@@ -1004,28 +1005,28 @@ void CParticleImgui::ParticleProperty()
 	}
 
 	{
-		//// テクスチャ
-		//CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
-		//int& index = particleEdit->GetBundledData()[0].particleData.nIdxTex;
+		// テクスチャ
+		CTexture* pTexture = CApplication::GetInstance()->GetTextureClass();
+		int& index = particleManager->GetBundledData()[0].particleData.nIdxTex;
 
-		//if (ImGui::BeginCombo("Texture", pTexture->GetPath(index, false).c_str(), 0))
-		//{// コンボボタン
-		//	for (int i = 0; i < pTexture->GetNumAll(); i++)
-		//	{
-		//		const bool is_selected = (index == i);
+		if (ImGui::BeginCombo("Texture", pTexture->GetPath(index, false).c_str(), 0))
+		{// コンボボタン
+			for (int i = 0; i < pTexture->GetNumAll(); i++)
+			{
+				const bool is_selected = (index == i);
 
-		//		if (ImGui::Selectable(pTexture->GetPath(i, false).c_str(), is_selected))
-		//		{// 選ばれた選択肢に変更
-		//			index = i;
-		//		}
+				if (ImGui::Selectable(pTexture->GetPath(i, false).c_str(), is_selected))
+				{// 選ばれた選択肢に変更
+					index = i;
+				}
 
-		//		if (is_selected)
-		//		{// 選択肢の項目を開く
-		//			ImGui::SetItemDefaultFocus();
-		//		}
-		//	}
-		//	ImGui::EndCombo();
-		//}
+				if (is_selected)
+				{// 選択肢の項目を開く
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
 	}
 
 	// エミッタ―の位置を調整
