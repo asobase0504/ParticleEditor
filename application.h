@@ -56,7 +56,7 @@ private:
 	CRenderer* renderer;				// レンダラ―
 	CTexture* texture;					// テクスチャ
 	CParticleManager* paticleManager;	// パーティクルマネジャー
-	CParticleEdit* particleEdit;
+	CParticleEdit* particleEdit;		// パーティクルエディタ
 	CBg* bg;							// 背景
 };
 #endif // !_APPLICATION_H_

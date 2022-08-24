@@ -102,6 +102,9 @@
     <ClCompile Include="particle_manager.cpp">
       <Filter>ソース ファイル\particle</Filter>
     </ClCompile>
+    <ClCompile Include="particle_imgui.cpp">
+      <Filter>ソース ファイル\particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui.h">
@@ -189,6 +192,9 @@
       <Filter>ソース ファイル\particle</Filter>
     </ClInclude>
     <ClInclude Include="particle_manager.h">
+      <Filter>ソース ファイル\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle_imgui.h">
       <Filter>ソース ファイル\particle</Filter>
     </ClInclude>
   </ItemGroup>

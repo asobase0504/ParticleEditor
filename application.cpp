@@ -81,9 +81,6 @@ HRESULT CApplication::Init(HWND hWnd, HINSTANCE hInstance)
 	{
 		return E_FAIL;
 	}
-	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f), 0);
-	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.75f, 0.0f), 0);
-	paticleManager->Create(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.25f, 0.0f), 0);
 
 	SetTex();
 
@@ -196,5 +193,5 @@ void CApplication::Draw()
 
 CImguiProperty * CApplication::GetImguiProperty()
 {
-	return particleEdit->GetImguiProperty();
+	return (CImguiProperty*)particleEdit->GetImguiProperty();
 }

@@ -35,32 +35,33 @@ private:	// 定義
 	static const ImVec4 HeaderHoveredColor;	// ヘッダーにマウスカーソルを合わせた時の色
 	static const ImVec4 HeaderActiveColor;	// ヘッダークリック時の色
 
-	///static const int	MAX_TEXT;		// テキストの最大文字数
+	//static const int	MAX_TEXT;		// テキストの最大文字数
 	static const char*	WINDOW_NAME;	// ウインドウの名前 (キャプションに表示)
 public:
 	CImguiProperty();
 	~CImguiProperty();
 
-	HWND Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice);
-	void Uninit(HWND hWnd, WNDCLASSEX wcex);
-	void Update();
-	void Draw();
+	virtual HWND Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice);
+	virtual void Uninit(HWND hWnd, WNDCLASSEX wcex);
+	virtual void Update();
+	virtual void Draw();
+
 	char* GetFileName();
 	void SetFileName(char*FileStringData);
-	bool bSetImguiParticle();
-	void ParticleTemplate();
+
+protected:
+	// カラーパレット
 	void ColorPalette4(const char* label, float col[4]);
 	void ColorPalette(float color[4], float backup_color[4], ImGuiColorEditFlags flags);
+
+	// 型の変換
 	ImVec4 ColorToImVec4(const D3DXCOLOR& color);
 	D3DXCOLOR ImVec4ToColor(const ImVec4& vec);
-private:
-	void ParticleProperty();
+
+protected:
+	bool s_window = false;	// ウインドウを使用するかどうか
 private:
 	char FileString[MAX_PATH * 256];	// ファイル名
-	bool s_window = false;	// ウインドウを使用するかどうか
-	bool s_bEffectEnable = true;
-	const unsigned int gpu_id = 0;
-	ImVec2 foo[10];
 };
 
 /* 使ってなさそう */

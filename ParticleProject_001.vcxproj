@@ -184,6 +184,7 @@
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="particle_edit.cpp" />
     <ClCompile Include="particle_emitter.cpp" />
+    <ClCompile Include="particle_imgui.cpp" />
     <ClCompile Include="particle_manager.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="texture.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="particle_edit.h" />
     <ClInclude Include="particle_emitter.h" />
+    <ClInclude Include="particle_imgui.h" />
     <ClInclude Include="particle_manager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="renderer.h" />
