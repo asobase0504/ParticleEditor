@@ -24,7 +24,7 @@
 // json
 //------------------------------
 #include <fstream>
-#include "nlohmann/json.hpp"
+#include "file.h"
 
 //------------------------------
 // CPU
@@ -36,7 +36,6 @@
 // particle
 //------------------------------
 #include "main.h"
-#include "file.h"
 #include "application.h"
 #include "texture.h"
 #include "particle_manager.h"
@@ -875,7 +874,7 @@ void CParticleImgui::Update()
 
 	if (ImGui::Button("JSON_SAVE"))
 	{
-		OutputStatus();
+		CApplication::GetInstance()->GetParticleEdit()->SaveEffect();
 	}
 
 	//SINカーブのデータ出力＆読み込み

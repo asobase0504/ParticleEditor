@@ -6,8 +6,6 @@
 //============================
 #include "file.h"
 #include <fstream>
-#include "nlohmann/json.hpp"
-#include <map>
 #include <assert.h>
 
 #include "application.h"
@@ -23,51 +21,13 @@ std::string Lync[256];
 int index = 0;
 
 //============================
-// 全部出力（置くだけ）
+// 書込み
 //============================
-void OutputStatus()
+void SaveJson(nlohmann::json inJson, const std::string cUrl)
 {
-	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
-	// 編集するエミッタ―の情報
-	CParticleEdit* particleEdit = CApplication::GetInstance()->GetParticleEdit();
-	CParticleEmitter* loadData = particleEdit->GetEmitter();
-
-	CParticle::Info& particleInfo = *loadData->GetParticle();
-	CParticleEmitter::Info& emitterInfo = *loadData->GetEmitterInfo();
-
-	j["POSMAX"] = {{ "X", emitterInfo.maxPopPos.x } ,{ "Y", emitterInfo.maxPopPos.y } ,{ "Z", emitterInfo.maxPopPos.z } };
-	j["POSMIN"] = {{ "X", emitterInfo.minPopPos.x } ,{ "Y", emitterInfo.minPopPos.y } ,{ "Z", emitterInfo.minPopPos.z } };
-	j["MOVE"] = { { "X", particleInfo.move.x } ,{ "Y", particleInfo.move.y } ,{ "Z", particleInfo.move.z } };
-	j["MOVETRANSITION"] = { { "X", particleInfo.moveTransition.x } ,{ "Y", particleInfo.moveTransition.y } ,{ "Z", particleInfo.moveTransition.z } };
-	j["ROT"] = { {"X", particleInfo.rot.x} ,{ "Y", particleInfo.rot.y },{ "Z", particleInfo.rot.z } };
-	
-	j["COL"] = { { "R", particleInfo.color.colBigin.r }, {"G" ,particleInfo.color.colBigin.g} ,{ "B", particleInfo.color.colBigin.b } ,{ "A", particleInfo.color.colBigin.a } };
-	j["COLRANDAMMAX"] = { { "R", particleInfo.color.colRandamMax.r },{ "G" ,particleInfo.color.colRandamMax.g } ,{ "B", particleInfo.color.colRandamMax.b } ,{ "A", particleInfo.color.colRandamMax.a } };
-	j["COLRANDAMMIN"] = { { "R", particleInfo.color.colRandamMin.r },{ "G" ,particleInfo.color.colRandamMin.g } ,{ "B", particleInfo.color.colRandamMin.b } ,{ "A", particleInfo.color.colRandamMin.a } };
-	j["COLTRANSITION"] = { { "R", particleInfo.color.colTransition.r },{ "G" ,particleInfo.color.colTransition.g } ,{ "B", particleInfo.color.colTransition.b } ,{ "A", particleInfo.color.colTransition.a } };
-	j["DESTCOL"] = { { "R", particleInfo.color.destCol.r },{ "G" ,particleInfo.color.destCol.g } ,{ "B", particleInfo.color.destCol.b } ,{ "A", particleInfo.color.destCol.a } };
-	j["ENDTIME"] = particleInfo.color.nEndTime;
-	j["CNTTRANSITIONTIME"] = particleInfo.color.nCntTransitionTime;
-	j["BCOLTRANSITION"] = particleInfo.color.bColTransition;
-	j["COLRANDOM"] = particleInfo.color.bColRandom;
-	j["RANDOMTRANSITIONTIME"] = particleInfo.color.bRandomTransitionTime;
-	
-	j["TYPE"] = particleInfo.type;
-	j["SCALE_TRANSITION"] = { { "X", particleInfo.scaleTransition.x } ,{ "Y", particleInfo.scaleTransition.y } ,{ "Z", particleInfo.scaleTransition.y } };
-	j["WIDTH"] = particleInfo.fWidth;
-	j["HEIGHT"] = particleInfo.fHeight;
-	j["ANGLE"] = particleInfo.fAngle;
-	j["ATTENUATION"] = particleInfo.fAttenuation;
-	j["RADIUS"] = particleInfo.fRadius;
-	j["WEIGHT"] = particleInfo.fWeight;
-	j["WEIGHTTRANSITION"] = particleInfo.fWeightTransition;
-	j["LIFE"] = particleInfo.nLife;
-	j["BACKROT"] = particleInfo.bBackrot;
-	j["SCALE"] = particleInfo.fScale;
-
-	auto jobj = j.dump();
+	auto jobj = inJson.dump();
 	std::ofstream writing_file;
-	const std::string pathToJSON = "data/FILE/DataEffectOutput.json";
+	const std::string pathToJSON = cUrl;
 	writing_file.open(pathToJSON, std::ios::out);
 	writing_file << jobj << std::endl;
 	writing_file.close();
@@ -80,70 +40,61 @@ void LoadJson(const wchar_t* cUrl)
 {
 	std::ifstream ifs(cUrl);
 
-	if (ifs)
+	if (!ifs)
 	{
-		CParticleManager::BundledData loadData = {};
-		CParticle::Info& particleInfo = loadData.particleData;
-		CParticleEmitter::Info& emitterInfo = loadData.emitterData;
-
-		//StringToWString(UTF8toSjis(j["name"]));
-		//DataSet.unionsname = StringToWString(UTF8toSjis(j["unions"] ["name"]));
-		ifs >> j;
-
-		if (j.count("POSMIN") == 0)
-		{
-			assert(true);
-		}
-		else
-		{
-			assert(true);
-		}
-
-		//こっちで構造体にデータを入れてます//文字は変換つけないとばぐるぞ＾＾これ-＞UTF8toSjis()
-		emitterInfo.maxPopPos = D3DXVECTOR3(j["POSMAX"]["X"], j["POSMAX"]["Y"], j["POSMAX"]["Z"]);
-		emitterInfo.minPopPos = D3DXVECTOR3(j["POSMIN"]["X"], j["POSMIN"]["Y"], j["POSMIN"]["Z"]);
-	
-		particleInfo.move = D3DXVECTOR3(j["MOVE"]["X"], j["MOVE"]["Y"], j["MOVE"]["Z"]);
-		particleInfo.rot = D3DXVECTOR3(j["ROT"]["X"], j["ROT"]["Y"], j["ROT"]["Z"]);
-		particleInfo.moveTransition = D3DXVECTOR3(j["MOVETRANSITION"]["X"], j["MOVETRANSITION"]["Y"], j["MOVETRANSITION"]["Z"]);;
-		
-		particleInfo.color.colBigin = D3DXCOLOR(j["COL"]["R"], j["COL"]["G"], j["COL"]["B"], j["COL"]["A"]);
-		particleInfo.color.colRandamMax = D3DXCOLOR(j["COLRANDAMMAX"]["R"], j["COLRANDAMMAX"]["G"], j["COLRANDAMMAX"]["B"], j["COLRANDAMMAX"]["A"]);
-		particleInfo.color.colRandamMin = D3DXCOLOR(j["COLRANDAMMIN"]["R"], j["COLRANDAMMIN"]["G"], j["COLRANDAMMIN"]["B"], j["COLRANDAMMIN"]["A"]);
-		particleInfo.color.colTransition = D3DXCOLOR(j["COLTRANSITION"]["R"], j["COLTRANSITION"]["G"], j["COLTRANSITION"]["B"], j["COLTRANSITION"]["A"]);
-		particleInfo.color.destCol = D3DXCOLOR(j["DESTCOL"]["R"], j["DESTCOL"]["G"], j["DESTCOL"]["B"], j["DESTCOL"]["A"]);
-		particleInfo.color.nEndTime = j["ENDTIME"];
-		particleInfo.color.nCntTransitionTime = j["CNTTRANSITIONTIME"];
-		particleInfo.color.bColTransition = j["BCOLTRANSITION"];
-		particleInfo.color.bColRandom = j["COLRANDOM"];
-		particleInfo.color.bRandomTransitionTime = j["RANDOMTRANSITIONTIME"];
-		
-		particleInfo.type = j["TYPE"];
-		particleInfo.scaleTransition = D3DXVECTOR3(j["SCALE_TRANSITION"]["X"], j["SCALE_TRANSITION"]["Y"], j["SCALE_TRANSITION"]["Z"]);
-		particleInfo.fWidth = j["WIDTH"];
-		particleInfo.fHeight = j["HEIGHT"];
-		particleInfo.fRadius = j["RADIUS"];
-		particleInfo.fAngle = j["ANGLE"];
-		particleInfo.fWeight = j["WEIGHT"];
-		particleInfo.nLife = j["LIFE"];
-		particleInfo.fAttenuation = j["ATTENUATION"];
-		particleInfo.fWeightTransition = j["WEIGHTTRANSITION"];
-		particleInfo.nLife = j["LIFE"];
-		particleInfo.bBackrot = j["BACKROT"];
-		particleInfo.fScale = j["SCALE"];
-
-		static bool chack = true;
-
-		if (chack)
-		{
-			CApplication::GetInstance()->GetParticleManager()->SetBundledData(loadData);
-			//chack = false;
-		}
-		else
-		{
-			CApplication::GetInstance()->GetParticleManager()->ChangeBundledData(0, loadData);
-		}
+		return;
 	}
+	CParticleManager::BundledData loadData = {};
+	CParticle::Info& particleInfo = loadData.particleData;
+	CParticleEmitter::Info& emitterInfo = loadData.emitterData;
+
+	//StringToWString(UTF8toSjis(j["name"]));
+	//DataSet.unionsname = StringToWString(UTF8toSjis(j["unions"] ["name"]));
+	ifs >> j;
+
+	if (j.count("POSMIN") == 0)
+	{
+		assert(true);
+	}
+	else
+	{
+		assert(true);
+	}
+
+	//こっちで構造体にデータを入れてます//文字は変換つけないとばぐるぞ＾＾これ-＞UTF8toSjis()
+	emitterInfo.maxPopPos = D3DXVECTOR3(j["POSMAX"]["X"], j["POSMAX"]["Y"], j["POSMAX"]["Z"]);
+	emitterInfo.minPopPos = D3DXVECTOR3(j["POSMIN"]["X"], j["POSMIN"]["Y"], j["POSMIN"]["Z"]);
+
+	particleInfo.move = D3DXVECTOR3(j["MOVE"]["X"], j["MOVE"]["Y"], j["MOVE"]["Z"]);
+	particleInfo.rot = D3DXVECTOR3(j["ROT"]["X"], j["ROT"]["Y"], j["ROT"]["Z"]);
+	particleInfo.moveTransition = D3DXVECTOR3(j["MOVETRANSITION"]["X"], j["MOVETRANSITION"]["Y"], j["MOVETRANSITION"]["Z"]);;
+
+	particleInfo.color.colBigin = D3DXCOLOR(j["COL"]["R"], j["COL"]["G"], j["COL"]["B"], j["COL"]["A"]);
+	particleInfo.color.colRandamMax = D3DXCOLOR(j["COLRANDAMMAX"]["R"], j["COLRANDAMMAX"]["G"], j["COLRANDAMMAX"]["B"], j["COLRANDAMMAX"]["A"]);
+	particleInfo.color.colRandamMin = D3DXCOLOR(j["COLRANDAMMIN"]["R"], j["COLRANDAMMIN"]["G"], j["COLRANDAMMIN"]["B"], j["COLRANDAMMIN"]["A"]);
+	particleInfo.color.colTransition = D3DXCOLOR(j["COLTRANSITION"]["R"], j["COLTRANSITION"]["G"], j["COLTRANSITION"]["B"], j["COLTRANSITION"]["A"]);
+	particleInfo.color.destCol = D3DXCOLOR(j["DESTCOL"]["R"], j["DESTCOL"]["G"], j["DESTCOL"]["B"], j["DESTCOL"]["A"]);
+	particleInfo.color.nEndTime = j["ENDTIME"];
+	particleInfo.color.nCntTransitionTime = j["CNTTRANSITIONTIME"];
+	particleInfo.color.bColTransition = j["BCOLTRANSITION"];
+	particleInfo.color.bColRandom = j["COLRANDOM"];
+	particleInfo.color.bRandomTransitionTime = j["RANDOMTRANSITIONTIME"];
+
+	particleInfo.type = j["TYPE"];
+	particleInfo.scaleTransition = D3DXVECTOR3(j["SCALE_TRANSITION"]["X"], j["SCALE_TRANSITION"]["Y"], j["SCALE_TRANSITION"]["Z"]);
+	particleInfo.fWidth = j["WIDTH"];
+	particleInfo.fHeight = j["HEIGHT"];
+	particleInfo.fRadius = j["RADIUS"];
+	particleInfo.fAngle = j["ANGLE"];
+	particleInfo.fWeight = j["WEIGHT"];
+	particleInfo.nLife = j["LIFE"];
+	particleInfo.fAttenuation = j["ATTENUATION"];
+	particleInfo.fWeightTransition = j["WEIGHTTRANSITION"];
+	particleInfo.nLife = j["LIFE"];
+	particleInfo.bBackrot = j["BACKROT"];
+	particleInfo.fScale = j["SCALE"];
+
+	CApplication::GetInstance()->GetParticleManager()->SetBundledData(loadData);
 }
 
 void LoadJsonTex(const char* cUrl)

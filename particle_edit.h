@@ -13,6 +13,7 @@
 #include <d3dx9.h>
 #include <list>
 #include <vector>
+#include "particle_manager.h"
 #include "particle_emitter.h"
 
 //=========================================
@@ -36,9 +37,14 @@ public:
 
 	void DoNextEditingEmitter(int inIndex);
 
+	void SaveEffect();
+	void LoasEffect();
+
+	// Getter
 	CParticleEmitter* GetEmitter() { return m_particleEditing; }
 	CParticleImgui* GetImguiProperty() { return m_imgui; }
 private:
+	CParticleManager::BundledData m_defaultData;
 	CParticleEmitter* m_particleEditing;
 	std::list<CParticleEmitter*> m_particleEmitter;	// エミッタ―情報
 	CParticleImgui* m_imgui;		// imgui

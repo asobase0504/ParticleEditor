@@ -102,7 +102,16 @@ void CParticleManager::ReleaseEmitter()
 {
 	m_particleEmitter.remove_if([](CParticleEmitter* inEmitter)
 	{
-		return inEmitter->GetNeedsDelete();
+		bool needsDelete = inEmitter->GetNeedsDelete();
+
+		if (needsDelete)
+		{
+			inEmitter->Uninit();
+			delete inEmitter;
+			inEmitter = nullptr;
+		}
+
+		return needsDelete;
 	});
 }
 
