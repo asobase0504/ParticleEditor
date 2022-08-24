@@ -34,6 +34,8 @@ public:
 	void Uninit();
 	void Update();
 
+	void DoNextEditingEmitter(int inIndex);
+
 	CParticleEmitter* GetEmitter() { return m_particleEditing; }
 	CParticleImgui* GetImguiProperty() { return m_imgui; }
 private:

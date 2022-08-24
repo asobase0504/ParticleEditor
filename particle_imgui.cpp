@@ -43,21 +43,10 @@
 #include "particle_edit.h"
 
 //--------------------------------------------------
-// マクロ定義
+// 静的変数
 //--------------------------------------------------
-
-//--------------------------------------------------
-// 定義
-//--------------------------------------------------
-
-//==================================================
-// スタティック変数
-//==================================================
 static nvmlDevice_t device;
-
-//これがSINカーブのやつ
-
-nlohmann::json Sin;//リストの生成
+static nlohmann::json Sin;//リストの生成
 
 // init data so editor knows to take it from here
 //unsigned MemoryUsageMegaBytes(void)
@@ -796,8 +785,11 @@ namespace ImGui
 //--------------------------------------------------
 // コンストラクタ
 //--------------------------------------------------
-CParticleImgui::CParticleImgui()
+CParticleImgui::CParticleImgui() :
+	s_bEffectEnable(true),
+	gpu_id(0)
 {
+	memset(foo, 0, sizeof(foo));
 }
 
 //--------------------------------------------------
@@ -844,13 +836,6 @@ void CParticleImgui::Update()
 		return;
 	}
 
-	// パーティクルのデータ
-	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
-	CParticleEdit* particleEdit = CApplication::GetInstance()->GetParticleEdit();
-
-	// 編集するエミッタ―の情報
-	CParticleEmitter* emitter = particleEdit->GetEmitter();
-
 	static int sliderInt = 0;
 	if (ImGui::BeginMenuBar())
 	{
@@ -875,6 +860,13 @@ void CParticleImgui::Update()
 	if (ImGui::Button("JSON_LOAD"))
 	{
 		LoadJson(L"data/FILE/DataEffectOutput.json");
+
+		// パーティクルのデータ
+		CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
+		CParticleEdit* particleEdit = CApplication::GetInstance()->GetParticleEdit();
+
+		// 編集するエミッタ―の情報
+		CParticleEmitter* emitter = particleEdit->GetEmitter();
 
 		// 読み込んだ末尾に変更する。
 		emitter->SetParticle((particleManager->GetBundledData().end() - 1)->particleData);
