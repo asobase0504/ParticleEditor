@@ -36,65 +36,18 @@ void SaveJson(nlohmann::json inJson, const std::string cUrl)
 //============================
 // 読込み
 //============================
-void LoadJson(const wchar_t* cUrl)
+nlohmann::json LoadJson(const wchar_t* cUrl)
 {
 	std::ifstream ifs(cUrl);
 
 	if (!ifs)
 	{
-		return;
+		return nullptr;
 	}
-	CParticleManager::BundledData loadData = {};
-	CParticle::Info& particleInfo = loadData.particleData;
-	CParticleEmitter::Info& emitterInfo = loadData.emitterData;
+	nlohmann::json jsonData;
+	ifs >> jsonData;
 
-	//StringToWString(UTF8toSjis(j["name"]));
-	//DataSet.unionsname = StringToWString(UTF8toSjis(j["unions"] ["name"]));
-	ifs >> j;
-
-	if (j.count("POSMIN") == 0)
-	{
-		assert(true);
-	}
-	else
-	{
-		assert(true);
-	}
-
-	//こっちで構造体にデータを入れてます//文字は変換つけないとばぐるぞ＾＾これ-＞UTF8toSjis()
-	emitterInfo.maxPopPos = D3DXVECTOR3(j["POSMAX"]["X"], j["POSMAX"]["Y"], j["POSMAX"]["Z"]);
-	emitterInfo.minPopPos = D3DXVECTOR3(j["POSMIN"]["X"], j["POSMIN"]["Y"], j["POSMIN"]["Z"]);
-
-	particleInfo.move = D3DXVECTOR3(j["MOVE"]["X"], j["MOVE"]["Y"], j["MOVE"]["Z"]);
-	particleInfo.rot = D3DXVECTOR3(j["ROT"]["X"], j["ROT"]["Y"], j["ROT"]["Z"]);
-	particleInfo.moveTransition = D3DXVECTOR3(j["MOVETRANSITION"]["X"], j["MOVETRANSITION"]["Y"], j["MOVETRANSITION"]["Z"]);;
-
-	particleInfo.color.colBigin = D3DXCOLOR(j["COL"]["R"], j["COL"]["G"], j["COL"]["B"], j["COL"]["A"]);
-	particleInfo.color.colRandamMax = D3DXCOLOR(j["COLRANDAMMAX"]["R"], j["COLRANDAMMAX"]["G"], j["COLRANDAMMAX"]["B"], j["COLRANDAMMAX"]["A"]);
-	particleInfo.color.colRandamMin = D3DXCOLOR(j["COLRANDAMMIN"]["R"], j["COLRANDAMMIN"]["G"], j["COLRANDAMMIN"]["B"], j["COLRANDAMMIN"]["A"]);
-	particleInfo.color.colTransition = D3DXCOLOR(j["COLTRANSITION"]["R"], j["COLTRANSITION"]["G"], j["COLTRANSITION"]["B"], j["COLTRANSITION"]["A"]);
-	particleInfo.color.destCol = D3DXCOLOR(j["DESTCOL"]["R"], j["DESTCOL"]["G"], j["DESTCOL"]["B"], j["DESTCOL"]["A"]);
-	particleInfo.color.nEndTime = j["ENDTIME"];
-	particleInfo.color.nCntTransitionTime = j["CNTTRANSITIONTIME"];
-	particleInfo.color.bColTransition = j["BCOLTRANSITION"];
-	particleInfo.color.bColRandom = j["COLRANDOM"];
-	particleInfo.color.bRandomTransitionTime = j["RANDOMTRANSITIONTIME"];
-
-	particleInfo.type = j["TYPE"];
-	particleInfo.scaleTransition = D3DXVECTOR3(j["SCALE_TRANSITION"]["X"], j["SCALE_TRANSITION"]["Y"], j["SCALE_TRANSITION"]["Z"]);
-	particleInfo.fWidth = j["WIDTH"];
-	particleInfo.fHeight = j["HEIGHT"];
-	particleInfo.fRadius = j["RADIUS"];
-	particleInfo.fAngle = j["ANGLE"];
-	particleInfo.fWeight = j["WEIGHT"];
-	particleInfo.nLife = j["LIFE"];
-	particleInfo.fAttenuation = j["ATTENUATION"];
-	particleInfo.fWeightTransition = j["WEIGHTTRANSITION"];
-	particleInfo.nLife = j["LIFE"];
-	particleInfo.bBackrot = j["BACKROT"];
-	particleInfo.fScale = j["SCALE"];
-
-	CApplication::GetInstance()->GetParticleManager()->SetBundledData(loadData);
+	return jsonData;
 }
 
 void LoadJsonTex(const char* cUrl)
@@ -145,4 +98,63 @@ void SetTex()
 	}
 
 	index = 0;
+}
+
+//--------------------------------------------------
+// 値の読込み
+//--------------------------------------------------
+void LoadValueBundledData(nlohmann::json* inJson, DeepTable& inTable)
+{
+	std::vector<ConvTable> table = inTable.table;
+	for (int i = 0; i < table.size(); i++)
+	{
+		if ((*inJson).count(table[i].name) == 0)
+		{
+			continue;
+		}
+
+		switch (table[i].type)
+		{
+		case UseChack:
+			if (((DeepTable*)table[i].store)->use != nullptr)
+			{
+				*((DeepTable*)table[i].store)->use = true;
+			}
+			// 再起処理
+			LoadValueBundledData(&((*inJson)[table[i].name]), *((DeepTable*)table[i].store));
+			break;
+		case Vector3:
+		{
+			auto VectorFloatToVector3 = [](std::vector<float> inVector)->D3DXVECTOR3
+			{
+				return D3DXVECTOR3(inVector[0], inVector[1], inVector[2]);
+			};
+
+			*((D3DXVECTOR3*)table[i].store) = VectorFloatToVector3((*inJson)[table[i].name]);
+		}
+		break;
+		case Color:
+		{
+			auto VectorFloatToColor = [](std::vector<float> inVector)->D3DXCOLOR
+			{
+				return D3DXCOLOR(inVector[0], inVector[1], inVector[2], inVector[3]);
+			};
+
+			*((D3DXCOLOR*)table[i].store) = VectorFloatToColor((*inJson)[table[i].name]);
+		}
+		break;
+		case Float:
+			*((float*)table[i].store) = (*inJson)[table[i].name];
+			break;
+		case Int:
+			*((int*)table[i].store) = (*inJson)[table[i].name];
+			break;
+		case Bool:
+			*((bool*)table[i].store) = (*inJson)[table[i].name];
+			break;
+
+		default:
+			break;
+		}
+	}
 }

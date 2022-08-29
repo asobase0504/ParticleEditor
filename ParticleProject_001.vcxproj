@@ -223,6 +223,8 @@
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\FILE\DataEffectOutput.json" />
+    <None Include="data\FILE\DataEffectOutput2.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

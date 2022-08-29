@@ -961,13 +961,41 @@ void CParticleImgui::ParticleProperty()
 	CParticleEdit* particleEdit = CApplication::GetInstance()->GetParticleEdit();
 	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
 
+	// 全体エミッタ―の情報
+	std::list<CParticleEmitter*> emitterList = particleManager->GetEmitter();
 	// 編集するエミッタ―の情報
 	CParticleEmitter* emitter = particleEdit->GetEmitter();
+
+	std::vector<char*> listbox_items;
+	
+
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 100), ImGuiWindowFlags_NoTitleBar);
+	float a;
+	for (int i = 0; i < 1 ; ++i) 
+	{
+		char name[16] = "a";
+		sprintf(name, "item %d", i);
+		ImGui::SliderFloat(name, &a, 0.0f, 10.0f);
+	}
+	ImGui::EndChild();
+	ImGui::Text("/* EffectEmitter */");
+	{
+		for (int i = 0; i < emitterList.size(); i++)
+		{
+			listbox_items.push_back("a");
+		}
+
+		static int listbox_item_current = 1;
+		ImGui::ListBox("a", &listbox_item_current, listbox_items.data(), (int)emitterList.size(), 5);
+	}
+
+	ImGui::Separator();
 
 	if (ImGui::Checkbox("EffectEnable", &useEffect))
 	{
 		s_bEffectEnable = !s_bEffectEnable;
 	}
+	ImGui::Separator();
 
 	if (ImGui::Button("Template"))
 	{

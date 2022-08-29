@@ -15,6 +15,7 @@
 #include <vector>
 #include "particle.h"
 #include "particle_emitter.h"
+#include "file.h"
 
 //=========================================
 // ‘O•ûéŒ¾
@@ -41,6 +42,8 @@ public:
 	void Update();
 	CParticleEmitter* Create(const D3DXVECTOR3& pos, const int& idx);
 	void ChangeBundledData(const int idx, const BundledData&inData);
+
+	void LoadBundledData(const wchar_t* cUrl);
 
 	// Setter
 	void SetBundledData(const BundledData&inData);

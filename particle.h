@@ -88,6 +88,7 @@ public: // 構造体
 		D3DXVECTOR3 moveTransition;		// 移動量の推移量
 		D3DXVECTOR3 rot;				// 向き
 		PARTICLETYPE type;				// エフェクトの種類
+		bool hasColor;
 		Color color;					// カラー
 		ALPHABLENDTYPE alphaBlend;		// αブレンディングの種別
 		D3DXVECTOR3 scaleTransition;	// サイズの推移量			※新規追加変数(ファイルに追加後消してください)

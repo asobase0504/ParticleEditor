@@ -19,6 +19,9 @@
     <Filter Include="ソース ファイル\particle">
       <UniqueIdentifier>{56758089-f84a-4ed9-aec4-a278de66023c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File">
+      <UniqueIdentifier>{1bcada9d-c9bd-4d18-b477-566214edb108}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BG.cpp">
@@ -200,6 +203,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="data\FILE\DataEffectOutput2.json">
+      <Filter>File</Filter>
+    </None>
+    <None Include="data\FILE\DataEffectOutput.json">
+      <Filter>File</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">

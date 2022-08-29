@@ -14,6 +14,7 @@
 #include "particle_imgui.h"
 #include "input.h"
 #include "file.h"
+#include <vector>
 
 //-----------------------------------------------------------------------------
 // コンストラクタ
@@ -123,42 +124,71 @@ void CParticleEdit::DoNextEditingEmitter(int inIndex)
 //-----------------------------------------------------------------------------
 void CParticleEdit::SaveEffect()
 {
+	//D3DXVECTOR3をvector<float>に変更する
+	auto Vector3ToVectorFloat = [](D3DXVECTOR3 inVector)->std::vector<float>
+	{
+		return{ inVector.x, inVector.y, inVector.z };
+	};
+
 	nlohmann::json saveEffect;//リストの生成
+	CParticle::Info& particleInfo = *m_particleEditing->GetParticle();
+	CParticleEmitter::Info& emitterInfo = *m_particleEditing->GetEmitterInfo();
 
-	CParticleEmitter* loadData = m_particleEditing;
+	saveEffect["ver.01"];
+	saveEffect["POSMAX"] = Vector3ToVectorFloat(emitterInfo.maxPopPos);
+	saveEffect["POSMIN"] = Vector3ToVectorFloat(emitterInfo.minPopPos);
+	saveEffect["MOVE"] = Vector3ToVectorFloat(particleInfo.move);
+	saveEffect["MOVE_TRANSITION"] = Vector3ToVectorFloat(particleInfo.moveTransition);
+	saveEffect["ROT"] = Vector3ToVectorFloat(particleInfo.rot);
 
-	CParticle::Info& particleInfo = *loadData->GetParticle();
-	CParticleEmitter::Info& emitterInfo = *loadData->GetEmitterInfo();
+	{ // 色の設定
 
-	saveEffect["POSMAX"] = { { "X", emitterInfo.maxPopPos.x } ,{ "Y", emitterInfo.maxPopPos.y } ,{ "Z", emitterInfo.maxPopPos.z } };
-	saveEffect["POSMIN"] = { { "X", emitterInfo.minPopPos.x } ,{ "Y", emitterInfo.minPopPos.y } ,{ "Z", emitterInfo.minPopPos.z } };
-	saveEffect["MOVE"] = { { "X", particleInfo.move.x } ,{ "Y", particleInfo.move.y } ,{ "Z", particleInfo.move.z } };
-	saveEffect["MOVETRANSITION"] = { { "X", particleInfo.moveTransition.x } ,{ "Y", particleInfo.moveTransition.y } ,{ "Z", particleInfo.moveTransition.z } };
-	saveEffect["ROT"] = { { "X", particleInfo.rot.x } ,{ "Y", particleInfo.rot.y },{ "Z", particleInfo.rot.z } };
+		//D3DXCOLORをvector<float>に変更する
+		auto ColorToVectorFloat = [](D3DXCOLOR inColor)->std::vector<float>
+		{
+			return{ inColor.r, inColor.g, inColor.b, inColor.a };
+		};
 
-	saveEffect["COL"] = { { "R", particleInfo.color.colBigin.r },{ "G" ,particleInfo.color.colBigin.g } ,{ "B", particleInfo.color.colBigin.b } ,{ "A", particleInfo.color.colBigin.a } };
-	saveEffect["COLRANDAMMAX"] = { { "R", particleInfo.color.colRandamMax.r },{ "G" ,particleInfo.color.colRandamMax.g } ,{ "B", particleInfo.color.colRandamMax.b } ,{ "A", particleInfo.color.colRandamMax.a } };
-	saveEffect["COLRANDAMMIN"] = { { "R", particleInfo.color.colRandamMin.r },{ "G" ,particleInfo.color.colRandamMin.g } ,{ "B", particleInfo.color.colRandamMin.b } ,{ "A", particleInfo.color.colRandamMin.a } };
-	saveEffect["COLTRANSITION"] = { { "R", particleInfo.color.colTransition.r },{ "G" ,particleInfo.color.colTransition.g } ,{ "B", particleInfo.color.colTransition.b } ,{ "A", particleInfo.color.colTransition.a } };
-	saveEffect["DESTCOL"] = { { "R", particleInfo.color.destCol.r },{ "G" ,particleInfo.color.destCol.g } ,{ "B", particleInfo.color.destCol.b } ,{ "A", particleInfo.color.destCol.a } };
-	saveEffect["ENDTIME"] = particleInfo.color.nEndTime;
-	saveEffect["CNTTRANSITIONTIME"] = particleInfo.color.nCntTransitionTime;
-	saveEffect["BCOLTRANSITION"] = particleInfo.color.bColTransition;
-	saveEffect["COLRANDOM"] = particleInfo.color.bColRandom;
-	saveEffect["RANDOMTRANSITIONTIME"] = particleInfo.color.bRandomTransitionTime;
+		CParticle::Color saveColor = particleInfo.color;
+		D3DXCOLOR transition = saveColor.colTransition;
+		D3DXCOLOR dest = saveColor.destCol;
+
+		saveEffect["COLOR"]["BIGIN"] = ColorToVectorFloat(saveColor.colBigin);
+		saveEffect["COLOR"]["DEST"] = ColorToVectorFloat(saveColor.destCol);
+		saveEffect["COLOR"]["ENDTIME"] = saveColor.nEndTime;
+
+		// カラーにランダム性を持たせる場合
+		if (particleInfo.color.bColRandom)
+		{
+			saveEffect["COLOR"]["RANDAM"]["MAX"] = ColorToVectorFloat(saveColor.colRandamMax);
+			saveEffect["COLOR"]["RANDAM"]["MIN"] = ColorToVectorFloat(saveColor.colRandamMin);
+		}
+		if (particleInfo.color.bColTransition)
+		{
+			saveEffect["COLOR"]["TRANSITION"]["VALUE"] = ColorToVectorFloat(saveColor.colTransition);
+			saveEffect["COLOR"]["TRANSITION"]["TIME"] = saveColor.nCntTransitionTime;
+		}
+		if (saveColor.bRandomTransitionTime)
+		{
+			saveEffect["COLOR"]["RANDOM_TRANSITION_TIME"] = saveColor.bRandomTransitionTime;
+		}
+	}
+
+	{ // 大きさの設定
+		saveEffect["SCALE"]["BASIC_VALUE"] = particleInfo.fScale;
+		saveEffect["SCALE"]["TRANSITION"] = Vector3ToVectorFloat(particleInfo.scaleTransition);
+		saveEffect["SCALE"]["PLUS_WIDTH"] = particleInfo.fWidth;
+		saveEffect["SCALE"]["PLUS_HEIGHT"] = particleInfo.fHeight;
+	}
 
 	saveEffect["TYPE"] = particleInfo.type;
-	saveEffect["SCALE_TRANSITION"] = { { "X", particleInfo.scaleTransition.x } ,{ "Y", particleInfo.scaleTransition.y } ,{ "Z", particleInfo.scaleTransition.y } };
-	saveEffect["WIDTH"] = particleInfo.fWidth;
-	saveEffect["HEIGHT"] = particleInfo.fHeight;
+	saveEffect["RADIUS"] = particleInfo.fRadius;
 	saveEffect["ANGLE"] = particleInfo.fAngle;
 	saveEffect["ATTENUATION"] = particleInfo.fAttenuation;
-	saveEffect["RADIUS"] = particleInfo.fRadius;
 	saveEffect["WEIGHT"] = particleInfo.fWeight;
-	saveEffect["WEIGHTTRANSITION"] = particleInfo.fWeightTransition;
+	saveEffect["WEIGHT_TRANSITION"] = particleInfo.fWeightTransition;
 	saveEffect["LIFE"] = particleInfo.nLife;
 	saveEffect["BACKROT"] = particleInfo.bBackrot;
-	saveEffect["SCALE"] = particleInfo.fScale;
 
-	SaveJson(saveEffect, "data/FILE/DataEffectOutput.json");
+	SaveJson(saveEffect, "data/FILE/DataEffectOutput2.json");
 }
