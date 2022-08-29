@@ -175,6 +175,38 @@ void CObject2D::SetPos(const D3DXVECTOR3 & inPos)
 }
 
 //=============================================================================
+// 位置の加算
+//=============================================================================
+void CObject2D::AddPos(const D3DXVECTOR3 & inPos)
+{
+	CObject::SetPos(pos + inPos);
+
+	VERTEX_2D *pVtx = NULL;		// 頂点情報へのポインタ
+
+	// 頂点情報をロックし、頂点情報へのポインタを取得
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx[0].pos.x = pos.x + sinf(m_rotY + fAngle + -D3DX_PI) * m_fLength;
+	pVtx[0].pos.y = pos.y + cosf(m_rotY + fAngle + -D3DX_PI) * m_fLength;
+	pVtx[0].pos.z = 0.0f;
+
+	pVtx[1].pos.x = pos.x + sinf(m_rotY + -fAngle + D3DX_PI) * m_fLength;
+	pVtx[1].pos.y = pos.y + cosf(m_rotY + -fAngle + D3DX_PI) * m_fLength;
+	pVtx[1].pos.z = 0.0f;
+
+	pVtx[2].pos.x = pos.x + sinf(m_rotY + fAngle * -1.0f) * m_fLength;
+	pVtx[2].pos.y = pos.y + cosf(m_rotY + fAngle * -1.0f) * m_fLength;
+	pVtx[2].pos.z = 0.0f;
+
+	pVtx[3].pos.x = pos.x + sinf(m_rotY + fAngle) * m_fLength;
+	pVtx[3].pos.y = pos.y + cosf(m_rotY + fAngle) * m_fLength;
+	pVtx[3].pos.z = 0.0f;
+
+	// 頂点バッファをアンロックする
+	m_pVtxBuff->Unlock();
+}
+
+//=============================================================================
 // 大きさの設定
 //=============================================================================
 void CObject2D::SetSize(const D3DXVECTOR2 & inSize)

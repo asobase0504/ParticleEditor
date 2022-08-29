@@ -61,10 +61,6 @@ void CParticle::Update()
 
 	/* ↓使用しているなら↓ */
 
-	// エフェクトの移動
-	pos += m_data.move;
-	AddRotY(0.1f);
-
 	// 推移
 	m_data.nLife--;									// 体力の減少
 	m_data.move.y += m_data.fWeight;				// 重力
@@ -75,7 +71,8 @@ void CParticle::Update()
 
 	ColorTransition();	// 色の遷移
 
-	SetPos(pos);
+	AddPos(m_data.move);	// 位置の加算
+	AddRotY(m_data.rot.z);	// 角度の加算
 	SetSize(D3DXVECTOR2(m_data.fWidth, m_data.fHeight));
 
 	if (m_data.nLife <= 0)

@@ -1075,10 +1075,9 @@ void CParticleImgui::ParticleProperty()
 	if (ImGui::CollapsingHeader("Details"))
 	{
 		//rotŒvŽZ—p
-		static float s_fDeg = 0.0f;
 		ImGui::Text("/* Rot */");
 		ImGui::InputFloat3("SettingEffectRot", emitter->GetParticle()->rot, "%f");
-		ImGui::SliderFloat("Rot", &s_fDeg, -D3DX_PI, D3DX_PI);
+		ImGui::SliderFloat("RotZ", &emitter->GetParticle()->rot.z,-D3DX_PI, D3DX_PI);
 
 		static bool s_bRot = false;
 		if (ImGui::Checkbox("BackRot", &s_bRot))
@@ -1086,25 +1085,11 @@ void CParticleImgui::ParticleProperty()
 			emitter->GetParticle()->bBackrot = !emitter->GetParticle()->bBackrot;
 		}
 
-		float rotX = Imguipos.x * cosf(s_fDeg) + Imguipos.x * sinf(s_fDeg);
-		float rotY = Imguipos.y * sinf(s_fDeg) - Imguipos.y * cosf(s_fDeg);
-		float fAngle = atan2f(rotX, rotY);
-		emitter->GetParticle()->rot = D3DXVECTOR3(rotX, rotY, fAngle);
-
-		if (emitter->GetParticle()->rot.z > D3DX_PI)
-		{
-			emitter->GetParticle()->rot.z -= D3DX_PI * 2.0f;
-		}
-		else if (emitter->GetParticle()->rot.z < -D3DX_PI)
-		{
-			emitter->GetParticle()->rot.z += D3DX_PI * 2.0f;
-		}
-
 		ImGui::Separator();
 		ImGui::Text("/* Scale */");
 		ImGui::SliderFloat("Scale", &emitter->GetParticle()->fScale, 0.0f, 100.0f);
-		ImGui::SliderFloat("ScaleTransfome.x", &emitter->GetParticle()->scaleTransition.x, 0.0f, 100.0f);
-		ImGui::SliderFloat("ScaleTransfome.y", &emitter->GetParticle()->scaleTransition.y, 0.0f, 100.0f);
+		ImGui::SliderFloat("ScaleTransfome.x", &emitter->GetParticle()->scaleTransition.x, -100.0f, 100.0f);
+		ImGui::SliderFloat("ScaleTransfome.y", &emitter->GetParticle()->scaleTransition.y, -100.0f, 100.0f);
 		ImGui::Separator();
 		ImGui::Text("/* Life */");
 		ImGui::SliderInt("Life", &emitter->GetParticle()->nLife, 0, 500);

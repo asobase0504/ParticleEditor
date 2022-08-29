@@ -143,7 +143,6 @@ void CParticleEdit::SaveEffect()
 	saveEffect["ROT"] = Vector3ToVectorFloat(particleInfo.rot);
 
 	{ // F‚Ìİ’è
-
 		//D3DXCOLOR‚ğvector<float>‚É•ÏX‚·‚é
 		auto ColorToVectorFloat = [](D3DXCOLOR inColor)->std::vector<float>
 		{

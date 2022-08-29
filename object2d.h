@@ -42,6 +42,7 @@ public:
 
 	// Setter
 	void SetPos(const D3DXVECTOR3& inPos) override;
+	void AddPos(const D3DXVECTOR3& inPos);
 	void SetSize(const D3DXVECTOR2& inSize);
 	void SetColor(const D3DXCOLOR& inColor);
 	void SetRotY(const float inRotY);
