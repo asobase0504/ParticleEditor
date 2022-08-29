@@ -40,11 +40,16 @@ public:
 	void Update();
 	void Draw();
 
+	// Setter
 	void SetPos(const D3DXVECTOR3& inPos) override;
 	void SetSize(const D3DXVECTOR2& inSize);
 	void SetColor(const D3DXCOLOR& inColor);
-	D3DXCOLOR GetColor() { return m_col; }
+	void SetRotY(const float inRotY);
+	void AddRotY(const float inRotY);
 	void SetTexture(int inTex) { m_nTexture = inTex; }
+
+	// Getter
+	D3DXCOLOR GetColor() { return m_col; }
 private:
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;	// VtxBuff
 	int m_nTexture;

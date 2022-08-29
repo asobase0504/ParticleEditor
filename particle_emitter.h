@@ -29,6 +29,7 @@ public:	// 構造体
 		D3DXVECTOR3 maxPopPos;		// 発生位置(最大)
 		D3DXVECTOR3 minPopPos;		// 発生位置(最小)
 		float fAngle;
+		int popNumber;				// 一度の出現数
 	};
 public:	// 静的メンバー変数
 public:

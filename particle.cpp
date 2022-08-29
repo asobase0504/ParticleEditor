@@ -63,6 +63,7 @@ void CParticle::Update()
 
 	// エフェクトの移動
 	pos += m_data.move;
+	AddRotY(0.1f);
 
 	// 推移
 	m_data.nLife--;									// 体力の減少

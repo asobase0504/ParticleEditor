@@ -21,6 +21,7 @@
   "MOVETRANSITION": [ 0.0, 0.0, 0.0 ],
   "POSMAX": [ 0.0, 0.0, 0.0 ],
   "POSMIN": [ 0.0, 0.0, 0.0 ],
+  "POP": 3,
   "RADIUS": 4.5,
   "ROT": [ 640.0, -360.0, 2.0831856727600098 ],
   "SCALE": {
@@ -30,7 +31,7 @@
     "TRANSITION": [ 0.0, 0.0, 0.0 ]
   },
   "TYPE": 0,
-  "WEIGHT": 0.7,
+  "WEIGHT": 0.0,
   "WEIGHTTRANSITION": 0.0,
   "ver.01": null
 }

@@ -195,6 +195,7 @@ void CParticleManager::LoadBundledData(const wchar_t* cUrl)
 			{
 				{ Type::Vector3, "POSMAX" , &emitterInfo.maxPopPos },
 				{ Type::Vector3, "POSMIN" , &emitterInfo.minPopPos },
+				{ Type::Int, "POP" , &emitterInfo.popNumber },
 				{ Type::Vector3, "MOVE" , &particleInfo.move },
 				{ Type::Vector3, "MOVE_TRANSITION" , &particleInfo.moveTransition },
 				{ Type::Vector3, "ROT" , &particleInfo.rot },

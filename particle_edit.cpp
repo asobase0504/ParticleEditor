@@ -136,6 +136,7 @@ void CParticleEdit::SaveEffect()
 
 	saveEffect["ver.01"];
 	saveEffect["POSMAX"] = Vector3ToVectorFloat(emitterInfo.maxPopPos);
+	saveEffect["POP"] = emitterInfo.popNumber;
 	saveEffect["POSMIN"] = Vector3ToVectorFloat(emitterInfo.minPopPos);
 	saveEffect["MOVE"] = Vector3ToVectorFloat(particleInfo.move);
 	saveEffect["MOVE_TRANSITION"] = Vector3ToVectorFloat(particleInfo.moveTransition);

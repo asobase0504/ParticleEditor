@@ -186,6 +186,9 @@ void CObject2D::SetSize(const D3DXVECTOR2 & inSize)
 	SetPos(pos);
 }
 
+//=============================================================================
+// 色の設定
+//=============================================================================
 void CObject2D::SetColor(const D3DXCOLOR & inColor)
 {
 	m_col = inColor;
@@ -203,6 +206,18 @@ void CObject2D::SetColor(const D3DXCOLOR & inColor)
 
 	// 頂点バッファをアンロックする
 	m_pVtxBuff->Unlock();
+}
+
+void CObject2D::SetRotY(const float inRotY)
+{
+	m_rotY = inRotY;
+	SetPos(pos);
+}
+
+void CObject2D::AddRotY(const float inRotY)
+{
+	m_rotY += inRotY;
+	SetPos(pos);
 }
 
 //=============================================================================
