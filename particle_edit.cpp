@@ -35,13 +35,14 @@ CParticleEdit::~CParticleEdit()
 //-----------------------------------------------------------------------------
 HRESULT CParticleEdit::Init(HWND hWnd)
 {
-
 	m_imgui = new CParticleImgui;
 	m_imgui->Init(hWnd, CApplication::GetInstance()->GetRenderer()->GetDevice());
 
-	m_particleEditing = CApplication::GetInstance()->GetParticleManager()->Create(D3DXVECTOR3(CApplication::SCREEN_WIDTH * 0.5f, CApplication::SCREEN_HEIGHT * 0.5f, 0.0f), 0);
-	m_defaultData = CApplication::GetInstance()->GetParticleManager()->GetBundledData()[0];
-	m_particleEmitter.push_back(m_particleEditing);
+	CParticleManager* manager = CApplication::GetInstance()->GetParticleManager();
+
+	m_emitterEditing = manager->Create(D3DXVECTOR3(CApplication::SCREEN_WIDTH * 0.5f, CApplication::SCREEN_HEIGHT * 0.5f, 0.0f), 0);
+	m_defaultData = manager->GetBundledData()[0];
+	m_editData = manager->GetBundledData()[0];
 
 	return S_OK;
 }
@@ -54,7 +55,7 @@ void CParticleEdit::Uninit()
 	// imguiの解放
 	if (m_imgui != nullptr)
 	{
-		//imguiProperty->Uninit();
+		//m_imgui->Uninit();
 
 		delete m_imgui;
 		m_imgui = nullptr;
@@ -66,22 +67,35 @@ void CParticleEdit::Uninit()
 //-----------------------------------------------------------------------------
 void CParticleEdit::Update()
 {
-	m_imgui->Update();	// imguiの更新
+	CParticleManager* manager = CApplication::GetInstance()->GetParticleManager();
+	bool existsChange = m_imgui->Update();	// imguiの更新
 
+	// 追加
 	if (GetKeyboardTrigger(DIK_J))
 	{
-		CApplication::GetInstance()->GetParticleManager()->SetBundledData(m_defaultData);
-		m_particleEditing = CApplication::GetInstance()->GetParticleManager()->Create(D3DXVECTOR3(CApplication::SCREEN_WIDTH * 0.5f, CApplication::SCREEN_HEIGHT * 0.5f, 0.0f), 0);
-		m_particleEmitter.push_back(m_particleEditing);
+		m_editDataIndex = manager->SetBundledData(m_defaultData);
+
+		D3DXVECTOR3 posCreate = D3DXVECTOR3(CApplication::SCREEN_WIDTH * 0.5f, CApplication::SCREEN_HEIGHT * 0.5f, 0.0f);
+		m_emitterEditing = manager->Create(posCreate, m_editDataIndex);
 	}
+	// 移動
 	if (GetKeyboardTrigger(DIK_K))
 	{
 		DoNextEditingEmitter(1);
 	}
+	// 削除
 	if (GetKeyboardTrigger(DIK_U))
 	{
-		m_particleEditing->SetNeedsDelete(true);
+		m_emitterEditing->SetNeedsDelete(true);
 		DoNextEditingEmitter(1);
+	}
+
+	// 編集中のエミッタ―に編集したデータを代入する。
+	if (existsChange)
+	{
+		m_emitterEditing->SetEmitter(m_editData.emitterData);
+		m_emitterEditing->SetParticle(m_editData.particleData);
+		manager->ChangeBundledData(m_emitterEditing->GetBundledIndex(), m_editData);
 	}
 }
 
@@ -90,30 +104,32 @@ void CParticleEdit::Update()
 //-----------------------------------------------------------------------------
 void CParticleEdit::DoNextEditingEmitter(int inIndex)
 {
-	for (auto it = m_particleEmitter.begin(); it != m_particleEmitter.end(); it++)
+	std::list<CParticleEmitter*> emitterList = CApplication::GetInstance()->GetParticleManager()->GetEmitter();
+	for (auto it = emitterList.begin(); it != emitterList.end(); it++)
 	{
-		if (*it != m_particleEditing)
+		if (*it != m_emitterEditing)
 		{
 			continue;
 		}
 
 		/* ↓listに編集中のエミッタ―と同じデータがあった場合↓ */
 
-		if (it == m_particleEmitter.begin() && inIndex < 0)
+		if (it == emitterList.begin() && inIndex < 0)
 		{ // listの最初の要素が同じデータだった場合
-			it = m_particleEmitter.end();
+			it = emitterList.end();
 		}
 
 		// 指定した数、イテレータをずらす
 		std::advance(it, inIndex);
 
-		if (it == m_particleEmitter.end() && inIndex > 0)
+		if (it == emitterList.end() && inIndex > 0)
 		{ // ずらした場所がendだった場合
-			it = m_particleEmitter.begin();
+			it = emitterList.begin();
 		}
 
 		// 編集するイテレータを更新する
-		m_particleEditing = *it;
+		m_emitterEditing = *it;
+		m_editData = CApplication::GetInstance()->GetParticleManager()->GetBundledData()[m_emitterEditing->GetBundledIndex()];
 
 		return;
 	}
@@ -131,13 +147,15 @@ void CParticleEdit::SaveEffect()
 	};
 
 	nlohmann::json saveEffect;//リストの生成
-	CParticle::Info& particleInfo = *m_particleEditing->GetParticle();
-	CParticleEmitter::Info& emitterInfo = *m_particleEditing->GetEmitterInfo();
+	CParticle::Info& particleInfo = m_editData.particleData;
+	CParticleEmitter::Info& emitterInfo = m_editData.emitterData;
 
 	saveEffect["ver.01"];
 	saveEffect["POSMAX"] = Vector3ToVectorFloat(emitterInfo.maxPopPos);
 	saveEffect["POP"] = emitterInfo.popNumber;
 	saveEffect["POSMIN"] = Vector3ToVectorFloat(emitterInfo.minPopPos);
+	saveEffect["ANGLE"] = emitterInfo.fAngle;
+	saveEffect["ADD_ANGLE"] = emitterInfo.fAddAngle;
 	saveEffect["MOVE"] = Vector3ToVectorFloat(particleInfo.move);
 	saveEffect["MOVE_TRANSITION"] = Vector3ToVectorFloat(particleInfo.moveTransition);
 	saveEffect["ROT"] = Vector3ToVectorFloat(particleInfo.rot);
@@ -181,9 +199,7 @@ void CParticleEdit::SaveEffect()
 		saveEffect["SCALE"]["PLUS_HEIGHT"] = particleInfo.fHeight;
 	}
 
-	saveEffect["TYPE"] = particleInfo.type;
 	saveEffect["RADIUS"] = particleInfo.fRadius;
-	saveEffect["ANGLE"] = particleInfo.fAngle;
 	saveEffect["ATTENUATION"] = particleInfo.fAttenuation;
 	saveEffect["WEIGHT"] = particleInfo.fWeight;
 	saveEffect["WEIGHT_TRANSITION"] = particleInfo.fWeightTransition;

@@ -76,7 +76,6 @@ void CParticleEmitter::PopParticle(void)
 	popInfo.nMaxLife = popInfo.nLife;
 	popInfo.fWidth = popInfo.fScale;
 	popInfo.fHeight = popInfo.fScale;
-	popInfo.type = CParticle::PARTICLETYPE_NORMAL;
 
 	D3DXVECTOR3 myPos = m_pos;
 	// ê∂ê¨à íuÇÃéZèo
@@ -118,7 +117,6 @@ void CParticleEmitter::PopParticle(void)
 		popColor.colTransition.b = (popColor.destCol.b - popColor.colBigin.b) / popColor.nEndTime;
 	}
 
-	static float ImAngle = 30.0f;
 	float fRad = 0.0f;
 	float fGRad = 0.0f;
 
@@ -136,7 +134,7 @@ void CParticleEmitter::PopParticle(void)
 	// ãììÆ
 	{
 		// óÜê˘ÇæÇ¡ÇΩÇË
-		m_info.fAngle += ImAngle;
+		m_info.fAngle += m_info.fAddAngle;
 		popInfo.move.x += (popInfo.fRadius * sinf(fGRad)) * popInfo.fAttenuation;
 		popInfo.move.y += (popInfo.fRadius * cosf(fGRad)) * popInfo.fAttenuation;
 	}

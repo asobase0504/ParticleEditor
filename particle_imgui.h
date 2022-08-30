@@ -24,15 +24,15 @@ public:
 	CParticleImgui();
 	~CParticleImgui();
 
-	HWND Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice);
-	void Uninit(HWND hWnd, WNDCLASSEX wcex);
-	void Update();
-	void Draw();
+	HWND Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice) override;
+	void Uninit(HWND hWnd, WNDCLASSEX wcex) override;
+	bool Update() override;
+	void Draw() override;
 	bool bSetImguiParticle();
 	void ParticleTemplate();
 
 private:
-	void ParticleProperty();
+	bool ParticleProperty();
 private:
 	bool s_bEffectEnable = true;
 	const unsigned int gpu_id = 0;

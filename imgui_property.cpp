@@ -129,11 +129,11 @@ void CImguiProperty::Uninit(HWND hWnd, WNDCLASSEX wcex)
 //--------------------------------------------------
 // 更新
 //--------------------------------------------------
-void CImguiProperty::Update()
+bool CImguiProperty::Update()
 {
 	if (!s_window)
 	{// ウインドウを使用しない
-		return;
+		return false;
 	}
 
 	ImGui_ImplDX9_NewFrame();
@@ -146,6 +146,7 @@ void CImguiProperty::Update()
 
 	// ウインドウの命名
 	ImGui::Begin(WINDOW_NAME, nullptr, ImGuiWindowFlags_MenuBar);
+	return false;
 }
 
 //--------------------------------------------------
@@ -185,7 +186,7 @@ void CImguiProperty::SetFileName(char * FileStringData)
 //--------------------------------------------------
 // カラーパレット4
 //--------------------------------------------------
-void CImguiProperty::ColorPalette4(const char * label, float col[4])
+bool CImguiProperty::ColorPalette4(const char * label, float col[4])
 {
 	//カラーパレット
 	ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_NoDragDrop | ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_NoOptions;
@@ -199,12 +200,26 @@ void CImguiProperty::ColorPalette4(const char * label, float col[4])
 	const float w_item_one = ImMax(1.0f, IM_FLOOR((w_inputs - (ImGui::GetStyle().ItemInnerSpacing.x) * (4 - 1)) / 4.0f));
 	const float w_item_last = ImMax(1.0f, IM_FLOOR(w_inputs - (w_item_one + ImGui::GetStyle().ItemInnerSpacing.x) * (4 - 1)));
 
+	bool dragChange = false;
+	// ドラッグで色を変更する
 	for (int i = 0; i < 4; i++)
 	{
 		if (i > 0)
+		{
+			// 横並びにする
 			ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+		}
+
+		// ボタンの大きさをウィンドウサイズに合わせる。
 		ImGui::SetNextItemWidth((i + 1 < 4) ? w_item_one : w_item_last);
-		ImGui::DragFloat(ids[i], &col[i], 1.0f / 255.0f, 0.0f, 1.0f, fmt_table_float[i]);
+
+		// データの変更
+		dragChange = (ImGui::DragFloat(ids[i], &col[i], 1.0f / 255.0f, 0.0f, 1.0f, fmt_table_float[i]) || dragChange);
+	}
+
+	if (dragChange)
+	{
+		int a = 0;
 	}
 
 	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
@@ -223,23 +238,29 @@ void CImguiProperty::ColorPalette4(const char * label, float col[4])
 		ImGui::OpenPopup(label);
 		backup_color = D3DXCOLOR(col[0], col[1], col[2], col[3]);
 	}
+
+	bool plaetteChange = false;
 	if (ImGui::BeginPopup(label))
 	{
 		ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar;
 		flags |= ImGuiColorEditFlags_AlphaPreview;
 		flags |= ImGuiColorEditFlags_Float;
 
-		ColorPalette(col, (float*)&backup_color, flags);
+		plaetteChange = ColorPalette(col, (float*)&backup_color, flags);
 		ImGui::EndPopup();
 	}
+
+	return plaetteChange || dragChange;
 }
 
 //--------------------------------------------------
 // カラーパレット
 //--------------------------------------------------
-void CImguiProperty::ColorPalette(float color[4], float backup_color[4], ImGuiColorEditFlags flags)
+bool CImguiProperty::ColorPalette(float color[4], float backup_color[4], ImGuiColorEditFlags flags)
 {
-	ImGui::ColorPicker4("##picker", color, flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
+	float colorOld[4] = { color[0],color[1],color[2],color[3] };
+
+	bool pickerChange = ImGui::ColorPicker4("##picker", color, flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
 	ImGui::SameLine();
 
 	ImGui::BeginGroup(); // Lock X position
@@ -298,6 +319,12 @@ void CImguiProperty::ColorPalette(float color[4], float backup_color[4], ImGuiCo
 		ImGui::PopID();
 	}
 	ImGui::EndGroup();
+
+	bool red = color[0] != colorOld[0];
+	bool grean = color[1] != colorOld[1];
+	bool blue = color[2] != colorOld[2];
+	bool alpha = color[3] != colorOld[3];
+	return pickerChange || red || grean || blue || alpha;
 }
 
 //--------------------------------------------------

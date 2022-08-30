@@ -824,7 +824,7 @@ void CParticleImgui::Uninit(HWND hWnd, WNDCLASSEX wcex)
 //--------------------------------------------------
 // 更新
 //--------------------------------------------------
-void CParticleImgui::Update()
+bool CParticleImgui::Update()
 {
 #ifdef _DEBUG
 
@@ -832,7 +832,7 @@ void CParticleImgui::Update()
 
 	if (!s_window)
 	{// ウインドウを使用しない
-		return;
+		return false;
 	}
 
 	static int sliderInt = 0;
@@ -940,31 +940,42 @@ void CParticleImgui::Update()
 	ImGui::Separator();	// 区切り線
 
 	//エフェクト関係
+	bool existsChange = false;
 	if (ImGui::CollapsingHeader("EffectSetting"))
 	{
-		ParticleProperty();
+		existsChange = ParticleProperty();
 	}
 
 	ImPlot::ShowDemoWindow();
 	ImGui::End();
-
+	return existsChange;
 #endif // _DEBUG
 }
 
 //--------------------------------------------------
 // パーティクルのImGui
 //--------------------------------------------------
-void CParticleImgui::ParticleProperty()
+bool CParticleImgui::ParticleProperty()
 {
+	bool existsChange = false;	// 変更があるか調べる
+	auto changeDetection = [&existsChange](bool function)
+	{
+		if (existsChange)
+		{
+			return;
+		}
+		existsChange = function;
+	};
+
 	static bool useEffect = true;
-	// パーティクルのデータ
-	CParticleEdit* particleEdit = CApplication::GetInstance()->GetParticleEdit();
-	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();
+	CParticleEdit* particleEdit = CApplication::GetInstance()->GetParticleEdit();	// エディター
+	CParticleManager* particleManager = CApplication::GetInstance()->GetParticleManager();	// マネジャー
+	CParticleManager::BundledData* bundled = particleEdit->GetBundledData();	// 初期値
+	CParticleEmitter::Info* emitter = &bundled->emitterData;	// 編集するエミッタ―の情報
+	CParticle::Info* particle = &bundled->particleData;			// 編集するパーティクルの情報
 
 	// 全体エミッタ―の情報
 	std::list<CParticleEmitter*> emitterList = particleManager->GetEmitter();
-	// 編集するエミッタ―の情報
-	CParticleEmitter* emitter = particleEdit->GetEmitter();
 
 	std::vector<char*> listbox_items;
 	
@@ -1060,48 +1071,48 @@ void CParticleImgui::ParticleProperty()
 
 	// 生成範囲の設定
 	ImGui::Text("/* Pop */");
-	ImGui::SliderFloat("MaxPopPosX", &emitter->GetEmitterInfo()->maxPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
-	ImGui::SliderFloat("MinPopPosX", &emitter->GetEmitterInfo()->minPopPos.x, 0, (float)CApplication::SCREEN_WIDTH);
-	ImGui::SliderFloat("MaxPopPosY", &emitter->GetEmitterInfo()->maxPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
-	ImGui::SliderFloat("MinPopPosY", &emitter->GetEmitterInfo()->minPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT);
+	changeDetection(ImGui::SliderFloat("MaxPopPosX", &emitter->maxPopPos.x, 0, (float)CApplication::SCREEN_WIDTH));
+	changeDetection(ImGui::SliderFloat("MinPopPosX", &emitter->minPopPos.x, 0, (float)CApplication::SCREEN_WIDTH));
+	changeDetection(ImGui::SliderFloat("MaxPopPosY", &emitter->maxPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT));
+	changeDetection(ImGui::SliderFloat("MinPopPosY", &emitter->minPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT));
 	ImGui::Separator();
 
 	ImGui::Text("/* Move */");
-	ImGui::InputFloat2("SettingEffectMove", emitter->GetParticle()->move, "%f");
-	ImGui::SliderFloat("MoveX", &emitter->GetParticle()->move.x, -100.0f, 100.0f);
-	ImGui::SliderFloat("MoveY", &emitter->GetParticle()->move.y, -100.0f, 100.0f);
+	changeDetection(ImGui::InputFloat2("SettingEffectMove", particle->move, "%f"));
+	changeDetection(ImGui::SliderFloat("MoveX", &particle->move.x, -100.0f, 100.0f));
+	changeDetection(ImGui::SliderFloat("MoveY", &particle->move.y, -100.0f, 100.0f));
 
 	//詳細
 	if (ImGui::CollapsingHeader("Details"))
 	{
 		//rot計算用
 		ImGui::Text("/* Rot */");
-		ImGui::InputFloat3("SettingEffectRot", emitter->GetParticle()->rot, "%f");
-		ImGui::SliderFloat("RotZ", &emitter->GetParticle()->rot.z,-D3DX_PI, D3DX_PI);
+		changeDetection(ImGui::InputFloat3("SettingEffectRot", particle->rot, "%f"));
+		changeDetection(ImGui::SliderFloat("RotZ", &particle->rot.z,-D3DX_PI, D3DX_PI));
 
 		static bool s_bRot = false;
 		if (ImGui::Checkbox("BackRot", &s_bRot))
 		{
-			emitter->GetParticle()->bBackrot = !emitter->GetParticle()->bBackrot;
+			particle->bBackrot = !particle->bBackrot;
 		}
 
 		ImGui::Separator();
 		ImGui::Text("/* Scale */");
-		ImGui::SliderFloat("Scale", &emitter->GetParticle()->fScale, 0.0f, 100.0f);
-		ImGui::SliderFloat("ScaleTransfome.x", &emitter->GetParticle()->scaleTransition.x, -100.0f, 100.0f);
-		ImGui::SliderFloat("ScaleTransfome.y", &emitter->GetParticle()->scaleTransition.y, -100.0f, 100.0f);
+		changeDetection(ImGui::SliderFloat("Scale", &particle->fScale, 0.0f, 100.0f));
+		changeDetection(ImGui::SliderFloat("ScaleTransfome.x", &particle->scaleTransition.x, -100.0f, 100.0f));
+		changeDetection(ImGui::SliderFloat("ScaleTransfome.y", &particle->scaleTransition.y, -100.0f, 100.0f));
 		ImGui::Separator();
 		ImGui::Text("/* Life */");
-		ImGui::SliderInt("Life", &emitter->GetParticle()->nLife, 0, 500);
+		changeDetection(ImGui::SliderInt("Life", &particle->nLife, 0, 500));
 		ImGui::Separator();
 		ImGui::Text("/* Radius */");
-		ImGui::SliderFloat("Radius", &emitter->GetParticle()->fRadius, 0.0f, 100.0f);
+		changeDetection(ImGui::SliderFloat("Radius", &particle->fRadius, 0.0f, 100.0f));
 		ImGui::Separator();
 		ImGui::Text("/* Angle */");
-		ImGui::SliderAngle("Angle", &emitter->GetParticle()->fAngle, 0.0f, 2000.0f);
+		changeDetection(ImGui::SliderAngle("Angle", &particle->fAngle, 0.0f, 2000.0f));
 		ImGui::Separator();
 		ImGui::Text("/* Attenuation */");
-		ImGui::SliderFloat("Attenuation", &emitter->GetParticle()->fAttenuation, 0.0f, 1.0f);
+		changeDetection(ImGui::SliderFloat("Attenuation", &particle->fAttenuation, 0.0f, 1.0f));
 
 		//挙動おかしくなっちゃった時用
 		if (ImGui::Button("DataRemove"))
@@ -1114,29 +1125,29 @@ void CParticleImgui::ParticleProperty()
 	if (ImGui::CollapsingHeader("Color"))
 	{
 		//カラーパレット
-		ColorPalette4("clear", (float*)&emitter->GetParticle()->color);
+		changeDetection(ColorPalette4("clear", (float*)&particle->color));
 
 		// ランダムカラー
-		ImGui::Checkbox("Random", &emitter->GetParticle()->color.bColRandom);
+		ImGui::Checkbox("Random", &particle->color.bColRandom);
 
-		if (emitter->GetParticle()->color.bColRandom)
+		if (particle->color.bColRandom)
 		{
-			ColorPalette4("RandamMax", (float*)&emitter->GetParticle()->color.colRandamMax);
-			ColorPalette4("RandamMin", (float*)&emitter->GetParticle()->color.colRandamMin);
+			changeDetection(ColorPalette4("RandamMax", (float*)&particle->color.colRandamMax));
+			changeDetection(ColorPalette4("RandamMin", (float*)&particle->color.colRandamMin));
 		}
 
 		// カラートラディション
-		ImGui::Checkbox("Transition", &emitter->GetParticle()->color.bColTransition);
+		ImGui::Checkbox("Transition", &particle->color.bColTransition);
 
-		if (emitter->GetParticle()->color.bColTransition)
+		if (particle->color.bColTransition)
 		{// 目的の色
-			ColorPalette4("clear destColor", (float*)&emitter->GetParticle()->color.destCol);
+			changeDetection(ColorPalette4("clear destColor", (float*)&particle->color.destCol));
 
-			ImGui::Checkbox("RandomTransitionTime", &emitter->GetParticle()->color.bRandomTransitionTime);
+			ImGui::Checkbox("RandomTransitionTime", &particle->color.bRandomTransitionTime);
 
-			if (!emitter->GetParticle()->color.bRandomTransitionTime)
+			if (!particle->color.bRandomTransitionTime)
 			{
-				ImGui::SliderInt("EndTime", &emitter->GetParticle()->color.nEndTime, 0, emitter->GetParticle()->nLife);
+				changeDetection(ImGui::SliderInt("EndTime", &particle->color.nEndTime, 0, particle->nLife));
 			}
 		}
 	}
@@ -1225,7 +1236,7 @@ void CParticleImgui::ParticleProperty()
 
 				if (s_nTimer >= 5)
 				{
-					emitter->GetParticle()->color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
+					particle->color.colTransition = D3DXCOLOR(s_fCustR[s_nColNum], s_fCustG[s_nColNum], s_fCustB[s_nColNum], 0.0f);
 					s_nColNum++;
 					s_nTimer = 0;
 				}
@@ -1252,21 +1263,23 @@ void CParticleImgui::ParticleProperty()
 			break;
 		}
 
-		ImGui::SliderFloat("Alpha", &emitter->GetParticle()->color.colTransition.a, -0.5f, 0.0f);
+		changeDetection(ImGui::SliderFloat("Alpha", &particle->color.colTransition.a, -0.5f, 0.0f));
 	}
 
 	// αブレンディングの種類
 	if (ImGui::CollapsingHeader("AlphaBlending"))
 	{
 		// 変数宣言
-		int	nBlendingType = (int)emitter->GetParticle()->alphaBlend;		// 種別変更用の変数
+		int	nBlendingType = (int)particle->alphaBlend;		// 種別変更用の変数
 
-		ImGui::RadioButton("AddBlend", &nBlendingType, 0);
-		ImGui::RadioButton("SubBlend", &nBlendingType, 1);
-		ImGui::RadioButton("BlendNone", &nBlendingType, 2);
+		changeDetection(ImGui::RadioButton("AddBlend", &nBlendingType, 0));
+		changeDetection(ImGui::RadioButton("SubBlend", &nBlendingType, 1));
+		changeDetection(ImGui::RadioButton("BlendNone", &nBlendingType, 2));
 
-		emitter->GetParticle()->alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
+		particle->alphaBlend = (CParticle::ALPHABLENDTYPE)nBlendingType;
 	}
+
+	return existsChange;
 }
 
 //--------------------------------------------------

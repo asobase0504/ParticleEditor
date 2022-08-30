@@ -43,7 +43,7 @@ public:
 
 	virtual HWND Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice);
 	virtual void Uninit(HWND hWnd, WNDCLASSEX wcex);
-	virtual void Update();
+	virtual bool Update();
 	virtual void Draw();
 
 	char* GetFileName();
@@ -51,8 +51,8 @@ public:
 
 protected:
 	// カラーパレット
-	void ColorPalette4(const char* label, float col[4]);
-	void ColorPalette(float color[4], float backup_color[4], ImGuiColorEditFlags flags);
+	bool ColorPalette4(const char* label, float col[4]);
+	bool ColorPalette(float color[4], float backup_color[4], ImGuiColorEditFlags flags);
 
 	// 型の変換
 	ImVec4 ColorToImVec4(const D3DXCOLOR& color);

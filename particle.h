@@ -17,18 +17,8 @@
 class CParticle : public CObject2D
 {
 public:	// 定数
-	static const int maxNumber = 21000;
-	static const int numType = 10;
 public:	// 静的変数
 public:	// 列挙型
-		//エフェクトの種別
-	enum PARTICLETYPE
-	{
-		PARTICLETYPE_NONE = 0,
-		PARTICLETYPE_NORMAL,
-		PARTICLETYPE_PLAYER,
-		PARTICLETYPE_MAX
-	};
 public: // 構造体
 
 	//-------------------------------------------------
@@ -55,11 +45,11 @@ public: // 構造体
 		D3DXCOLOR colRandamMin;		// ランダムな色の範囲(最小)
 		D3DXCOLOR colTransition;	// 色の遷移量
 		D3DXCOLOR destCol;			// 目的の色
-		int nEndTime;				// 遷移完了までの時間			※新規追加変数(ファイルに追加後消してください)
-		int nCntTransitionTime;		// 遷移カウント					※新規追加変数(ファイルに追加後消してください)
-		bool bColTransition;		// カラー遷移					※新規追加変数(ファイルに追加後消してください)
-		bool bColRandom;			// ランダムカラー				※新規追加変数(ファイルに追加後消してください)
-		bool bRandomTransitionTime;	// 遷移時間の乱数				※新規追加変数(ファイルに追加後消してください)
+		int nEndTime;				// 遷移完了までの時間
+		int nCntTransitionTime;		// 遷移カウント
+		bool bColTransition;		// 遷移を行うか
+		bool bColRandom;			// ランダムで色を変更するか
+		bool bRandomTransitionTime;	// 遷移完了時間の乱数
 	};
 
 	//-------------------------------------------------
@@ -87,8 +77,6 @@ public: // 構造体
 		D3DXVECTOR3 move;				// 移動量
 		D3DXVECTOR3 moveTransition;		// 移動量の推移量
 		D3DXVECTOR3 rot;				// 向き
-		PARTICLETYPE type;				// エフェクトの種類
-		bool hasColor;
 		Color color;					// カラー
 		ALPHABLENDTYPE alphaBlend;		// αブレンディングの種別
 		D3DXVECTOR3 scaleTransition;	// サイズの推移量			※新規追加変数(ファイルに追加後消してください)

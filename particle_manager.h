@@ -43,14 +43,17 @@ public:
 	CParticleEmitter* Create(const D3DXVECTOR3& pos, const int& idx);
 	void ChangeBundledData(const int idx, const BundledData&inData);
 
+	void ChangeEmitterInfo(CParticleEmitter* inEmitter, const int& idx);
+
+	// 外部読込み
 	void LoadBundledData(const wchar_t* cUrl);
 
 	// Setter
-	void SetBundledData(const BundledData&inData);
+	int SetBundledData(const BundledData&inData);
 
 	// Getter
-	std::vector<BundledData>& GetBundledData() { return m_bundledData; }
-	std::list<CParticleEmitter*> GetEmitter() { return m_particleEmitter; }
+	std::vector<BundledData>& GetBundledData() { return m_bundledData; }	// 情報体全体の取得
+	std::list<CParticleEmitter*> GetEmitter() { return m_particleEmitter; }	// エミッタ―全体の取得
 
 private:
 	void ReleaseEmitter();

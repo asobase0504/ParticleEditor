@@ -37,17 +37,20 @@ public:
 
 	void DoNextEditingEmitter(int inIndex);
 
+	// 外部
 	void SaveEffect();
-	void LoasEffect();
 
 	// Getter
-	CParticleEmitter* GetEmitter() { return m_particleEditing; }
+	CParticleEmitter* GetEmitter() { return m_emitterEditing; }
+	CParticleManager::BundledData* GetBundledData() { return &m_editData; }
 	CParticleImgui* GetImguiProperty() { return m_imgui; }
+
 private:
-	CParticleManager::BundledData m_defaultData;
-	CParticleEmitter* m_particleEditing;
-	std::list<CParticleEmitter*> m_particleEmitter;	// エミッタ―情報
-	CParticleImgui* m_imgui;		// imgui
+	CParticleManager::BundledData m_editData;		// 編集データ
+	CParticleManager::BundledData m_defaultData;	// 基本値
+	int m_editDataIndex;							// 編集中情報体の番号
+	CParticleEmitter* m_emitterEditing;				// 編集エミッタ―
+	CParticleImgui* m_imgui;						// imgui
 };
 
 #endif // !_PARTICLE_FACTORY_H_

@@ -42,6 +42,7 @@ HRESULT CParticleManager::Init()
 //-----------------------------------------
 void CParticleManager::Uninit()
 {
+	// 全てのエミッタ―を解放する
 	for (CParticleEmitter* emitter : m_particleEmitter)
 	{
 		if (emitter != nullptr)
@@ -58,6 +59,7 @@ void CParticleManager::Uninit()
 //-----------------------------------------
 void CParticleManager::Update()
 {
+	// 全てのエミッタ―を更新する
 	for (CParticleEmitter* i : m_particleEmitter)
 	{
 		if (i == nullptr)
@@ -67,7 +69,8 @@ void CParticleManager::Update()
 
 		i->Update();
 	}
-	ReleaseEmitter();
+
+	ReleaseEmitter();	// 条件を満たしたエミッタ―を削除する
 }
 
 //-----------------------------------------
@@ -87,6 +90,7 @@ CParticleEmitter* CParticleManager::Create(const D3DXVECTOR3& pos, const int& in
 		return 0;
 	}
 
+	emitter->SetBundledDataIndex(index);	// BundledDataのIndexを向こうに渡す。
 	emitter->SetParticle(m_bundledData.at(index).particleData);	// 指定されてたパーティクルデータの挿入
 	emitter->SetEmitter(m_bundledData.at(index).emitterData);	// 指定されてたエミッタ―データの挿入
 
@@ -118,9 +122,10 @@ void CParticleManager::ReleaseEmitter()
 //-----------------------------------------
 // 設定
 //-----------------------------------------
-void CParticleManager::SetBundledData(const BundledData& inData)
+int CParticleManager::SetBundledData(const BundledData& inData)
 {
 	m_bundledData.push_back(inData);
+	return (int)m_bundledData.size() - 1;
 }
 
 //-----------------------------------------
@@ -129,6 +134,12 @@ void CParticleManager::SetBundledData(const BundledData& inData)
 void CParticleManager::ChangeBundledData(const int idx, const BundledData& inData)
 {
 	m_bundledData.at(idx) = inData;
+}
+
+void CParticleManager::ChangeEmitterInfo(CParticleEmitter* inEmitter, const int& index)
+{
+	inEmitter->SetParticle(m_bundledData.at(index).particleData);	// 指定されてたパーティクルデータの挿入
+	inEmitter->SetEmitter(m_bundledData.at(index).emitterData);		// 指定されてたエミッタ―データの挿入
 }
 
 //-----------------------------------------
@@ -177,7 +188,7 @@ void CParticleManager::LoadBundledData(const wchar_t* cUrl)
 				{ Type::UseChack, "RANDAM" , &color_randum },
 				{ Type::UseChack, "TRANSITION" , &color_transition },
 			}
-			,&particleInfo.hasColor
+			,nullptr
 		};
 
 		// ["SCALE"]内の情報テーブル
@@ -200,13 +211,13 @@ void CParticleManager::LoadBundledData(const wchar_t* cUrl)
 				{ Type::Vector3, "MOVE_TRANSITION" , &particleInfo.moveTransition },
 				{ Type::Vector3, "ROT" , &particleInfo.rot },
 				{ Type::UseChack, "COLOR" , &color },
-				{ Type::Float, "ANGLE" , &particleInfo.fAngle },
+				{ Type::Float, "ANGLE" , &emitterInfo.fAngle },
+				{ Type::Float, "ADD_ANGLE" , &emitterInfo.fAddAngle },
 				{ Type::Float, "ATTENUATION" , &particleInfo.fAttenuation },
 				{ Type::Bool, "BACKROT" , &particleInfo.bBackrot },
 				{ Type::Int, "LIFE" , &particleInfo.nLife },
 				{ Type::Float, "RADIUS" , &particleInfo.fRadius },
 				{ Type::UseChack, "SCALE" , &scale},
-				{ Type::Int, "TYPE" , &particleInfo.type },
 				{ Type::Float, "WEIGHT" , &particleInfo.fWeight },
 				{ Type::Float, "WEIGHTTRANSITION" , &particleInfo.fWeightTransition },
 			},nullptr
@@ -234,7 +245,6 @@ void CParticleManager::LoadBundledData(const wchar_t* cUrl)
 		particleInfo.color.bColRandom = inData["COLRANDOM"];
 		particleInfo.color.bRandomTransitionTime = inData["RANDOMTRANSITIONTIME"];
 
-		particleInfo.type = inData["TYPE"];
 		particleInfo.scaleTransition = D3DXVECTOR3(inData["SCALE_TRANSITION"]["X"], inData["SCALE_TRANSITION"]["Y"], inData["SCALE_TRANSITION"]["Z"]);
 		particleInfo.fWidth = inData["WIDTH"];
 		particleInfo.fHeight = inData["HEIGHT"];
