@@ -88,8 +88,8 @@ public: // 構造体
 		float fWeight;					// 重さ
 		float fWeightTransition;		// 重さの推移量
 		float fScale;					// 全体的な大きさ
-		int nLife;						// 寿命
-		int nMaxLife;					// 最大寿命
+		unsigned int nLife;				// 寿命
+		unsigned int nMaxLife;			// 最大寿命
 		int nMoveTime;					//							※未使用変数
 		int nIdxTex;					// テクスチャの番号
 		bool bUseWeight;				// 重さを使用するかどうか

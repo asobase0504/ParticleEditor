@@ -1071,6 +1071,7 @@ bool CParticleImgui::ParticleProperty()
 
 	// ¶¬”ÍˆÍ‚Ìİ’è
 	ImGui::Text("/* Pop */");
+	changeDetection(ImGui::SliderInt("PopNumber", &emitter->popNumber, 0, 20));
 	changeDetection(ImGui::SliderFloat("MaxPopPosX", &emitter->maxPopPos.x, 0, (float)CApplication::SCREEN_WIDTH));
 	changeDetection(ImGui::SliderFloat("MinPopPosX", &emitter->minPopPos.x, 0, (float)CApplication::SCREEN_WIDTH));
 	changeDetection(ImGui::SliderFloat("MaxPopPosY", &emitter->maxPopPos.y, 0, (float)CApplication::SCREEN_HEIGHT));
@@ -1103,7 +1104,7 @@ bool CParticleImgui::ParticleProperty()
 		changeDetection(ImGui::SliderFloat("ScaleTransfome.y", &particle->scaleTransition.y, -100.0f, 100.0f));
 		ImGui::Separator();
 		ImGui::Text("/* Life */");
-		changeDetection(ImGui::SliderInt("Life", &particle->nLife, 0, 500));
+		changeDetection(ImGui::SliderInt("Life", (int*)&particle->nLife, 0, 500));
 		ImGui::Separator();
 		ImGui::Text("/* Radius */");
 		changeDetection(ImGui::SliderFloat("Radius", &particle->fRadius, 0.0f, 100.0f));
