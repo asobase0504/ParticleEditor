@@ -23,7 +23,7 @@
 //==================================================
 // 定義
 //==================================================
-const char* CImguiProperty::FontPath = "c:\\Windows\\Fonts\\meiryo.ttc";			// 使用するフォント
+const char* CImguiProperty::FontPath = "data/font/GenShinGothic-Bold.ttf";			// 使用するフォント
 const float CImguiProperty::FontSize = 18.0f;										// フォントサイズ
 const ImVec4 CImguiProperty::TitleBarColor = ImVec4(0.615f, 0.215f, 0.341f, 1.0f);	// タイトルバーの色
 const ImVec4 CImguiProperty::SliderBarColor = ImVec4(0.615f, 0.215f, 0.341f, 1.0f);	// スライダーバーの色
@@ -70,7 +70,7 @@ HWND CImguiProperty::Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 
 	// 文字の設定
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontDefault();
+	//io.Fonts->AddFontDefault();
 	io.Fonts->AddFontFromFileTTF(FontPath, FontSize, nullptr, io.Fonts->GetGlyphRangesJapanese());
 
 	// スタイルの設定
