@@ -1126,11 +1126,9 @@ bool CParticleImgui::ParticleProperty()
 	if (ImGui::CollapsingHeader(u8"色の設定"))
 	{
 		//カラーパレット
-		ColorPalette4("clear", (float*)&emitter->GetParticle()->color);
 		changeDetection(ColorPalette4(u8"色", (float*)&particle->color));
 
 		// ランダムカラー
-		ImGui::Checkbox("Random", &emitter->GetParticle()->color.bColRandom);
 		ImGui::Checkbox(u8"ランダム幅", &particle->color.bColRandom);
 
 		if (particle->color.bColRandom)
