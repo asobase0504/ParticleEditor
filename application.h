@@ -1,17 +1,20 @@
-//=========================================
+//=============================================================================
 // 
 // アプリケーションクラス
 // Author YudaKaito
 // 
-//=========================================
+//=============================================================================
 #ifndef _APPLICATION_H_
 #define _APPLICATION_H_
 
-#include <d3dx9.h>
+//-----------------------------------------------------------------------------
+// include
+//-----------------------------------------------------------------------------
+#include <Windows.h>
 
-//-----------------------------------------
+//-----------------------------------------------------------------------------
 // 前方宣言
-//-----------------------------------------
+//-----------------------------------------------------------------------------
 class CRenderer;
 class CObject;
 class CPlayer;
@@ -21,9 +24,9 @@ class CBg;
 class CImguiProperty;
 class CParticleEdit;
 
-//-----------------------------------------
+//-----------------------------------------------------------------------------
 // アプリケーションクラス
-//-----------------------------------------
+//-----------------------------------------------------------------------------
 class CApplication
 {
 public: // 定数
@@ -34,7 +37,9 @@ public: // シングルトンのインスタンス取得
 	static CApplication* GetInstance();
 
 private:
+	static CApplication* application;	// アプリケーション
 	CApplication();
+
 public:
 	~CApplication();
 
@@ -43,6 +48,7 @@ public:
 	void Update();
 	void Draw();
 
+	// Getter
 	CRenderer* GetRenderer() { return renderer; }
 	CObject** GetMyObject() { return &object; }
 	CTexture* GetTextureClass() { return texture; }
@@ -51,7 +57,6 @@ public:
 	CImguiProperty* GetImguiProperty();
 
 private:
-	static CApplication* application;	// アプリケーション
 	CObject* object;					// オブジェクト
 	CRenderer* renderer;				// レンダラ―
 	CTexture* texture;					// テクスチャ

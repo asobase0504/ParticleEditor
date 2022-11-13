@@ -15,14 +15,26 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="02_Cord\01_Particle">
+    <Filter Include="02_Cord\00_Particle">
       <UniqueIdentifier>{56758089-f84a-4ed9-aec4-a278de66023c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02_Cord\00_Main">
+    <Filter Include="02_Cord\01_Main">
       <UniqueIdentifier>{caa4c524-6871-4111-ae46-9f33d8d912a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02_Cord\01_Object">
+    <Filter Include="02_Cord\02_Object">
       <UniqueIdentifier>{32b6629e-5cfe-4525-b7fe-deefdc1b9771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_Cord\01_Main\02_Imgui">
+      <UniqueIdentifier>{5f5b949a-4429-49d2-919e-4cb9e63fc369}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_Cord\01_Main\01_OutSide">
+      <UniqueIdentifier>{12fcf95d-5909-461e-8458-e0de2126527c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_Cord\01_Main\03_Input">
+      <UniqueIdentifier>{09cffff3-6d12-4dba-be6c-731a0faafe17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_Cord\01_Main\00_Main">
+      <UniqueIdentifier>{a974e1a6-ed62-4518-9002-e64f01cf9a9d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,61 +69,61 @@
       <Filter>01_imgui</Filter>
     </ClCompile>
     <ClCompile Include="particle.cpp">
-      <Filter>02_Cord\01_Particle</Filter>
+      <Filter>02_Cord\00_Particle</Filter>
     </ClCompile>
     <ClCompile Include="particle_edit.cpp">
-      <Filter>02_Cord\01_Particle</Filter>
+      <Filter>02_Cord\00_Particle</Filter>
     </ClCompile>
     <ClCompile Include="particle_emitter.cpp">
-      <Filter>02_Cord\01_Particle</Filter>
+      <Filter>02_Cord\00_Particle</Filter>
     </ClCompile>
     <ClCompile Include="particle_manager.cpp">
-      <Filter>02_Cord\01_Particle</Filter>
+      <Filter>02_Cord\00_Particle</Filter>
     </ClCompile>
     <ClCompile Include="particle_imgui.cpp">
-      <Filter>02_Cord\01_Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClCompile>
-    <ClCompile Include="application.cpp">
-      <Filter>02_Cord\00_Main</Filter>
+      <Filter>02_Cord\00_Particle</Filter>
     </ClCompile>
     <ClCompile Include="BG.cpp">
-      <Filter>02_Cord\01_Object</Filter>
-    </ClCompile>
-    <ClCompile Include="file.cpp">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClCompile>
-    <ClCompile Include="implot_demo.cpp">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_property.cpp">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClCompile>
-    <ClCompile Include="input.cpp">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClCompile>
-    <ClCompile Include="letter.cpp">
-      <Filter>02_Cord\00_Main</Filter>
+      <Filter>02_Cord\02_Object</Filter>
     </ClCompile>
     <ClCompile Include="object.cpp">
-      <Filter>02_Cord\01_Object</Filter>
+      <Filter>02_Cord\02_Object</Filter>
     </ClCompile>
     <ClCompile Include="object2d.cpp">
-      <Filter>02_Cord\01_Object</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer.cpp">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClCompile>
-    <ClCompile Include="texture.cpp">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClCompile>
-    <ClCompile Include="utility.cpp">
-      <Filter>02_Cord\00_Main</Filter>
+      <Filter>02_Cord\02_Object</Filter>
     </ClCompile>
     <ClCompile Include="precompile.cpp">
       <Filter>02_Cord</Filter>
+    </ClCompile>
+    <ClCompile Include="letter.cpp">
+      <Filter>02_Cord\01_Main\01_OutSide</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_property.cpp">
+      <Filter>02_Cord\01_Main\02_Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="implot_demo.cpp">
+      <Filter>02_Cord\01_Main\02_Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="file.cpp">
+      <Filter>02_Cord\01_Main\01_OutSide</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>02_Cord\01_Main\00_Main</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer.cpp">
+      <Filter>02_Cord\01_Main\00_Main</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>02_Cord\01_Main\01_OutSide</Filter>
+    </ClCompile>
+    <ClCompile Include="application.cpp">
+      <Filter>02_Cord\01_Main\00_Main</Filter>
+    </ClCompile>
+    <ClCompile Include="utility.cpp">
+      <Filter>02_Cord\01_Main\00_Main</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>02_Cord\01_Main\03_Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,64 +161,64 @@
       <Filter>01_imgui</Filter>
     </ClInclude>
     <ClInclude Include="particle.h">
-      <Filter>02_Cord\01_Particle</Filter>
+      <Filter>02_Cord\00_Particle</Filter>
     </ClInclude>
     <ClInclude Include="particle_edit.h">
-      <Filter>02_Cord\01_Particle</Filter>
+      <Filter>02_Cord\00_Particle</Filter>
     </ClInclude>
     <ClInclude Include="particle_emitter.h">
-      <Filter>02_Cord\01_Particle</Filter>
+      <Filter>02_Cord\00_Particle</Filter>
     </ClInclude>
     <ClInclude Include="particle_manager.h">
-      <Filter>02_Cord\01_Particle</Filter>
+      <Filter>02_Cord\00_Particle</Filter>
     </ClInclude>
     <ClInclude Include="particle_imgui.h">
-      <Filter>02_Cord\01_Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="main.h">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClInclude>
-    <ClInclude Include="application.h">
-      <Filter>02_Cord\00_Main</Filter>
+      <Filter>02_Cord\00_Particle</Filter>
     </ClInclude>
     <ClInclude Include="BG.h">
-      <Filter>02_Cord\01_Object</Filter>
-    </ClInclude>
-    <ClInclude Include="file.h">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_property.h">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClInclude>
-    <ClInclude Include="letter.h">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClInclude>
-    <ClInclude Include="input.h">
-      <Filter>02_Cord\00_Main</Filter>
+      <Filter>02_Cord\02_Object</Filter>
     </ClInclude>
     <ClInclude Include="object2d.h">
-      <Filter>02_Cord\01_Object</Filter>
+      <Filter>02_Cord\02_Object</Filter>
     </ClInclude>
     <ClInclude Include="object.h">
-      <Filter>02_Cord\01_Object</Filter>
-    </ClInclude>
-    <ClInclude Include="utility.h">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer.h">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClInclude>
-    <ClInclude Include="resource1.h">
-      <Filter>02_Cord\00_Main</Filter>
-    </ClInclude>
-    <ClInclude Include="texture.h">
-      <Filter>02_Cord\00_Main</Filter>
+      <Filter>02_Cord\02_Object</Filter>
     </ClInclude>
     <ClInclude Include="precompile.h">
       <Filter>02_Cord</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_property.h">
+      <Filter>02_Cord\01_Main\02_Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="file.h">
+      <Filter>02_Cord\01_Main\01_OutSide</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>02_Cord\01_Main\00_Main</Filter>
+    </ClInclude>
+    <ClInclude Include="letter.h">
+      <Filter>02_Cord\01_Main\01_OutSide</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>02_Cord\01_Main\02_Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>02_Cord\01_Main\02_Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer.h">
+      <Filter>02_Cord\01_Main\00_Main</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>02_Cord\01_Main\01_OutSide</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
+      <Filter>02_Cord\01_Main\00_Main</Filter>
+    </ClInclude>
+    <ClInclude Include="application.h">
+      <Filter>02_Cord\01_Main\00_Main</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>02_Cord\01_Main\03_Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
