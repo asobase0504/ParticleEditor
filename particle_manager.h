@@ -27,15 +27,15 @@ class CParticleEmitter;
 //-----------------------------------------------------------------------------
 class CParticleManager
 {
-public: 
+public: // 定数
 	static const wchar_t* FILE_PATH;
-public:	// 構造体
+public: // 構造体
 	struct BundledData
 	{
 		CParticle::Info particleData;
 		CParticleEmitter::Info emitterData;
 	};
-public:
+public: // 関数
 	CParticleManager();
 	~CParticleManager();
 
@@ -57,9 +57,10 @@ public:
 	std::vector<BundledData>& GetBundledData() { return m_bundledData; }	// 情報体全体の取得
 	std::list<CParticleEmitter*> GetEmitter() { return m_particleEmitter; }	// エミッタ―全体の取得
 
-private:
+private: // プライベート関数
 	void ReleaseEmitter();
-private:
+
+private: // メンバー変数
 	std::vector<BundledData> m_bundledData;	// 情報体
 	std::list<CParticleEmitter*> m_particleEmitter;	// エミッタ―情報
 };

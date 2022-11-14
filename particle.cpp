@@ -1,6 +1,13 @@
-// ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//=============================================================================
+//
 // effect.cpp
-// ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+// Author : Tanaka Kouta
+// Author : Yuda Kaito
+//
+//=============================================================================
+//-----------------------------------------------------------------------------
+// iclude
+//-----------------------------------------------------------------------------
 #include "particle.h"
 #include "main.h"
 #include "application.h"
@@ -8,10 +15,6 @@
 #include "renderer.h"
 
 #include <assert.h>
-
-//==================================================
-// 静的メンバー変数
-//==================================================
 
 //-----------------------------------------------------------------------------
 // コンストラクタ
@@ -129,18 +132,20 @@ void CParticle::Draw()
 CParticle* CParticle::Create(const Info& inParticle, const D3DXVECTOR3& inPos)
 {
 	CParticle* particle = nullptr;
-	if (particle == nullptr)
+
+	if (particle != nullptr)
 	{
-		particle = new CParticle;
-		particle->Init();
-		particle->m_data = inParticle;
-		particle->SetPos(inPos);
-		particle->SetSize(D3DXVECTOR2(particle->m_data.fWidth, particle->m_data.fHeight));
-		particle->SetTexture(particle->m_data.nIdxTex);
-		particle->SetColor(particle->m_data.color.colBigin);
 		return particle;
 	}
-	return nullptr;
+
+	particle = new CParticle;
+	particle->Init();
+	particle->m_data = inParticle;
+	particle->SetPos(inPos);
+	particle->SetSize(D3DXVECTOR2(particle->m_data.fWidth, particle->m_data.fHeight));
+	particle->SetTexture(particle->m_data.nIdxTex);
+	particle->SetColor(particle->m_data.color.colBigin);
+	return particle;
 }
 
 //-----------------------------------------------------------------------------

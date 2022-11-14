@@ -2,16 +2,15 @@
 //
 // Hackathon ( imgui_property.cpp )
 // Author  : katsuki mizuki
-// Author  : katsuki mizuki
 // Author  : Tanaka Kouta
 // Author  : Hamada Ryuga
 // Author  : Yuda Kaito
 //
 //**************************************************
 
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 // include
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 #include "particle_imgui.h"
 //------------------------------
 // imgui
@@ -41,9 +40,9 @@
 #include "particle_manager.h"
 #include "particle_edit.h"
 
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 // 静的変数
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 static nvmlDevice_t device;
 static nlohmann::json Sin;//リストの生成
 
@@ -94,45 +93,45 @@ namespace tween {
 	{
 		LINEAR,
 
-		QUADIN,          // t^2
+		QUADIN,			// t^2
 		QUADOUT,
 		QUADINOUT,
-		CUBICIN,         // t^3
+		CUBICIN,		// t^3
 		CUBICOUT,
 		CUBICINOUT,
-		QUARTIN,         // t^4
+		QUARTIN,		// t^4
 		QUARTOUT,
 		QUARTINOUT,
-		QUINTIN,         // t^5
+		QUINTIN,		// t^5
 		QUINTOUT,
 		QUINTINOUT,
-		SINEIN,          // sin(t)
+		SINEIN,			// sin(t)
 		SINEOUT,
 		SINEINOUT,
-		EXPOIN,          // 2^t
+		EXPOIN,			// 2^t
 		EXPOOUT,
 		EXPOINOUT,
-		CIRCIN,          // sqrt(1-t^2)
+		CIRCIN,			// sqrt(1-t^2)
 		CIRCOUT,
 		CIRCINOUT,
-		ELASTICIN,       // exponentially decaying sine wave
+		ELASTICIN,		// exponentially decaying sine wave
 		ELASTICOUT,
 		ELASTICINOUT,
-		BACKIN,          // overshooting cubic easing: (s+1)*t^3 - s*t^2
+		BACKIN,			// overshooting cubic easing: (s+1)*t^3 - s*t^2
 		BACKOUT,
 		BACKINOUT,
-		BOUNCEIN,        // exponentially decaying parabolic bounce
+		BOUNCEIN,		// exponentially decaying parabolic bounce
 		BOUNCEOUT,
 		BOUNCEINOUT,
 
-		SINESQUARE,      // gapjumper's
-		EXPONENTIAL,     // gapjumper's
-		SCHUBRING1,      // terry schubring's formula 1
-		SCHUBRING2,      // terry schubring's formula 2
-		SCHUBRING3,      // terry schubring's formula 3
+		SINESQUARE,		// gapjumper's
+		EXPONENTIAL,	// gapjumper's
+		SCHUBRING1,		// terry schubring's formula 1
+		SCHUBRING2,		// terry schubring's formula 2
+		SCHUBRING3,		// terry schubring's formula 3
 
-		SINPI2,          // tomas cepeda's
-		SWING,           // tomas cepeda's & lquery's
+		SINPI2,			// tomas cepeda's
+		SWING,			// tomas cepeda's & lquery's
 	};
 
 	// }
@@ -204,7 +203,7 @@ namespace tween {
 			}
 		}
 
-							   // Modeled after the quartic x^4
+		// Modeled after the quartic x^4
 		case TYPE::QUARTIN: {
 			return p * p * p * p;
 		}
@@ -781,9 +780,9 @@ namespace ImGui
 
 };
 
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 // コンストラクタ
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 CParticleImgui::CParticleImgui() :
 	s_bEffectEnable(true),
 	gpu_id(0)
@@ -791,16 +790,16 @@ CParticleImgui::CParticleImgui() :
 	memset(foo, 0, sizeof(foo));
 }
 
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 // デストラクタ
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 CParticleImgui::~CParticleImgui()
 {
 }
 
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 // 初期化
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 HWND CParticleImgui::Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 {
 	// 初期化
@@ -813,17 +812,17 @@ HWND CParticleImgui::Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 	return outWnd;
 }
 
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 // 終了
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 void CParticleImgui::Uninit(HWND hWnd, WNDCLASSEX wcex)
 {
 	CImguiProperty::Uninit(hWnd, wcex);
 }
 
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 // 更新
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 bool CParticleImgui::Update()
 {
 #ifdef _DEBUG
@@ -952,9 +951,9 @@ bool CParticleImgui::Update()
 #endif // _DEBUG
 }
 
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 // パーティクルのImGui
-//--------------------------------------------------
+//-----------------------------------------------------------------------------
 bool CParticleImgui::ParticleProperty()
 {
 	bool existsChange = false;	// 変更があるか調べる
@@ -1202,7 +1201,7 @@ bool CParticleImgui::ParticleProperty()
 			ImGui::SliderInt("SetKey", &s_nSetTime, 0, 9);
 			ImGui::SliderInt("Speed", &s_nSpeed, 1, 30);		//数値が高くなると変化速度がゆっくりになる
 
-																/*グラフの全ての色の数値を０にする*/
+			/*グラフの全ての色の数値を０にする*/
 			if (ImGui::Button("All Zero"))
 			{
 				for (int i = 0; i < 10; i++)
