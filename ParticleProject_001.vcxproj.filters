@@ -129,37 +129,57 @@
   <ItemGroup>
     <ClInclude Include="imgui\imgui.h">
       <Filter>01_imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_dx9.h">
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\backends\imgui_impl_android.cpp">
       <Filter>01_imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_win32.h">
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\backends\imgui_impl_dx10.cpp">
       <Filter>01_imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imconfig.h">
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\backends\imgui_impl_dx11.cpp">
       <Filter>01_imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_internal.h">
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\backends\imgui_impl_dx9.cpp">
       <Filter>01_imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_rectpack.h">
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\backends\imgui_impl_win32.cpp">
       <Filter>01_imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_textedit.h">
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\imgui.cpp">
       <Filter>01_imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_truetype.h">
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\imgui_demo.cpp">
       <Filter>01_imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\implot.h">
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\imgui_draw.cpp">
       <Filter>01_imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\implot_internal.h">
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\imgui_impl_dx9.cpp">
       <Filter>01_imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_widget_flamegraph.h">
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\imgui_impl_win32.cpp">
       <Filter>01_imgui</Filter>
-    </ClInclude>
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\imgui_widget_flamegraph.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\implot.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\implot_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\エディター製作\imgui\implot_items.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="particle.h">
       <Filter>02_Cord\00_Particle</Filter>
     </ClInclude>
@@ -219,6 +239,54 @@
     </ClInclude>
     <ClInclude Include="input.h">
       <Filter>02_Cord\01_Main\03_Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\backends\imgui_impl_allegro5.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\backends\imgui_impl_android.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\backends\imgui_impl_dx10.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\backends\imgui_impl_dx9.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\backends\imgui_impl_win32.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\imgui_impl_dx9.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\imgui_impl_win32.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\imgui_widget_flamegraph.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\implot.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\implot_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\エディター製作\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
